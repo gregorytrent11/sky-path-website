@@ -1,12 +1,9 @@
-import type { Metadata } from "next";
 import PageHero from "@/components/layout/PageHero";
 import ContactForm from "@/components/forms/ContactForm";
 import { siteConfig } from "@/lib/site-config";
+import { pageMetadata } from "@/lib/metadata";
 
-export const metadata: Metadata = {
-  title: "Contact",
-  description: "Contact Sky's Path to Home.",
-};
+export const metadata = pageMetadata("Contact", "Contact Sky's Path to Home.");
 
 export default function ContactPage() {
   return (

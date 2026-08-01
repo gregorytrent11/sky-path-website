@@ -25,7 +25,7 @@ export default function AdminProtectedLayout({ children }: { children: React.Rea
 
   if (state !== "authenticated") {
     return (
-      <div className="flex min-h-[60vh] items-center justify-center text-brand-charcoal/60">
+      <div className="flex min-h-[60vh] items-center justify-center text-brand-charcoal/80">
         Loading…
       </div>
     );
@@ -41,6 +41,7 @@ export default function AdminProtectedLayout({ children }: { children: React.Rea
               <Link
                 key={item.href}
                 href={item.href}
+                aria-current={active ? "page" : undefined}
                 className={`whitespace-nowrap rounded-md px-3 py-2 text-sm font-medium ${
                   active
                     ? "bg-brand-purple text-brand-white"
@@ -52,7 +53,7 @@ export default function AdminProtectedLayout({ children }: { children: React.Rea
             );
           })}
         </nav>
-        <div className="mt-6 hidden border-t border-brand-soft-blue/60 pt-4 text-xs text-brand-charcoal/60 md:block">
+        <div className="mt-6 hidden border-t border-brand-soft-blue/60 pt-4 text-xs text-brand-charcoal/80 md:block">
           {session?.user.email}
           <button
             type="button"

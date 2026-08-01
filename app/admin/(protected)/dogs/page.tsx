@@ -10,7 +10,7 @@ const statusStyles: Record<DogStatus, string> = {
   published: "bg-green-100 text-green-800",
   pending: "bg-brand-purple text-brand-white",
   adopted: "bg-brand-deep-blue text-brand-white",
-  archived: "bg-brand-charcoal/10 text-brand-charcoal/60",
+  archived: "bg-brand-charcoal/10 text-brand-charcoal/80",
 };
 
 export default function AdminDogsPage() {
@@ -62,13 +62,13 @@ export default function AdminDogsPage() {
       </div>
 
       {!dogs ? (
-        <p className="mt-6 text-brand-charcoal/60">Loading…</p>
+        <p className="mt-6 text-brand-charcoal/80">Loading…</p>
       ) : dogs.length === 0 ? (
-        <p className="mt-6 text-brand-charcoal/60">No dogs yet. Add your first one.</p>
+        <p className="mt-6 text-brand-charcoal/80">No dogs yet. Add your first one.</p>
       ) : (
         <div className="mt-6 overflow-x-auto rounded-xl border border-brand-soft-blue/60">
           <table className="min-w-full divide-y divide-brand-soft-blue/60 bg-brand-white text-sm">
-            <thead className="bg-brand-gray/50 text-left text-xs uppercase tracking-wide text-brand-charcoal/60">
+            <thead className="bg-brand-gray/50 text-left text-xs uppercase tracking-wide text-brand-charcoal/80">
               <tr>
                 <th className="px-4 py-3">Name</th>
                 <th className="px-4 py-3">Status</th>

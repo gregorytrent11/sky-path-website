@@ -1,11 +1,8 @@
-import type { Metadata } from "next";
 import PageHero from "@/components/layout/PageHero";
 import { siteConfig } from "@/lib/site-config";
+import { pageMetadata } from "@/lib/metadata";
 
-export const metadata: Metadata = {
-  title: "Terms of Use",
-  description: "Terms of use for Sky's Path to Home.",
-};
+export const metadata = pageMetadata("Terms of Use", "Terms of use for Sky's Path to Home.");
 
 export default function TermsPage() {
   return (

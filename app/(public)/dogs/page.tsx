@@ -1,11 +1,11 @@
-import type { Metadata } from "next";
 import PageHero from "@/components/layout/PageHero";
 import DogsListClient from "@/components/dogs/DogsListClient";
+import { pageMetadata } from "@/lib/metadata";
 
-export const metadata: Metadata = {
-  title: "Dogs Looking for a Home",
-  description: "Dogs currently available for adoption from Sky's Path to Home.",
-};
+export const metadata = pageMetadata(
+  "Dogs Looking for a Home",
+  "Dogs currently available for adoption from Sky's Path to Home."
+);
 
 export default function DogsPage() {
   return (

@@ -1,11 +1,8 @@
-import type { Metadata } from "next";
 import PageHero from "@/components/layout/PageHero";
 import VolunteerForm from "@/components/forms/VolunteerForm";
+import { pageMetadata } from "@/lib/metadata";
 
-export const metadata: Metadata = {
-  title: "Get Involved",
-  description: "Volunteer opportunities with Sky's Path to Home.",
-};
+export const metadata = pageMetadata("Get Involved", "Volunteer opportunities with Sky's Path to Home.");
 
 export default function VolunteerPage() {
   return (

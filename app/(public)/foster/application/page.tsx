@@ -1,12 +1,12 @@
-import type { Metadata } from "next";
 import PageHero from "@/components/layout/PageHero";
 import ExternalApplicationCta from "@/components/forms/ExternalApplicationCta";
 import { siteConfig } from "@/lib/site-config";
+import { pageMetadata } from "@/lib/metadata";
 
-export const metadata: Metadata = {
-  title: "Foster Application",
-  description: "Apply to become a foster home with Sky's Path to Home.",
-};
+export const metadata = pageMetadata(
+  "Foster Application",
+  "Apply to become a foster home with Sky's Path to Home."
+);
 
 export default function FosterApplicationPage() {
   return (

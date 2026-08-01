@@ -112,25 +112,30 @@ export default function HomePage() {
 
       {/* Foster needs + ways to help */}
       <section aria-labelledby="help-heading" className="bg-brand-gray">
-        <div className="mx-auto grid max-w-6xl gap-8 px-4 py-16 sm:px-6 md:grid-cols-3">
-          <HelpCard
-            heading="Current Foster Needs"
-            body="We are always looking for approved foster homes to give a dog a safe, stable place to stay while they wait for their permanent home."
-            href="/foster"
-            cta="Learn About Fostering"
-          />
-          <HelpCard
-            heading="Ways to Help"
-            body="Adopt, foster, volunteer, donate, or share a dog's profile. Every action helps a dog move closer to a safe, permanent home."
-            href="/volunteer"
-            cta="See How to Get Involved"
-          />
-          <HelpCard
-            heading="Veterinary & Emergency Fund"
-            body="Donations help cover veterinary care, medication, and emergency treatment for dogs in our care who need it most."
-            href="/donate"
-            cta="Support Veterinary Care"
-          />
+        <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
+          <h2 id="help-heading" className="sr-only">
+            Ways to help
+          </h2>
+          <div className="grid gap-8 md:grid-cols-3">
+            <HelpCard
+              heading="Current Foster Needs"
+              body="We are always looking for approved foster homes to give a dog a safe, stable place to stay while they wait for their permanent home."
+              href="/foster"
+              cta="Learn About Fostering"
+            />
+            <HelpCard
+              heading="Ways to Help"
+              body="Adopt, foster, volunteer, donate, or share a dog's profile. Every action helps a dog move closer to a safe, permanent home."
+              href="/volunteer"
+              cta="See How to Get Involved"
+            />
+            <HelpCard
+              heading="Veterinary & Emergency Fund"
+              body="Donations help cover veterinary care, medication, and emergency treatment for dogs in our care who need it most."
+              href="/donate"
+              cta="Support Veterinary Care"
+            />
+          </div>
         </div>
       </section>
 

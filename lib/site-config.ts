@@ -1,4 +1,5 @@
 export const siteConfig = {
+  siteUrl: process.env.NEXT_PUBLIC_SITE_URL || "https://skyspath.com",
   orgName: "Sky's Path to Home",
   tagline: "Every Dog Deserves a Safe Path Home",
   shortDescription:

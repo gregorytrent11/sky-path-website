@@ -1,13 +1,12 @@
-import type { Metadata } from "next";
 import PageHero from "@/components/layout/PageHero";
 import RequestHelpForm from "@/components/forms/RequestHelpForm";
 import { siteConfig } from "@/lib/site-config";
+import { pageMetadata } from "@/lib/metadata";
 
-export const metadata: Metadata = {
-  title: "Request Help",
-  description:
-    "Request help from Sky's Path to Home: found dogs, owner surrenders, shelter transfers, and more.",
-};
+export const metadata = pageMetadata(
+  "Request Help",
+  "Request help from Sky's Path to Home: found dogs, owner surrenders, shelter transfers, and more."
+);
 
 export default function RequestHelpPage() {
   return (

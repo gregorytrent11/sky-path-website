@@ -45,7 +45,7 @@ export default function AdminDashboardPage() {
           href="/admin/dogs/"
           className="rounded-xl border border-brand-soft-blue/60 bg-brand-white p-5 shadow-sm hover:shadow-md"
         >
-          <p className="text-sm text-brand-charcoal/60">Live &amp; pending dogs</p>
+          <p className="text-sm text-brand-charcoal/80">Live &amp; pending dogs</p>
           <p className="mt-1 text-3xl font-semibold text-brand-deep-blue">
             {counts ? counts.publishedDogs : "…"}
           </p>
@@ -54,7 +54,7 @@ export default function AdminDashboardPage() {
           href="/admin/dogs/"
           className="rounded-xl border border-brand-soft-blue/60 bg-brand-white p-5 shadow-sm hover:shadow-md"
         >
-          <p className="text-sm text-brand-charcoal/60">Draft dogs</p>
+          <p className="text-sm text-brand-charcoal/80">Draft dogs</p>
           <p className="mt-1 text-3xl font-semibold text-brand-deep-blue">
             {counts ? counts.draftDogs : "…"}
           </p>
@@ -63,7 +63,7 @@ export default function AdminDashboardPage() {
           href="/admin/submissions/"
           className="rounded-xl border border-brand-soft-blue/60 bg-brand-white p-5 shadow-sm hover:shadow-md"
         >
-          <p className="text-sm text-brand-charcoal/60">New submissions</p>
+          <p className="text-sm text-brand-charcoal/80">New submissions</p>
           <p className="mt-1 text-3xl font-semibold text-brand-deep-blue">
             {counts ? counts.newSubmissions : "…"}
           </p>

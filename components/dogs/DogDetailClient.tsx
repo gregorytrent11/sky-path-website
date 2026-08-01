@@ -65,7 +65,8 @@ export default function DogDetailClient({ slug }: { slug: string }) {
 
   if (state === "loading") {
     return (
-      <div className="mx-auto max-w-4xl animate-pulse px-4 py-14 sm:px-6">
+      <div className="mx-auto max-w-4xl animate-pulse px-4 py-14 sm:px-6" aria-busy="true">
+        <p className="sr-only">Loading dog profile…</p>
         <div className="aspect-[4/3] w-full rounded-xl bg-brand-gray" />
         <div className="mt-6 h-8 w-1/3 rounded bg-brand-gray" />
         <div className="mt-3 h-4 w-2/3 rounded bg-brand-gray" />
@@ -124,7 +125,7 @@ export default function DogDetailClient({ slug }: { slug: string }) {
                 priority
               />
             ) : (
-              <div className="flex h-full items-center justify-center text-brand-charcoal/50">
+              <div className="flex h-full items-center justify-center text-brand-charcoal/70">
                 Photo coming soon
               </div>
             )}
@@ -167,25 +168,25 @@ export default function DogDetailClient({ slug }: { slug: string }) {
           <dl className="mt-4 grid grid-cols-2 gap-3 text-sm">
             {dog.breed && (
               <div>
-                <dt className="text-brand-charcoal/60">Breed</dt>
+                <dt className="text-brand-charcoal/70">Breed</dt>
                 <dd className="font-medium text-brand-charcoal">{dog.breed}</dd>
               </div>
             )}
             {ageCategoryLabel(dog.age_category) && (
               <div>
-                <dt className="text-brand-charcoal/60">Age</dt>
+                <dt className="text-brand-charcoal/70">Age</dt>
                 <dd className="font-medium text-brand-charcoal">{ageCategoryLabel(dog.age_category)}</dd>
               </div>
             )}
             {dog.sex && dog.sex !== "unknown" && (
               <div>
-                <dt className="text-brand-charcoal/60">Sex</dt>
+                <dt className="text-brand-charcoal/70">Sex</dt>
                 <dd className="font-medium text-brand-charcoal">{dog.sex === "male" ? "Male" : "Female"}</dd>
               </div>
             )}
             {sizeLabel(dog.size) && (
               <div>
-                <dt className="text-brand-charcoal/60">Size</dt>
+                <dt className="text-brand-charcoal/70">Size</dt>
                 <dd className="font-medium text-brand-charcoal">
                   {sizeLabel(dog.size)}
                   {dog.weight_lbs ? ` (${dog.weight_lbs} lbs)` : ""}
@@ -194,13 +195,13 @@ export default function DogDetailClient({ slug }: { slug: string }) {
             )}
             {dog.location && (
               <div>
-                <dt className="text-brand-charcoal/60">Location</dt>
+                <dt className="text-brand-charcoal/70">Location</dt>
                 <dd className="font-medium text-brand-charcoal">{dog.location}</dd>
               </div>
             )}
             {dog.energy_level && (
               <div>
-                <dt className="text-brand-charcoal/60">Energy level</dt>
+                <dt className="text-brand-charcoal/70">Energy level</dt>
                 <dd className="font-medium capitalize text-brand-charcoal">{dog.energy_level}</dd>
               </div>
             )}

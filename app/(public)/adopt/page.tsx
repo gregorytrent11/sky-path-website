@@ -1,12 +1,11 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import PageHero from "@/components/layout/PageHero";
+import { pageMetadata } from "@/lib/metadata";
 
-export const metadata: Metadata = {
-  title: "Adopt",
-  description:
-    "Learn about the adoption process at Sky's Path to Home, a Montana foster-based dog rescue.",
-};
+export const metadata = pageMetadata(
+  "Adopt",
+  "Learn about the adoption process at Sky's Path to Home, a Montana foster-based dog rescue."
+);
 
 const processSteps = [
   "Review available dogs.",

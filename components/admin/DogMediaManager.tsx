@@ -178,7 +178,7 @@ export default function DogMediaManager({ dogId, dogName }: { dogId: string; dog
             <li key={item.id} className="relative overflow-hidden rounded-lg border border-brand-soft-blue/60">
               <div className="relative aspect-square bg-brand-gray">
                 {item.media_type === "image" ? (
-                  <Image src={item.url} alt={item.alt_text || ""} fill className="object-cover" />
+                  <Image src={item.url} alt={item.alt_text || `Photo of ${dogName}`} fill className="object-cover" />
                 ) : (
                   <video src={item.url} className="h-full w-full object-cover" muted />
                 )}

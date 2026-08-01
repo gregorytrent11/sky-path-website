@@ -18,7 +18,7 @@ export default function DogCard({ dog }: { dog: Dog }) {
             className="object-cover transition-transform group-hover:scale-105"
           />
         ) : (
-          <div className="flex h-full items-center justify-center text-sm text-brand-charcoal/50">
+          <div className="flex h-full items-center justify-center text-sm text-brand-charcoal/70">
             Photo coming soon
           </div>
         )}
@@ -34,7 +34,7 @@ export default function DogCard({ dog }: { dog: Dog }) {
         )}
       </div>
       <div className="p-4">
-        <h3 className="font-heading text-lg font-semibold text-brand-deep-blue">{dog.name}</h3>
+        <h2 className="font-heading text-lg font-semibold text-brand-deep-blue">{dog.name}</h2>
         <p className="mt-1 text-sm text-brand-charcoal/80">{dogSummaryLine(dog) || "Details coming soon"}</p>
       </div>
     </Link>

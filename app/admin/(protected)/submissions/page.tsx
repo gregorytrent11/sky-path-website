@@ -16,7 +16,7 @@ const statusStyles: Record<SubmissionStatus, string> = {
   new: "bg-brand-purple text-brand-white",
   in_progress: "bg-brand-soft-blue/60 text-brand-deep-blue",
   resolved: "bg-green-100 text-green-800",
-  archived: "bg-brand-charcoal/10 text-brand-charcoal/60",
+  archived: "bg-brand-charcoal/10 text-brand-charcoal/80",
 };
 
 export default function AdminSubmissionsPage() {
@@ -67,9 +67,9 @@ export default function AdminSubmissionsPage() {
       </div>
 
       {!submissions ? (
-        <p className="mt-6 text-brand-charcoal/60">Loading…</p>
+        <p className="mt-6 text-brand-charcoal/80">Loading…</p>
       ) : visible.length === 0 ? (
-        <p className="mt-6 text-brand-charcoal/60">No submissions yet.</p>
+        <p className="mt-6 text-brand-charcoal/80">No submissions yet.</p>
       ) : (
         <ul className="mt-6 space-y-3">
           {visible.map((submission) => (
@@ -80,11 +80,13 @@ export default function AdminSubmissionsPage() {
               <button
                 type="button"
                 onClick={() => setExpanded(expanded === submission.id ? null : submission.id)}
+                aria-expanded={expanded === submission.id}
+                aria-controls={`submission-${submission.id}-details`}
                 className="flex w-full flex-wrap items-center justify-between gap-2 text-left"
               >
                 <div>
                   <span className="font-medium text-brand-charcoal">{submission.name}</span>{" "}
-                  <span className="text-sm text-brand-charcoal/60">
+                  <span className="text-sm text-brand-charcoal/80">
                     · {formTypeLabels[submission.form_type]} ·{" "}
                     {new Date(submission.created_at).toLocaleDateString()}
                   </span>
@@ -95,21 +97,24 @@ export default function AdminSubmissionsPage() {
               </button>
 
               {expanded === submission.id && (
-                <div className="mt-3 space-y-2 border-t border-brand-soft-blue/40 pt-3 text-sm">
+                <div
+                  id={`submission-${submission.id}-details`}
+                  className="mt-3 space-y-2 border-t border-brand-soft-blue/40 pt-3 text-sm"
+                >
                   <p>
-                    <span className="text-brand-charcoal/60">Email:</span>{" "}
+                    <span className="text-brand-charcoal/80">Email:</span>{" "}
                     <a href={`mailto:${submission.email}`} className="text-brand-purple hover:underline">
                       {submission.email}
                     </a>
                   </p>
                   {submission.phone && (
                     <p>
-                      <span className="text-brand-charcoal/60">Phone:</span> {submission.phone}
+                      <span className="text-brand-charcoal/80">Phone:</span> {submission.phone}
                     </p>
                   )}
                   {submission.message && (
                     <p className="whitespace-pre-line">
-                      <span className="text-brand-charcoal/60">Message:</span> {submission.message}
+                      <span className="text-brand-charcoal/80">Message:</span> {submission.message}
                     </p>
                   )}
                   {Object.keys(submission.payload || {}).length > 0 && (
@@ -124,7 +129,7 @@ export default function AdminSubmissionsPage() {
                         type="button"
                         onClick={() => setStatus(submission.id, status)}
                         disabled={submission.status === status}
-                        className="text-xs font-medium text-brand-purple hover:underline disabled:text-brand-charcoal/40 disabled:no-underline"
+                        className="text-xs font-medium text-brand-purple hover:underline disabled:text-brand-charcoal/70 disabled:no-underline"
                       >
                         Mark {status.replace("_", " ")}
                       </button>

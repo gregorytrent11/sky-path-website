@@ -1,11 +1,8 @@
-import type { Metadata } from "next";
 import PageHero from "@/components/layout/PageHero";
 import { siteConfig } from "@/lib/site-config";
+import { pageMetadata } from "@/lib/metadata";
 
-export const metadata: Metadata = {
-  title: "Privacy Policy",
-  description: "Privacy policy for Sky's Path to Home.",
-};
+export const metadata = pageMetadata("Privacy Policy", "Privacy policy for Sky's Path to Home.");
 
 export default function PrivacyPage() {
   return (

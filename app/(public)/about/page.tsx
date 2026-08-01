@@ -1,11 +1,11 @@
-import type { Metadata } from "next";
 import PageHero from "@/components/layout/PageHero";
 import { siteConfig } from "@/lib/site-config";
+import { pageMetadata } from "@/lib/metadata";
 
-export const metadata: Metadata = {
-  title: "About",
-  description: "Learn about Sky's Path to Home, our story, mission, and values.",
-};
+export const metadata = pageMetadata(
+  "About",
+  "Learn about Sky's Path to Home, our story, mission, and values."
+);
 
 const values = [
   "Safety",

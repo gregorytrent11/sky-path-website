@@ -1,10 +1,7 @@
-import type { Metadata } from "next";
 import PageHero from "@/components/layout/PageHero";
+import { pageMetadata } from "@/lib/metadata";
 
-export const metadata: Metadata = {
-  title: "Success Stories",
-  description: "Adoption success stories from Sky's Path to Home.",
-};
+export const metadata = pageMetadata("Success Stories", "Adoption success stories from Sky's Path to Home.");
 
 export default function SuccessStoriesPage() {
   return (

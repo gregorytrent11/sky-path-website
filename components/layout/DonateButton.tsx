@@ -45,7 +45,7 @@ export default function DonateButton({
       type="button"
       disabled
       aria-disabled="true"
-      className={`inline-flex items-center justify-center rounded-full bg-brand-gray font-semibold text-brand-charcoal/60 cursor-not-allowed ${sizeClasses[size]}`}
+      className={`inline-flex items-center justify-center rounded-full bg-brand-gray font-semibold text-brand-charcoal/70 cursor-not-allowed ${sizeClasses[size]}`}
     >
       Online donations coming soon
     </button>

@@ -176,7 +176,7 @@ function EditDogForm() {
   }
 
   if (loading) {
-    return <p className="text-brand-charcoal/60">Loading…</p>;
+    return <p className="text-brand-charcoal/80">Loading…</p>;
   }
 
   return (
@@ -193,8 +193,11 @@ function EditDogForm() {
       <form onSubmit={handleSubmit} noValidate className="mt-6 max-w-2xl space-y-5">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
-            <label className="block text-sm font-medium text-brand-charcoal">Name *</label>
+            <label htmlFor="dog-name" className="block text-sm font-medium text-brand-charcoal">
+              Name *
+            </label>
             <input
+              id="dog-name"
               required
               value={form.name}
               onChange={(e) => {
@@ -206,8 +209,11 @@ function EditDogForm() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-brand-charcoal">URL slug *</label>
+            <label htmlFor="dog-slug" className="block text-sm font-medium text-brand-charcoal">
+              URL slug *
+            </label>
             <input
+              id="dog-slug"
               required
               value={form.slug}
               onChange={(e) => {
@@ -220,8 +226,11 @@ function EditDogForm() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-brand-charcoal">Status</label>
+          <label htmlFor="dog-status" className="block text-sm font-medium text-brand-charcoal">
+            Status
+          </label>
           <select
+            id="dog-status"
             value={form.status}
             onChange={(e) => update("status", e.target.value as DogStatus)}
             className={selectClasses()}
@@ -236,12 +245,22 @@ function EditDogForm() {
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
-            <label className="block text-sm font-medium text-brand-charcoal">Breed</label>
-            <input value={form.breed} onChange={(e) => update("breed", e.target.value)} className={selectClasses()} />
+            <label htmlFor="dog-breed" className="block text-sm font-medium text-brand-charcoal">
+              Breed
+            </label>
+            <input
+              id="dog-breed"
+              value={form.breed}
+              onChange={(e) => update("breed", e.target.value)}
+              className={selectClasses()}
+            />
           </div>
           <div>
-            <label className="block text-sm font-medium text-brand-charcoal">Location</label>
+            <label htmlFor="dog-location" className="block text-sm font-medium text-brand-charcoal">
+              Location
+            </label>
             <input
+              id="dog-location"
               value={form.location}
               onChange={(e) => update("location", e.target.value)}
               className={selectClasses()}
@@ -251,8 +270,15 @@ function EditDogForm() {
 
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
           <div>
-            <label className="block text-sm font-medium text-brand-charcoal">Sex</label>
-            <select value={form.sex} onChange={(e) => update("sex", e.target.value as DogSex)} className={selectClasses()}>
+            <label htmlFor="dog-sex" className="block text-sm font-medium text-brand-charcoal">
+              Sex
+            </label>
+            <select
+              id="dog-sex"
+              value={form.sex}
+              onChange={(e) => update("sex", e.target.value as DogSex)}
+              className={selectClasses()}
+            >
               <option value="">—</option>
               <option value="male">Male</option>
               <option value="female">Female</option>
@@ -260,8 +286,11 @@ function EditDogForm() {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-brand-charcoal">Age</label>
+            <label htmlFor="dog-age" className="block text-sm font-medium text-brand-charcoal">
+              Age
+            </label>
             <select
+              id="dog-age"
               value={form.age_category}
               onChange={(e) => update("age_category", e.target.value as DogAgeCategory)}
               className={selectClasses()}
@@ -274,8 +303,15 @@ function EditDogForm() {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-brand-charcoal">Size</label>
-            <select value={form.size} onChange={(e) => update("size", e.target.value as DogSize)} className={selectClasses()}>
+            <label htmlFor="dog-size" className="block text-sm font-medium text-brand-charcoal">
+              Size
+            </label>
+            <select
+              id="dog-size"
+              value={form.size}
+              onChange={(e) => update("size", e.target.value as DogSize)}
+              className={selectClasses()}
+            >
               <option value="">—</option>
               <option value="small">Small</option>
               <option value="medium">Medium</option>
@@ -284,8 +320,11 @@ function EditDogForm() {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-brand-charcoal">Weight (lbs)</label>
+            <label htmlFor="dog-weight" className="block text-sm font-medium text-brand-charcoal">
+              Weight (lbs)
+            </label>
             <input
+              id="dog-weight"
               type="number"
               min="0"
               value={form.weight_lbs}
@@ -296,8 +335,11 @@ function EditDogForm() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-brand-charcoal">Energy level</label>
+          <label htmlFor="dog-energy" className="block text-sm font-medium text-brand-charcoal">
+            Energy level
+          </label>
           <select
+            id="dog-energy"
             value={form.energy_level}
             onChange={(e) => update("energy_level", e.target.value as DogEnergyLevel)}
             className={selectClasses()}
@@ -333,8 +375,11 @@ function EditDogForm() {
         </fieldset>
 
         <div>
-          <label className="block text-sm font-medium text-brand-charcoal">Intake date</label>
+          <label htmlFor="dog-intake-date" className="block text-sm font-medium text-brand-charcoal">
+            Intake date
+          </label>
           <input
+            id="dog-intake-date"
             type="date"
             value={form.intake_date}
             onChange={(e) => update("intake_date", e.target.value)}
@@ -343,10 +388,11 @@ function EditDogForm() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-brand-charcoal">
+          <label htmlFor="dog-description" className="block text-sm font-medium text-brand-charcoal">
             Public description
           </label>
           <textarea
+            id="dog-description"
             rows={6}
             value={form.description}
             onChange={(e) => update("description", e.target.value)}
@@ -355,10 +401,11 @@ function EditDogForm() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-brand-charcoal">
+          <label htmlFor="dog-foster-notes" className="block text-sm font-medium text-brand-charcoal">
             Foster notes (internal only, never shown publicly)
           </label>
           <textarea
+            id="dog-foster-notes"
             rows={4}
             value={form.foster_notes}
             onChange={(e) => update("foster_notes", e.target.value)}
@@ -390,7 +437,7 @@ function EditDogForm() {
         </div>
       )}
       {!dogId && (
-        <p className="mt-6 max-w-2xl text-sm text-brand-charcoal/60">
+        <p className="mt-6 max-w-2xl text-sm text-brand-charcoal/80">
           Save the dog first, then you&rsquo;ll be able to upload photos and video.
         </p>
       )}
@@ -400,7 +447,7 @@ function EditDogForm() {
 
 export default function EditDogPage() {
   return (
-    <Suspense fallback={<p className="text-brand-charcoal/60">Loading…</p>}>
+    <Suspense fallback={<p className="text-brand-charcoal/80">Loading…</p>}>
       <EditDogForm />
     </Suspense>
   );

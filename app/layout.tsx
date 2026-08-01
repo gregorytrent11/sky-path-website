@@ -16,11 +16,26 @@ const headingFont = Lora({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(siteConfig.siteUrl),
   title: {
     default: `${siteConfig.orgName} | ${siteConfig.tagline}`,
     template: `%s | ${siteConfig.orgName}`,
   },
   description: siteConfig.shortDescription,
+  openGraph: {
+    type: "website",
+    siteName: siteConfig.orgName,
+    title: `${siteConfig.orgName} | ${siteConfig.tagline}`,
+    description: siteConfig.shortDescription,
+    url: siteConfig.siteUrl,
+    images: [{ url: "/brand/og-image.jpg", width: 1200, height: 630, alt: siteConfig.orgName }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `${siteConfig.orgName} | ${siteConfig.tagline}`,
+    description: siteConfig.shortDescription,
+    images: ["/brand/og-image.jpg"],
+  },
 };
 
 export default function RootLayout({

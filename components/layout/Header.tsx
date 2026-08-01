@@ -2,12 +2,18 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { primaryNav, siteConfig } from "@/lib/site-config";
 import DonateButton from "@/components/layout/DonateButton";
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const pathname = usePathname();
+
+  function isActive(href: string) {
+    return href === "/" ? pathname === "/" : pathname.startsWith(href);
+  }
 
   return (
     <header className="sticky top-0 z-40 border-b border-brand-soft-blue/60 bg-brand-white/95 backdrop-blur">
@@ -38,6 +44,7 @@ export default function Header() {
             <Link
               key={link.href}
               href={link.href}
+              aria-current={isActive(link.href) ? "page" : undefined}
               className="text-sm font-medium text-brand-charcoal transition-colors hover:text-brand-purple"
             >
               {link.label}
@@ -75,30 +82,31 @@ export default function Header() {
         </button>
       </div>
 
-      {menuOpen && (
-        <nav
-          id="mobile-nav"
-          aria-label="Primary"
-          className="border-t border-brand-soft-blue/60 bg-brand-white px-4 py-3 md:hidden"
-        >
-          <ul className="flex flex-col gap-3">
-            {primaryNav.map((link) => (
-              <li key={link.href}>
-                <Link
-                  href={link.href}
-                  className="block py-1 text-base font-medium text-brand-charcoal hover:text-brand-purple"
-                  onClick={() => setMenuOpen(false)}
-                >
-                  {link.label}
-                </Link>
-              </li>
-            ))}
-            <li className="pt-2">
-              <DonateButton size="sm" />
+      <nav
+        id="mobile-nav"
+        aria-label="Primary"
+        className={`border-t border-brand-soft-blue/60 bg-brand-white px-4 py-3 md:hidden ${
+          menuOpen ? "block" : "hidden"
+        }`}
+      >
+        <ul className="flex flex-col gap-3">
+          {primaryNav.map((link) => (
+            <li key={link.href}>
+              <Link
+                href={link.href}
+                aria-current={isActive(link.href) ? "page" : undefined}
+                className="block py-1 text-base font-medium text-brand-charcoal hover:text-brand-purple"
+                onClick={() => setMenuOpen(false)}
+              >
+                {link.label}
+              </Link>
             </li>
-          </ul>
-        </nav>
-      )}
+          ))}
+          <li className="pt-2">
+            <DonateButton size="sm" />
+          </li>
+        </ul>
+      </nav>
     </header>
   );
 }
