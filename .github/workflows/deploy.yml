@@ -1,0 +1,62 @@
+name: Build and deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  # Dogs are published/edited straight from the live admin UI, not through
+  # a commit -- new dogs only get their own pretty static URL after a
+  # rebuild (see app/(public)/dogs/[slug]/page.tsx). This periodic rebuild
+  # keeps that lag to a few hours instead of "whenever someone next pushes
+  # code." The /dogs listing itself is always live regardless.
+  schedule:
+    - cron: "17 */6 * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Build
+        env:
+          NEXT_PUBLIC_SITE_URL: ${{ vars.NEXT_PUBLIC_SITE_URL }}
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          NEXT_PUBLIC_TURNSTILE_SITE_KEY: ${{ secrets.NEXT_PUBLIC_TURNSTILE_SITE_KEY }}
+          NEXT_PUBLIC_DONATION_URL: ${{ vars.NEXT_PUBLIC_DONATION_URL }}
+          NEXT_PUBLIC_ADOPT_APPLICATION_URL: ${{ vars.NEXT_PUBLIC_ADOPT_APPLICATION_URL }}
+          NEXT_PUBLIC_FOSTER_APPLICATION_URL: ${{ vars.NEXT_PUBLIC_FOSTER_APPLICATION_URL }}
+        run: npm run build
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: out
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

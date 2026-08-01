@@ -1,0 +1,29 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: #ffffff;
+  --color-foreground: #27272a;
+
+  /* Sky's Path to Home brand palette (pulled from the approved logo) */
+  --color-brand-deep-blue: #1e3a72;
+  --color-brand-blue: #3b5fa8;
+  --color-brand-soft-blue: #a9c2e8;
+  --color-brand-purple: #6d4aa3;
+  --color-brand-lavender: #c9b8e8;
+  --color-brand-white: #ffffff;
+  --color-brand-gray: #f4f5f7;
+  --color-brand-charcoal: #27272a;
+
+  --font-sans: var(--font-body);
+  --font-heading: var(--font-heading);
+}
+
+body {
+  background: var(--color-background);
+  color: var(--color-foreground);
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-brand-purple);
+  outline-offset: 2px;
+}
