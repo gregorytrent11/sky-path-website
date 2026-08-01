@@ -33,8 +33,19 @@ export default function Footer() {
             Contact
           </p>
           <ul className="space-y-2 text-sm text-brand-white/90">
-            <li>{siteConfig.contactEmail}</li>
-            <li>{siteConfig.contactPhone}</li>
+            <li>
+              <a href={`mailto:${siteConfig.contactEmail}`} className="hover:text-brand-lavender">
+                {siteConfig.contactEmail}
+              </a>
+            </li>
+            <li>
+              <a
+                href={`tel:${siteConfig.contactPhone.replace(/[^\d+]/g, "")}`}
+                className="hover:text-brand-lavender"
+              >
+                {siteConfig.contactPhone}
+              </a>
+            </li>
           </ul>
           <p className="mt-4 text-xs leading-relaxed text-brand-white/70">
             {siteConfig.nonprofitStatus}

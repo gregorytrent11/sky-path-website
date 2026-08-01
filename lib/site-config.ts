@@ -13,9 +13,8 @@ export const siteConfig = {
   emergencyDisclaimer:
     "Sky's Path to Home is not an emergency veterinary clinic or animal-control agency. For an immediate medical emergency, contact a veterinarian. For an immediate public-safety concern, contact the appropriate local authority.",
   serviceArea: "Billings and surrounding Montana communities",
-  // Open item from the requirements doc -- replace once confirmed.
-  contactEmail: "[email pending]",
-  contactPhone: "[phone pending]",
+  contactEmail: "skyspathtohome@gmail.com",
+  contactPhone: "813-373-1918",
   donationUrl: process.env.NEXT_PUBLIC_DONATION_URL || "",
   // Optional external form platform links (see requirements doc section 22).
   // Leave blank until an application platform is selected.
