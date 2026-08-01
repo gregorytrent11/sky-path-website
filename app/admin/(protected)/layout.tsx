@@ -10,6 +10,7 @@ const navItems = [
   { label: "Dashboard", href: "/admin/" },
   { label: "Dogs", href: "/admin/dogs/" },
   { label: "Submissions", href: "/admin/submissions/" },
+  { label: "Settings", href: "/admin/settings/" },
 ];
 
 export default function AdminProtectedLayout({ children }: { children: React.ReactNode }) {
