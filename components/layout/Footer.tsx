@@ -7,7 +7,6 @@ export default function Footer() {
       <div className="mx-auto grid max-w-6xl gap-8 px-4 py-10 sm:px-6 md:grid-cols-3">
         <div>
           <p className="font-heading text-lg font-semibold">{siteConfig.orgName}</p>
-          <p className="mt-2 text-sm text-brand-soft-blue">{siteConfig.serviceArea}</p>
           <p className="mt-4 text-sm leading-relaxed text-brand-white/90">
             {siteConfig.shortDescription}
           </p>
