@@ -9,12 +9,7 @@ export default function TermsPage() {
     <>
       <PageHero title="Terms of Use" />
       <section className="mx-auto max-w-3xl px-4 py-14 text-sm leading-relaxed text-brand-charcoal sm:px-6">
-        <p className="rounded-lg border border-dashed border-brand-soft-blue bg-brand-gray/50 p-4 text-brand-charcoal/70">
-          These terms are a placeholder pending final legal review. They will be replaced
-          with approved language before launch.
-        </p>
-
-        <h2 className="mt-8 font-heading text-xl font-semibold text-brand-deep-blue">
+        <h2 className="mt-0 font-heading text-xl font-semibold text-brand-deep-blue">
           Use of This Website
         </h2>
         <p className="mt-3">

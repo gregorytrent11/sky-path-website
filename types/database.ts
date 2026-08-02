@@ -21,6 +21,7 @@ export type Dog = {
   name: string;
   slug: string;
   status: DogStatus;
+  is_visible: boolean;
   breed: string | null;
   sex: DogSex | null;
   age_category: DogAgeCategory | null;

@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import DonateButton from "@/components/layout/DonateButton";
 import RecoveryRedirect from "@/components/RecoveryRedirect";
+import SuccessStoriesPreview from "@/components/dogs/SuccessStoriesPreview";
 import { siteConfig } from "@/lib/site-config";
 
 export default function HomePage() {
@@ -132,14 +133,12 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Success story placeholder */}
+      {/* Success stories */}
       <section aria-labelledby="success-heading" className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
         <h2 id="success-heading" className="text-center font-heading text-3xl font-semibold text-brand-deep-blue">
           Success Stories
         </h2>
-        <p className="mx-auto mt-6 max-w-2xl rounded-xl border border-dashed border-brand-soft-blue bg-brand-gray/50 p-8 text-center text-brand-charcoal/70">
-          Our first adoption stories will be shared here soon.
-        </p>
+        <SuccessStoriesPreview />
         <div className="mt-6 text-center">
           <Link href="/success-stories" className="text-sm font-semibold text-brand-purple hover:underline">
             View all success stories &rarr;

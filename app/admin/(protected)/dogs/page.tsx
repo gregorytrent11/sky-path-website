@@ -51,6 +51,13 @@ export default function AdminDogsPage() {
     router.push(`/admin/dogs/edit/?id=${id}`);
   }
 
+  async function setVisible(id: string, is_visible: boolean) {
+    setBusyId(id);
+    await supabase.from("dogs").update({ is_visible }).eq("id", id);
+    await reload();
+    setBusyId(null);
+  }
+
   async function remove(id: string, name: string) {
     if (!window.confirm(`Delete ${name}? This also removes their photos and cannot be undone.`)) {
       return;
@@ -96,6 +103,11 @@ export default function AdminDogsPage() {
                     <span className={`rounded-full px-2 py-1 text-xs font-medium ${statusStyles[dog.status]}`}>
                       {dog.status}
                     </span>
+                    {!dog.is_visible && (
+                      <span className="ml-1 rounded-full bg-red-100 px-2 py-1 text-xs font-medium text-red-800">
+                        Hidden
+                      </span>
+                    )}
                   </td>
                   <td className="px-4 py-3 text-brand-charcoal/80">{dog.breed || "—"}</td>
                   <td className="px-4 py-3">
@@ -153,6 +165,25 @@ export default function AdminDogsPage() {
                           className="text-brand-charcoal/70 hover:underline"
                         >
                           Unmark Adopted
+                        </button>
+                      )}
+                      {dog.is_visible ? (
+                        <button
+                          type="button"
+                          disabled={busyId === dog.id}
+                          onClick={() => setVisible(dog.id, false)}
+                          className="text-brand-charcoal/70 hover:underline"
+                        >
+                          Hide from site
+                        </button>
+                      ) : (
+                        <button
+                          type="button"
+                          disabled={busyId === dog.id}
+                          onClick={() => setVisible(dog.id, true)}
+                          className="text-brand-charcoal/70 hover:underline"
+                        >
+                          Show on site
                         </button>
                       )}
                       <button
