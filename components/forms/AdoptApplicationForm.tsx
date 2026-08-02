@@ -4,7 +4,13 @@ import { FormEvent, Suspense, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Turnstile from "@/components/forms/Turnstile";
 import { submitForm } from "@/lib/submit-form";
-import { SectionHeading, TextAreaField, TextField, YesNoField } from "@/components/forms/FormPrimitives";
+import {
+  RadioGroupField,
+  SectionHeading,
+  TextAreaField,
+  TextField,
+  YesNoField,
+} from "@/components/forms/FormPrimitives";
 
 type FormState = {
   dogName: string;
@@ -15,6 +21,9 @@ type FormState = {
   city: string;
   state: string;
   adult: string;
+  homeOwnership: string;
+  yardFenced: string;
+  landlordInfo: string;
   whyInterested: string;
 };
 
@@ -28,6 +37,9 @@ function emptyForm(dogName: string): FormState {
     city: "",
     state: "",
     adult: "",
+    homeOwnership: "",
+    yardFenced: "",
+    landlordInfo: "",
     whyInterested: "",
   };
 }
@@ -44,12 +56,18 @@ function AdoptApplicationFormInner() {
     setForm((prev) => ({ ...prev, [key]: value }));
   }
 
+  const renting = form.homeOwnership === "Rent";
+
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError(null);
 
     if (form.adult !== "Yes") {
       setError("You must be at least 18 years old to apply.");
+      return;
+    }
+    if (renting && !form.landlordInfo.trim()) {
+      setError("Landlord or property manager contact information is required when renting.");
       return;
     }
     if (!certified) {
@@ -124,12 +142,37 @@ function AdoptApplicationFormInner() {
           onChange={(v) => update("adult", v)}
           required
         />
+        <RadioGroupField
+          name="homeOwnership"
+          label="Do you own or rent your home?"
+          value={form.homeOwnership}
+          onChange={(v) => update("homeOwnership", v)}
+          options={["Own", "Rent", "Live with family or another arrangement"]}
+          required
+        />
+        {renting && (
+          <TextField
+            id="adopt-landlord"
+            label="Landlord or property manager name and phone/email"
+            value={form.landlordInfo}
+            onChange={(v) => update("landlordInfo", v)}
+            required
+          />
+        )}
+        <RadioGroupField
+          name="yardFenced"
+          label="Is your yard fenced?"
+          value={form.yardFenced}
+          onChange={(v) => update("yardFenced", v)}
+          options={["Yes", "No", "Partially"]}
+          required
+        />
         <TextAreaField
           id="adopt-why"
-          label="Tell us a little about why you're interested in this dog and your home situation"
+          label="Tell us a little about why you're interested in this dog"
           value={form.whyInterested}
           onChange={(v) => update("whyInterested", v)}
-          rows={4}
+          rows={3}
           required
         />
       </div>
