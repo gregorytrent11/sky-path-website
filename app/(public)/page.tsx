@@ -1,11 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
 import DonateButton from "@/components/layout/DonateButton";
+import RecoveryRedirect from "@/components/RecoveryRedirect";
 import { siteConfig } from "@/lib/site-config";
 
 export default function HomePage() {
   return (
     <>
+      <RecoveryRedirect />
       {/* Hero */}
       <section className="bg-gradient-to-b from-brand-soft-blue/40 to-brand-white">
         <div className="mx-auto flex max-w-6xl flex-col items-center gap-8 px-4 py-16 text-center sm:px-6 md:py-24">
