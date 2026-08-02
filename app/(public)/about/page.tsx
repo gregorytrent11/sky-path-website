@@ -134,7 +134,7 @@ export default function AboutPage() {
             </div>
           ))}
         </div>
-        <div className="relative mt-3 aspect-video w-full overflow-hidden rounded-xl bg-brand-soft-blue/40">
+        <div className="relative mx-auto mt-3 aspect-video w-full max-w-xl overflow-hidden rounded-xl bg-brand-soft-blue/40">
           <Image
             src="/about/sky-laying.jpg"
             alt="Sky lying on the floor with her toy"
