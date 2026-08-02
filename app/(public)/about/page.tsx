@@ -18,6 +18,13 @@ const values = [
   "Long-term commitment",
 ];
 
+const skyPhotos = [
+  { src: "/about/sky-pawshake.jpg", alt: "Sky shaking paws with a member of her family" },
+  { src: "/about/sky-couch.jpg", alt: "Sky curled up on the couch" },
+  { src: "/about/sky-laying.jpg", alt: "Sky lying on the floor with a toy" },
+  { src: "/about/sky-harley.jpg", alt: "Sky on a hike with her two dog siblings by a waterfall" },
+];
+
 const boardMembers = [
   {
     name: "Brianna Trent",
@@ -110,6 +117,23 @@ export default function AboutPage() {
             Sky’s story did not end when we lost her. Her path continues through every dog we
             rescue and every life we help change.
           </p>
+        </div>
+
+        <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
+          {skyPhotos.map((photo) => (
+            <div
+              key={photo.src}
+              className="relative aspect-square overflow-hidden rounded-xl bg-brand-soft-blue/40"
+            >
+              <Image
+                src={photo.src}
+                alt={photo.alt}
+                fill
+                className="object-cover"
+                sizes="(min-width: 640px) 25vw, 50vw"
+              />
+            </div>
+          ))}
         </div>
 
         <h2 className="mt-12 font-heading text-2xl font-semibold text-brand-deep-blue">
