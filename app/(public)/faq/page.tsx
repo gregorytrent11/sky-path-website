@@ -41,8 +41,8 @@ export default function FaqPage() {
 
           <FaqItem question="Why adopt a pet from Sky's Path to Home?">
             <p>
-              By adopting from a 501(c)(3), you are putting money into an organization that fights
-              endlessly to save the lives of euthanasia-listed dogs every day, save dogs with
+              By adopting from a nonprofit rescue, you are putting money into an organization that
+              fights endlessly to save the lives of euthanasia-listed dogs every day, save dogs with
               medical issues, seniors, and those that have been abused, and is committed to ending
               the overpopulation of pet animals in this country. When you purchase a dog from a
               breeder, you are lining the pockets of those breeders and continuing the suffering

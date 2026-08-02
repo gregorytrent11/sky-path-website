@@ -47,8 +47,8 @@ export default function DonatePage() {
           </p>
           <p>
             You may make a one-time contribution or become a monthly donor. Every gift, regardless
-            of the amount, helps give a vulnerable dog a path to safety and a home. As a 501(c)(3)
-            nonprofit, 100% of your donation goes directly toward our dogs and our mission.
+            of the amount, helps give a vulnerable dog a path to safety and a home. 100% of your
+            donation goes directly toward our dogs and our mission.
           </p>
         </div>
 

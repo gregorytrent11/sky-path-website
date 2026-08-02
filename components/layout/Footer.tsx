@@ -17,7 +17,7 @@ export default function Footer() {
           <p className="mb-3 text-sm font-semibold uppercase tracking-wide text-brand-soft-blue">
             Site
           </p>
-          <ul className="space-y-2 text-sm">
+          <ul className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
             {[...primaryNav, ...footerLinks].map((link) => (
               <li key={link.href}>
                 <Link href={link.href} className="hover:text-brand-lavender">
@@ -50,6 +50,7 @@ export default function Footer() {
           <p className="mt-4 text-xs leading-relaxed text-brand-white/70">
             {siteConfig.nonprofitStatus}
           </p>
+          <p className="mt-2 text-xs text-brand-white/70">EIN: {siteConfig.ein}</p>
         </div>
       </div>
 
