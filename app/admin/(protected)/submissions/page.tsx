@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase/client";
 import type { Submission, SubmissionFormType, SubmissionStatus } from "@/types/database";
+import { humanizeKey, humanizeValue } from "@/lib/submission-format";
+import { downloadSubmissionPdf } from "@/lib/submission-pdf";
 
 const formTypeLabels: Record<SubmissionFormType, string> = {
   contact: "Contact",
@@ -20,27 +22,6 @@ const statusStyles: Record<SubmissionStatus, string> = {
 };
 
 type TabFilter = SubmissionFormType | "all" | "archived";
-
-// Turns a payload key like "preferredContact" or "transportation_access"
-// into "Preferred Contact" / "Transportation Access" for display.
-function humanizeKey(key: string): string {
-  const words = key
-    .replace(/([a-z0-9])([A-Z])/g, "$1 $2")
-    .replace(/_/g, " ")
-    .trim()
-    .split(/\s+/);
-  return words.map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(" ");
-}
-
-function humanizeValue(value: unknown): string | null {
-  if (value === null || value === undefined || value === "") return null;
-  if (typeof value === "boolean") return value ? "Yes" : "No";
-  if (Array.isArray(value)) {
-    const items = value.filter((item) => item !== null && item !== undefined && item !== "");
-    return items.length > 0 ? items.join(", ") : null;
-  }
-  return String(value);
-}
 
 export default function AdminSubmissionsPage() {
   const [submissions, setSubmissions] = useState<Submission[] | null>(null);
@@ -80,23 +61,42 @@ export default function AdminSubmissionsPage() {
       return filter === "all" || s.form_type === filter;
     }) ?? [];
 
+  function newCount(type: TabFilter): number {
+    if (!submissions) return 0;
+    return submissions.filter((s) => {
+      if (s.status !== "new") return false;
+      if (type === "all") return true;
+      if (type === "archived") return false;
+      return s.form_type === type;
+    }).length;
+  }
+
   return (
     <div>
       <h1 className="font-heading text-2xl font-semibold text-brand-deep-blue">Submissions</h1>
 
       <div className="mt-4 flex flex-wrap gap-2">
-        {(["all", "contact", "volunteer", "request_help", "archived"] as const).map((type) => (
+        {(["all", "contact", "volunteer", "request_help", "adopt_application", "foster_application", "archived"] as const).map((type) => (
           <button
             key={type}
             type="button"
             onClick={() => setFilter(type)}
-            className={`rounded-full px-3 py-1 text-xs font-medium ${
+            className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium ${
               filter === type
                 ? "bg-brand-purple text-brand-white"
                 : "bg-brand-gray text-brand-charcoal hover:bg-brand-soft-blue/40"
             }`}
           >
             {type === "all" ? "All" : type === "archived" ? "Archived" : formTypeLabels[type]}
+            {newCount(type) > 0 && (
+              <span
+                className={`flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[10px] font-semibold ${
+                  filter === type ? "bg-brand-white text-brand-purple" : "bg-red-600 text-white"
+                }`}
+              >
+                {newCount(type)}
+              </span>
+            )}
           </button>
         ))}
       </div>
@@ -178,6 +178,16 @@ export default function AdminSubmissionsPage() {
                     </dl>
                   )}
                   <div className="flex flex-wrap items-center gap-3 pt-2">
+                    {(submission.form_type === "adopt_application" ||
+                      submission.form_type === "foster_application") && (
+                      <button
+                        type="button"
+                        onClick={() => downloadSubmissionPdf(submission)}
+                        className="text-xs font-medium text-brand-purple hover:underline"
+                      >
+                        Download PDF
+                      </button>
+                    )}
                     {(["new", "in_progress", "resolved", "archived"] as const).map((status) => (
                       <button
                         key={status}

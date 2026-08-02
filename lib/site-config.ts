@@ -17,10 +17,6 @@ export const siteConfig = {
   contactEmail: "skyspathtohome@gmail.com",
   contactPhone: "813-373-1918",
   donationUrl: process.env.NEXT_PUBLIC_DONATION_URL || "",
-  // Optional external form platform links (see requirements doc section 22).
-  // Leave blank until an application platform is selected.
-  adoptApplicationUrl: process.env.NEXT_PUBLIC_ADOPT_APPLICATION_URL || "",
-  fosterApplicationUrl: process.env.NEXT_PUBLIC_FOSTER_APPLICATION_URL || "",
 } as const;
 
 export type NavLink = {

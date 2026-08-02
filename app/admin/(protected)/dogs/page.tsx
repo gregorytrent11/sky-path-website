@@ -105,14 +105,24 @@ export default function AdminDogsPage() {
                         </button>
                       )}
                       {dog.status === "published" && (
-                        <button
-                          type="button"
-                          disabled={busyId === dog.id}
-                          onClick={() => setStatus(dog.id, "archived")}
-                          className="text-brand-charcoal/70 hover:underline"
-                        >
-                          Archive
-                        </button>
+                        <>
+                          <button
+                            type="button"
+                            disabled={busyId === dog.id}
+                            onClick={() => setStatus(dog.id, "draft")}
+                            className="text-brand-charcoal/70 hover:underline"
+                          >
+                            Unpublish
+                          </button>
+                          <button
+                            type="button"
+                            disabled={busyId === dog.id}
+                            onClick={() => setStatus(dog.id, "archived")}
+                            className="text-brand-charcoal/70 hover:underline"
+                          >
+                            Archive
+                          </button>
+                        </>
                       )}
                       {dog.status !== "adopted" ? (
                         <button

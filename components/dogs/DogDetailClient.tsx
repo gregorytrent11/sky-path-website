@@ -255,7 +255,7 @@ export default function DogDetailClient({ slug }: { slug: string }) {
           {dog.status !== "adopted" && (
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
-                href="/adopt/application/"
+                href={`/adopt/application/?dog=${encodeURIComponent(dog.name)}`}
                 className="inline-flex items-center justify-center rounded-full bg-brand-purple px-6 py-3 text-sm font-semibold text-brand-white shadow-sm hover:bg-brand-deep-blue"
               >
                 Apply to Adopt {dog.name}

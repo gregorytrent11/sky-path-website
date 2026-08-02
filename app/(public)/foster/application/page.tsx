@@ -1,6 +1,5 @@
 import PageHero from "@/components/layout/PageHero";
-import ExternalApplicationCta from "@/components/forms/ExternalApplicationCta";
-import { siteConfig } from "@/lib/site-config";
+import FosterApplicationForm from "@/components/forms/FosterApplicationForm";
 import { pageMetadata } from "@/lib/metadata";
 
 export const metadata = pageMetadata(
@@ -15,8 +14,8 @@ export default function FosterApplicationPage() {
         title="Foster Application"
         intro="Thank you for your interest in fostering. Complete the application below and a member of our team will follow up with you."
       />
-      <section className="mx-auto max-w-2xl px-4 py-14 text-center sm:px-6">
-        <ExternalApplicationCta url={siteConfig.fosterApplicationUrl} label="Start Foster Application" />
+      <section className="mx-auto max-w-2xl px-4 py-14 sm:px-6">
+        <FosterApplicationForm />
       </section>
     </>
   );
