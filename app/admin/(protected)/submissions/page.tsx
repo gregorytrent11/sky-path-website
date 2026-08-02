@@ -149,16 +149,23 @@ export default function AdminSubmissionsPage() {
                       <span className="text-brand-charcoal/80">Phone:</span> {submission.phone}
                     </p>
                   )}
+                  {humanizeValue(submission.payload?.subject) && (
+                    <p>
+                      <span className="text-brand-charcoal/80">Subject:</span>{" "}
+                      {humanizeValue(submission.payload?.subject)}
+                    </p>
+                  )}
                   {submission.message && (
                     <p className="whitespace-pre-line">
                       <span className="text-brand-charcoal/80">Message:</span> {submission.message}
                     </p>
                   )}
                   {Object.entries(submission.payload || {}).some(
-                    ([, value]) => humanizeValue(value) !== null
+                    ([key, value]) => key !== "subject" && humanizeValue(value) !== null
                   ) && (
                     <dl className="grid grid-cols-1 gap-x-4 gap-y-1 sm:grid-cols-2">
                       {Object.entries(submission.payload || {}).map(([key, value]) => {
+                        if (key === "subject") return null;
                         const display = humanizeValue(value);
                         if (display === null) return null;
                         return (
