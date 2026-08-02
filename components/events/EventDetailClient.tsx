@@ -91,7 +91,14 @@ export default function EventDetailClient({ slug }: { slug: string }) {
     <div className="mx-auto max-w-3xl px-4 py-14 sm:px-6">
       {event.cover_image_url && (
         <div className="relative aspect-[16/9] w-full overflow-hidden rounded-xl bg-brand-gray">
-          <Image src={event.cover_image_url} alt={event.title} fill className="object-cover" priority />
+          <Image
+            src={event.cover_image_url}
+            alt={event.title}
+            fill
+            className="object-cover"
+            style={{ objectPosition: `${event.cover_focal_x}% ${event.cover_focal_y}%` }}
+            priority
+          />
         </div>
       )}
 

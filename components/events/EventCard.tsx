@@ -16,6 +16,7 @@ export default function EventCard({ event }: { event: Event }) {
             alt={event.title}
             fill
             className="object-cover transition-transform group-hover:scale-105"
+            style={{ objectPosition: `${event.cover_focal_x}% ${event.cover_focal_y}%` }}
           />
         ) : (
           <div className="flex h-full items-center justify-center text-sm text-brand-charcoal/70">

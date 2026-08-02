@@ -7,6 +7,7 @@ import Image from "next/image";
 import { supabase } from "@/lib/supabase/client";
 import type { Event, EventInsert, EventStatus, EventUpdate } from "@/types/database";
 import { slugify } from "@/lib/slugify";
+import FocalPointPicker from "@/components/admin/FocalPointPicker";
 
 const MAX_COVER_IMAGE_BYTES = 2 * 1024 * 1024;
 
@@ -19,6 +20,8 @@ type FormState = {
   summary: string;
   body: string;
   cover_image_url: string;
+  cover_focal_x: number;
+  cover_focal_y: number;
 };
 
 const emptyForm: FormState = {
@@ -30,6 +33,8 @@ const emptyForm: FormState = {
   summary: "",
   body: "",
   cover_image_url: "",
+  cover_focal_x: 50,
+  cover_focal_y: 50,
 };
 
 function eventToForm(event: Event): FormState {
@@ -42,6 +47,8 @@ function eventToForm(event: Event): FormState {
     summary: event.summary ?? "",
     body: event.body ?? "",
     cover_image_url: event.cover_image_url ?? "",
+    cover_focal_x: event.cover_focal_x ?? 50,
+    cover_focal_y: event.cover_focal_y ?? 50,
   };
 }
 
@@ -109,7 +116,12 @@ function EditEventForm() {
       return;
     }
     const { data: publicUrlData } = supabase.storage.from("event-photos").getPublicUrl(path);
-    update("cover_image_url", publicUrlData.publicUrl);
+    setForm((prev) => ({
+      ...prev,
+      cover_image_url: publicUrlData.publicUrl,
+      cover_focal_x: 50,
+      cover_focal_y: 50,
+    }));
     setCoverUploading(false);
   }
 
@@ -127,6 +139,8 @@ function EditEventForm() {
       summary: form.summary.trim() || null,
       body: form.body.trim() || null,
       cover_image_url: form.cover_image_url.trim() || null,
+      cover_focal_x: form.cover_focal_x,
+      cover_focal_y: form.cover_focal_y,
     };
 
     if (eventId) {
@@ -254,8 +268,25 @@ function EditEventForm() {
             Cover photo
           </label>
           {form.cover_image_url && (
-            <div className="relative mt-2 h-32 w-full max-w-xs overflow-hidden rounded-lg bg-brand-gray">
-              <Image src={form.cover_image_url} alt="" fill className="object-cover" />
+            <div className="mt-2 flex flex-wrap items-start gap-6">
+              <FocalPointPicker
+                src={form.cover_image_url}
+                x={form.cover_focal_x}
+                y={form.cover_focal_y}
+                onChange={(x, y) => setForm((prev) => ({ ...prev, cover_focal_x: x, cover_focal_y: y }))}
+              />
+              <div>
+                <p className="text-xs font-medium text-brand-charcoal/70">Preview on events list</p>
+                <div className="relative mt-1 aspect-[4/3] w-40 overflow-hidden rounded-lg bg-brand-gray">
+                  <Image
+                    src={form.cover_image_url}
+                    alt=""
+                    fill
+                    className="object-cover"
+                    style={{ objectPosition: `${form.cover_focal_x}% ${form.cover_focal_y}%` }}
+                  />
+                </div>
+              </div>
             </div>
           )}
           <div className="mt-2 flex items-center gap-3">

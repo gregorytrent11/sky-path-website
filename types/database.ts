@@ -87,6 +87,8 @@ export type Event = {
   summary: string | null;
   body: string | null;
   cover_image_url: string | null;
+  cover_focal_x: number;
+  cover_focal_y: number;
   sort_order: number;
   created_at: string;
   updated_at: string;
