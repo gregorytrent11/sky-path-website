@@ -114,7 +114,7 @@ export default function AdminDogsPage() {
                           Archive
                         </button>
                       )}
-                      {dog.status !== "adopted" && (
+                      {dog.status !== "adopted" ? (
                         <button
                           type="button"
                           disabled={busyId === dog.id}
@@ -122,6 +122,15 @@ export default function AdminDogsPage() {
                           className="text-brand-charcoal/70 hover:underline"
                         >
                           Mark Adopted
+                        </button>
+                      ) : (
+                        <button
+                          type="button"
+                          disabled={busyId === dog.id}
+                          onClick={() => setStatus(dog.id, "published")}
+                          className="text-brand-charcoal/70 hover:underline"
+                        >
+                          Unmark Adopted
                         </button>
                       )}
                       <button
