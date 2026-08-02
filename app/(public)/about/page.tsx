@@ -29,12 +29,64 @@ export default function AboutPage() {
       <PageHero title="About Sky's Path to Home" />
 
       <section className="mx-auto max-w-3xl px-4 py-14 sm:px-6">
-        <h2 className="font-heading text-2xl font-semibold text-brand-deep-blue">Our Story</h2>
-        <p className="mt-4 text-lg leading-relaxed text-brand-charcoal">
-          Sky&rsquo;s Path to Home was created in memory of Sky and the lasting impact one dog
-          can have on a family. Sky&rsquo;s legacy is reflected in every dog we help move from
-          an uncertain situation toward safety, healing, and home.
-        </p>
+        <h2 className="font-heading text-2xl font-semibold text-brand-deep-blue">Sky’s Story</h2>
+        <div className="mt-4 space-y-4 text-lg leading-relaxed text-brand-charcoal">
+          <p>
+            Sky’s Path to Home was created in memory of our beloved rescue dog, Sky.
+          </p>
+          <p>
+            In 2019, my husband, Greg, and I traveled to Thailand, where we witnessed firsthand
+            the overwhelming number of homeless dogs and the cruelty many animals endure. During
+            our trip, we visited several dog rescue shelters and saw the extraordinary work being
+            done to save these animals. I knew before we returned home that we would adopt a dog
+            from Thailand.
+          </p>
+          <p>
+            After returning to the United States, I began researching rescue organizations and
+            searching for a dog who needed a home. That search led me to Dog Rescue
+            Thailand—and to Sky.
+          </p>
+          <p>
+            Sky had been found on the streets when she was approximately six months old. She had
+            suffered severe burns across much of her body after someone reportedly threw boiling
+            water or oil on her and left her to die. Dog Rescue Thailand rescued and rehabilitated
+            her, giving her the medical care and protection she desperately needed.
+          </p>
+          <p>
+            The organization worked closely with us throughout the adoption process, sending
+            videos and helping arrange Sky’s journey from Thailand to the United States. We
+            covered the cost of her flight, and she finally arrived at her new home.
+          </p>
+          <p>
+            Sky quickly became part of our family. She bonded with us and our other dogs, and
+            over the years, she blossomed into the most loving, gentle, and remarkable rescue dog
+            we could have hoped for. Despite the cruelty she had experienced, Sky learned that she
+            was safe. She had a comfortable home, a family who loved her, and the life she had
+            always deserved.
+          </p>
+          <p>
+            In 2025, Sky suddenly became critically ill. She had shown no previous signs that
+            anything was wrong. After a CT scan of her head and abdomen and an urgent trip to a
+            widely respected veterinary teaching hospital, we learned that she had suffered
+            multiple blood clots and strokes. Veterinarians also suspected that she might have had
+            cancer affecting her heart. Her condition deteriorated rapidly, and we lost her before
+            we could fully understand what had caused her illness.
+          </p>
+          <p>
+            Losing Sky was devastating. After everything she had survived, it felt deeply unfair
+            that her life ended so suddenly. The grief of losing her is difficult to put into
+            words.
+          </p>
+          <p>
+            I ultimately decided to turn that grief into something meaningful. Sky’s Path to Home
+            was created to honor Sky’s life by helping other vulnerable dogs find safety, medical
+            care, compassion, and loving homes.
+          </p>
+          <p>
+            Sky’s story did not end when we lost her. Her path continues through every dog we
+            rescue and every life we help change.
+          </p>
+        </div>
 
         <h2 className="mt-12 font-heading text-2xl font-semibold text-brand-deep-blue">
           Mission &amp; Vision

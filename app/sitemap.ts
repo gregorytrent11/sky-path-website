@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { fetchDogsForBuild } from "@/lib/build-time-dogs";
+import { fetchEventsForBuild } from "@/lib/build-time-events";
 
 export const dynamic = "force-static";
 
@@ -10,6 +11,7 @@ const STATIC_ROUTES = [
   "adopt/application",
   "foster",
   "foster/application",
+  "events",
   "volunteer",
   "about",
   "contact",
@@ -38,5 +40,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.8,
   }));
 
-  return [...staticEntries, ...dogEntries];
+  const events = await fetchEventsForBuild();
+  const eventEntries: MetadataRoute.Sitemap = events.map((event) => ({
+    url: `${siteUrl}/events/${event.slug}/`,
+    lastModified: event.updated_at,
+    changeFrequency: "weekly",
+    priority: 0.6,
+  }));
+
+  return [...staticEntries, ...dogEntries, ...eventEntries];
 }

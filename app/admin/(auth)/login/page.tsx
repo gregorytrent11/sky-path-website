@@ -48,7 +48,10 @@ export default function AdminLoginPage() {
 
     if (aal.currentLevel === aal.nextLevel) {
       setSubmitting(false);
-      router.replace("/admin/");
+      // No verified factor means nextLevel never rose to aal2 -- two-factor
+      // is mandatory, so route straight to enrollment instead of the
+      // dashboard.
+      router.replace(aal.nextLevel === "aal2" ? "/admin/" : "/admin/settings/");
       return;
     }
 

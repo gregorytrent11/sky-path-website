@@ -14,6 +14,7 @@ export type SubmissionFormType =
   | "adopt_application"
   | "foster_application";
 export type SubmissionStatus = "new" | "in_progress" | "resolved" | "archived";
+export type EventStatus = "draft" | "published" | "archived";
 
 export type Dog = {
   id: string;
@@ -76,6 +77,26 @@ export type Submission = {
   created_at: string;
 };
 
+export type Event = {
+  id: string;
+  title: string;
+  slug: string;
+  status: EventStatus;
+  event_date: string | null;
+  location: string | null;
+  summary: string | null;
+  body: string | null;
+  cover_image_url: string | null;
+  sort_order: number;
+  created_at: string;
+  updated_at: string;
+  created_by: string | null;
+};
+
+export type EventInsert = Partial<Omit<Event, "id" | "created_at" | "updated_at">> &
+  Pick<Event, "title" | "slug">;
+export type EventUpdate = Partial<Omit<Event, "id" | "created_at" | "updated_at">>;
+
 export type Database = {
   public: {
     Tables: {
@@ -97,6 +118,12 @@ export type Database = {
         Insert: Partial<Omit<Submission, "id" | "created_at">> &
           Pick<Submission, "form_type" | "name" | "email">;
         Update: Partial<Omit<Submission, "id" | "created_at">>;
+        Relationships: [];
+      };
+      events: {
+        Row: Event;
+        Insert: EventInsert;
+        Update: EventUpdate;
         Relationships: [];
       };
     };
