@@ -35,6 +35,7 @@ type FormState = {
   intake_date: string;
   description: string;
   foster_notes: string;
+  success_story: string;
 };
 
 const emptyForm: FormState = {
@@ -55,6 +56,7 @@ const emptyForm: FormState = {
   intake_date: "",
   description: "",
   foster_notes: "",
+  success_story: "",
 };
 
 function dogToForm(dog: Dog): FormState {
@@ -76,6 +78,7 @@ function dogToForm(dog: Dog): FormState {
     intake_date: dog.intake_date ?? "",
     description: dog.description ?? "",
     foster_notes: dog.foster_notes ?? "",
+    success_story: dog.success_story ?? "",
   };
 }
 
@@ -141,6 +144,7 @@ function EditDogForm() {
       intake_date: form.intake_date || null,
       description: form.description.trim() || null,
       foster_notes: form.foster_notes.trim() || null,
+      success_story: form.status === "adopted" ? form.success_story.trim() || null : null,
     };
 
     if (dogId) {
@@ -418,6 +422,32 @@ function EditDogForm() {
             className={selectClasses()}
           />
         </div>
+
+        {form.status === "adopted" && (
+          <div>
+            <div className="flex items-baseline justify-between">
+              <label htmlFor="dog-success-story" className="block text-sm font-medium text-brand-charcoal">
+                Success story (shown on the Success Stories page)
+              </label>
+              <span className="text-xs text-brand-charcoal/60">
+                {form.success_story.trim() === "" ? 0 : form.success_story.trim().split(/\s+/).length}{" "}
+                words &middot; {form.success_story.length}/500 characters
+              </span>
+            </div>
+            <textarea
+              id="dog-success-story"
+              rows={5}
+              maxLength={500}
+              placeholder={`Tell adopters about ${form.name || "this dog"}'s journey home...`}
+              value={form.success_story}
+              onChange={(e) => update("success_story", e.target.value)}
+              className={selectClasses()}
+            />
+            <p className="mt-1 text-xs text-brand-charcoal/60">
+              Leave blank to keep this dog off the Success Stories page.
+            </p>
+          </div>
+        )}
 
         {error && (
           <p role="alert" className="text-sm text-red-700">

@@ -16,6 +16,7 @@ export default function DogCard({ dog }: { dog: Dog }) {
             alt={dog.name}
             fill
             className="object-cover transition-transform group-hover:scale-105"
+            style={{ objectPosition: `${dog.primary_photo_focal_x}% ${dog.primary_photo_focal_y}%` }}
           />
         ) : (
           <div className="flex h-full items-center justify-center text-sm text-brand-charcoal/70">

@@ -4,12 +4,18 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { supabase } from "@/lib/supabase/client";
 import type { DogMedia } from "@/types/database";
+import FocalPointPicker from "@/components/admin/FocalPointPicker";
 
 const MAX_DOG_PHOTOS = 8;
 const MAX_DOG_VIDEOS = 1;
 const MAX_IMAGE_BYTES = 2.5 * 1024 * 1024;
 const MAX_VIDEO_BYTES = 5 * 1024 * 1024;
 const MAX_DOG_VIDEO_SECONDS = 15;
+
+function fileExtension(path: string): string {
+  const ext = path.split(".").pop();
+  return ext ? ext.toUpperCase() : "FILE";
+}
 
 function readVideoDuration(file: File): Promise<number> {
   return new Promise((resolve, reject) => {
@@ -31,6 +37,7 @@ export default function DogMediaManager({ dogId, dogName }: { dogId: string; dog
   const [media, setMedia] = useState<DogMedia[]>([]);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [adjustingId, setAdjustingId] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   async function reload() {
@@ -51,7 +58,14 @@ export default function DogMediaManager({ dogId, dogName }: { dogId: string; dog
 
   async function syncPrimaryPhoto(rows: DogMedia[]) {
     const primary = rows.find((m) => m.is_primary) ?? rows.find((m) => m.media_type === "image");
-    await supabase.from("dogs").update({ primary_photo_url: primary?.url ?? null }).eq("id", dogId);
+    await supabase
+      .from("dogs")
+      .update({
+        primary_photo_url: primary?.url ?? null,
+        primary_photo_focal_x: primary?.focal_x ?? 50,
+        primary_photo_focal_y: primary?.focal_y ?? 50,
+      })
+      .eq("id", dogId);
   }
 
   async function handleFiles(files: FileList | null) {
@@ -150,14 +164,33 @@ export default function DogMediaManager({ dogId, dogName }: { dogId: string; dog
     await supabase.from("dog_media").delete().eq("id", item.id);
     const remaining = media.filter((m) => m.id !== item.id);
     setMedia(remaining);
+    if (adjustingId === item.id) setAdjustingId(null);
     await syncPrimaryPhoto(remaining);
   }
 
   async function makePrimary(item: DogMedia) {
     await supabase.from("dog_media").update({ is_primary: false }).eq("dog_id", dogId);
     await supabase.from("dog_media").update({ is_primary: true }).eq("id", item.id);
-    await supabase.from("dogs").update({ primary_photo_url: item.url }).eq("id", dogId);
+    await supabase
+      .from("dogs")
+      .update({
+        primary_photo_url: item.url,
+        primary_photo_focal_x: item.focal_x,
+        primary_photo_focal_y: item.focal_y,
+      })
+      .eq("id", dogId);
     await reload();
+  }
+
+  async function updateFocal(item: DogMedia, x: number, y: number) {
+    setMedia((prev) => prev.map((m) => (m.id === item.id ? { ...m, focal_x: x, focal_y: y } : m)));
+    await supabase.from("dog_media").update({ focal_x: x, focal_y: y }).eq("id", item.id);
+    if (item.is_primary) {
+      await supabase
+        .from("dogs")
+        .update({ primary_photo_focal_x: x, primary_photo_focal_y: y })
+        .eq("id", dogId);
+    }
   }
 
   return (
@@ -174,6 +207,11 @@ export default function DogMediaManager({ dogId, dogName }: { dogId: string; dog
           className="sr-only"
         />
       </label>
+      <p className="mt-1 text-xs text-brand-charcoal/60">
+        Up to {MAX_DOG_PHOTOS} photos ({MAX_IMAGE_BYTES / 1024 / 1024}MB each) and 1 video
+        (under {Math.round(MAX_VIDEO_BYTES / 1024 / 1024)}MB, {MAX_DOG_VIDEO_SECONDS} seconds or
+        shorter).
+      </p>
       {error && (
         <p role="alert" className="mt-2 text-sm text-red-700">
           {error}
@@ -186,9 +224,25 @@ export default function DogMediaManager({ dogId, dogName }: { dogId: string; dog
             <li key={item.id} className="relative overflow-hidden rounded-lg border border-brand-soft-blue/60">
               <div className="relative aspect-square bg-brand-gray">
                 {item.media_type === "image" ? (
-                  <Image src={item.url} alt={item.alt_text || `Photo of ${dogName}`} fill className="object-cover" />
+                  <Image
+                    src={item.url}
+                    alt={item.alt_text || `Photo of ${dogName}`}
+                    fill
+                    className="object-cover"
+                    style={{ objectPosition: `${item.focal_x}% ${item.focal_y}%` }}
+                  />
                 ) : (
-                  <video src={item.url} className="h-full w-full object-cover" muted />
+                  <>
+                    <video src={item.url} className="h-full w-full object-cover" muted />
+                    <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/20">
+                      <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-brand-deep-blue shadow">
+                        &#9654;
+                      </span>
+                    </div>
+                    <span className="absolute right-1 top-1 rounded bg-brand-deep-blue px-1.5 py-0.5 text-[10px] font-semibold uppercase text-brand-white">
+                      Video &middot; {fileExtension(item.storage_path)}
+                    </span>
+                  </>
                 )}
                 {item.is_primary && (
                   <span className="absolute left-1 top-1 rounded bg-brand-purple px-1.5 py-0.5 text-[10px] font-semibold text-brand-white">
@@ -196,7 +250,16 @@ export default function DogMediaManager({ dogId, dogName }: { dogId: string; dog
                   </span>
                 )}
               </div>
-              <div className="flex justify-between gap-1 bg-brand-white p-1.5 text-xs">
+              <div className="flex flex-wrap justify-between gap-1 bg-brand-white p-1.5 text-xs">
+                {item.media_type === "image" && (
+                  <button
+                    type="button"
+                    onClick={() => setAdjustingId(adjustingId === item.id ? null : item.id)}
+                    className="text-brand-purple hover:underline"
+                  >
+                    {adjustingId === item.id ? "Done" : "Crop"}
+                  </button>
+                )}
                 {item.media_type === "image" && !item.is_primary && (
                   <button
                     type="button"
@@ -214,6 +277,16 @@ export default function DogMediaManager({ dogId, dogName }: { dogId: string; dog
                   Remove
                 </button>
               </div>
+              {adjustingId === item.id && (
+                <div className="border-t border-brand-soft-blue/60 bg-brand-white p-2">
+                  <FocalPointPicker
+                    src={item.url}
+                    x={item.focal_x}
+                    y={item.focal_y}
+                    onChange={(x, y) => updateFocal(item, x, y)}
+                  />
+                </div>
+              )}
             </li>
           ))}
         </ul>

@@ -36,6 +36,9 @@ export type Dog = {
   intake_date: string | null;
   location: string | null;
   primary_photo_url: string | null;
+  primary_photo_focal_x: number;
+  primary_photo_focal_y: number;
+  success_story: string | null;
   sort_order: number;
   created_at: string;
   updated_at: string;
@@ -59,6 +62,8 @@ export type DogMedia = {
   sort_order: number;
   is_primary: boolean;
   alt_text: string | null;
+  focal_x: number;
+  focal_y: number;
   created_at: string;
 };
 

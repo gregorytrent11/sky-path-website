@@ -104,10 +104,13 @@ export default function DogDetailClient({ slug }: { slug: string }) {
   }
 
   const photos = media.filter((m) => m.media_type === "image");
+  const videos = media.filter((m) => m.media_type === "video");
   const gallery = photos.length > 0 ? photos : dog.primary_photo_url ? [{
     id: "primary",
     url: dog.primary_photo_url,
     alt_text: dog.name,
+    focal_x: dog.primary_photo_focal_x,
+    focal_y: dog.primary_photo_focal_y,
   }] : [];
   const badges = compatibilityBadges(dog);
 
@@ -122,6 +125,11 @@ export default function DogDetailClient({ slug }: { slug: string }) {
                 alt={gallery[activePhoto]?.alt_text || dog.name}
                 fill
                 className="object-cover"
+                style={{
+                  objectPosition: `${gallery[activePhoto]?.focal_x ?? gallery[0].focal_x}% ${
+                    gallery[activePhoto]?.focal_y ?? gallery[0].focal_y
+                  }%`,
+                }}
                 priority
               />
             ) : (
@@ -143,9 +151,27 @@ export default function DogDetailClient({ slug }: { slug: string }) {
                     index === activePhoto ? "border-brand-purple" : "border-transparent"
                   }`}
                 >
-                  <Image src={item.url} alt="" fill className="object-cover" />
+                  <Image
+                    src={item.url}
+                    alt=""
+                    fill
+                    className="object-cover"
+                    style={{ objectPosition: `${item.focal_x}% ${item.focal_y}%` }}
+                  />
                 </button>
               ))}
+            </div>
+          )}
+          {videos.length > 0 && (
+            <div className="mt-4">
+              <video
+                src={videos[0].url}
+                controls
+                preload="metadata"
+                className="w-full rounded-xl bg-brand-gray"
+              >
+                Your browser does not support the video tag.
+              </video>
             </div>
           )}
         </div>
