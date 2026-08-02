@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase/client";
 import type { Dog, DogStatus } from "@/types/database";
 
@@ -14,6 +15,7 @@ const statusStyles: Record<DogStatus, string> = {
 };
 
 export default function AdminDogsPage() {
+  const router = useRouter();
   const [dogs, setDogs] = useState<Dog[] | null>(null);
   const [busyId, setBusyId] = useState<string | null>(null);
 
@@ -37,6 +39,16 @@ export default function AdminDogsPage() {
     await supabase.from("dogs").update({ status }).eq("id", id);
     await reload();
     setBusyId(null);
+  }
+
+  async function markAdopted(id: string) {
+    setBusyId(id);
+    await supabase.from("dogs").update({ status: "adopted" }).eq("id", id);
+    setBusyId(null);
+    // Send the admin straight to the edit form, where a success story can
+    // now be added -- marking adopted from the list alone left no obvious
+    // way to find that field.
+    router.push(`/admin/dogs/edit/?id=${id}`);
   }
 
   async function remove(id: string, name: string) {
@@ -128,7 +140,7 @@ export default function AdminDogsPage() {
                         <button
                           type="button"
                           disabled={busyId === dog.id}
-                          onClick={() => setStatus(dog.id, "adopted")}
+                          onClick={() => markAdopted(dog.id)}
                           className="text-brand-charcoal/70 hover:underline"
                         >
                           Mark Adopted
