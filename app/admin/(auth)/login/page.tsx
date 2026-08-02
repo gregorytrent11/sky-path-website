@@ -10,14 +10,25 @@ import { siteConfig } from "@/lib/site-config";
 const inputClasses =
   "mt-1 block w-full rounded-md border border-brand-soft-blue bg-brand-white px-3 py-2 text-sm text-brand-charcoal shadow-sm focus:border-brand-purple focus:outline-none focus:ring-1 focus:ring-brand-purple";
 
+type EnrollState = {
+  factorId: string;
+  qrCode: string;
+  secret: string;
+} | null;
+
 export default function AdminLoginPage() {
   const router = useRouter();
   const { state } = useAdminSession();
-  const [step, setStep] = useState<"credentials" | "mfa">("credentials");
+  const [step, setStep] = useState<"credentials" | "challenge" | "enroll">("credentials");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
   const [mfaFactorId, setMfaFactorId] = useState<string | null>(null);
   const [mfaCode, setMfaCode] = useState("");
+
+  const [enroll, setEnroll] = useState<EnrollState>(null);
+  const [enrollCode, setEnrollCode] = useState("");
+
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
@@ -47,11 +58,29 @@ export default function AdminLoginPage() {
     }
 
     if (aal.currentLevel === aal.nextLevel) {
+      if (aal.nextLevel === "aal2") {
+        // Already fully satisfied (rare on a fresh sign-in, but possible).
+        setSubmitting(false);
+        router.replace("/admin/");
+        return;
+      }
+      // No verified factor exists -- two-factor is mandatory, so start
+      // enrollment right here instead of letting the admin into the
+      // dashboard first.
+      const { data: enrollData, error: enrollError } = await supabase.auth.mfa.enroll({
+        factorType: "totp",
+      });
       setSubmitting(false);
-      // No verified factor means nextLevel never rose to aal2 -- two-factor
-      // is mandatory, so route straight to enrollment instead of the
-      // dashboard.
-      router.replace(aal.nextLevel === "aal2" ? "/admin/" : "/admin/settings/");
+      if (enrollError || !enrollData) {
+        setError(enrollError?.message ?? "Could not start two-factor setup. Please try again.");
+        return;
+      }
+      setEnroll({
+        factorId: enrollData.id,
+        qrCode: enrollData.totp.qr_code,
+        secret: enrollData.totp.secret,
+      });
+      setStep("enroll");
       return;
     }
 
@@ -63,10 +92,10 @@ export default function AdminLoginPage() {
       return;
     }
     setMfaFactorId(factor.id);
-    setStep("mfa");
+    setStep("challenge");
   }
 
-  async function handleMfaSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleChallengeSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!mfaFactorId) return;
     setError(null);
@@ -79,6 +108,33 @@ export default function AdminLoginPage() {
     if (verifyError) {
       setError("Incorrect code. Please try again.");
       setMfaCode("");
+      return;
+    }
+    router.replace("/admin/");
+  }
+
+  async function handleEnrollSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!enroll) return;
+    setError(null);
+    setSubmitting(true);
+    const { data: challenge, error: challengeError } = await supabase.auth.mfa.challenge({
+      factorId: enroll.factorId,
+    });
+    if (challengeError || !challenge) {
+      setSubmitting(false);
+      setError(challengeError?.message ?? "Could not verify code.");
+      return;
+    }
+    const { error: verifyError } = await supabase.auth.mfa.verify({
+      factorId: enroll.factorId,
+      challengeId: challenge.id,
+      code: enrollCode,
+    });
+    setSubmitting(false);
+    if (verifyError) {
+      setError("Incorrect code. Please try again.");
+      setEnrollCode("");
       return;
     }
     router.replace("/admin/");
@@ -100,7 +156,7 @@ export default function AdminLoginPage() {
           </h1>
         </div>
 
-        {step === "credentials" ? (
+        {step === "credentials" && (
           <form onSubmit={handleCredentialsSubmit} noValidate className="space-y-4">
             <div>
               <label htmlFor="admin-email" className="block text-sm font-medium text-brand-charcoal">
@@ -146,8 +202,10 @@ export default function AdminLoginPage() {
               {submitting ? "Signing in…" : "Sign In"}
             </button>
           </form>
-        ) : (
-          <form onSubmit={handleMfaSubmit} noValidate className="space-y-4">
+        )}
+
+        {step === "challenge" && (
+          <form onSubmit={handleChallengeSubmit} noValidate className="space-y-4">
             <p className="text-sm text-brand-charcoal/80">
               Enter the 6-digit code from your authenticator app.
             </p>
@@ -181,6 +239,58 @@ export default function AdminLoginPage() {
               className="w-full rounded-full bg-brand-purple px-6 py-3 text-sm font-semibold text-brand-white shadow-sm transition-colors hover:bg-brand-deep-blue disabled:opacity-60"
             >
               {submitting ? "Verifying…" : "Verify"}
+            </button>
+          </form>
+        )}
+
+        {step === "enroll" && enroll && (
+          <form onSubmit={handleEnrollSubmit} noValidate className="space-y-4">
+            <p className="text-sm text-brand-charcoal">
+              Two-factor authentication is required for all admin accounts. Scan this QR code
+              with an authenticator app (Google Authenticator, Authy, 1Password, etc.), then enter
+              the 6-digit code it generates to finish signing in.
+            </p>
+            {/* eslint-disable-next-line @next/next/no-img-element -- data: URI SVG from Supabase, not an optimizable asset */}
+            <img
+              src={enroll.qrCode}
+              alt="Scan this QR code with your authenticator app to enable two-factor authentication"
+              className="h-48 w-48"
+            />
+            <p className="text-xs text-brand-charcoal/70">
+              Can&rsquo;t scan? Enter this code manually:{" "}
+              <code className="rounded bg-brand-gray px-1.5 py-0.5">{enroll.secret}</code>
+            </p>
+
+            <div>
+              <label htmlFor="admin-enroll-code" className="block text-sm font-medium text-brand-charcoal">
+                6-digit code
+              </label>
+              <input
+                id="admin-enroll-code"
+                type="text"
+                inputMode="numeric"
+                autoComplete="one-time-code"
+                required
+                autoFocus
+                maxLength={6}
+                value={enrollCode}
+                onChange={(e) => setEnrollCode(e.target.value.replace(/\D/g, ""))}
+                className={`${inputClasses} text-center text-lg tracking-[0.5em]`}
+              />
+            </div>
+
+            {error && (
+              <p role="alert" className="text-sm text-red-700">
+                {error}
+              </p>
+            )}
+
+            <button
+              type="submit"
+              disabled={submitting || enrollCode.length !== 6}
+              className="w-full rounded-full bg-brand-purple px-6 py-3 text-sm font-semibold text-brand-white shadow-sm transition-colors hover:bg-brand-deep-blue disabled:opacity-60"
+            >
+              {submitting ? "Verifying…" : "Confirm & Finish Sign In"}
             </button>
           </form>
         )}
