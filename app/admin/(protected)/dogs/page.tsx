@@ -62,6 +62,15 @@ export default function AdminDogsPage() {
     triggerDeploy();
   }
 
+  async function setFeatured(id: string, featured: boolean) {
+    setBusyId(id);
+    await supabase.from("dogs").update({ featured }).eq("id", id);
+    await reload();
+    setBusyId(null);
+    // Featured status only affects the homepage's client-side dog fetch,
+    // not which static pages exist -- no rebuild needed.
+  }
+
   async function remove(id: string, name: string) {
     if (!window.confirm(`Delete ${name}? This also removes their photos and cannot be undone.`)) {
       return;
@@ -111,6 +120,11 @@ export default function AdminDogsPage() {
                     {!dog.is_visible && (
                       <span className="ml-1 rounded-full bg-red-100 px-2 py-1 text-xs font-medium text-red-800">
                         Hidden
+                      </span>
+                    )}
+                    {dog.featured && (
+                      <span className="ml-1 rounded-full bg-brand-purple/10 px-2 py-1 text-xs font-medium text-brand-purple">
+                        Featured
                       </span>
                     )}
                   </td>
@@ -189,6 +203,25 @@ export default function AdminDogsPage() {
                           className="text-brand-charcoal/70 hover:underline"
                         >
                           Show on site
+                        </button>
+                      )}
+                      {dog.featured ? (
+                        <button
+                          type="button"
+                          disabled={busyId === dog.id}
+                          onClick={() => setFeatured(dog.id, false)}
+                          className="text-brand-charcoal/70 hover:underline"
+                        >
+                          Unfeature
+                        </button>
+                      ) : (
+                        <button
+                          type="button"
+                          disabled={busyId === dog.id}
+                          onClick={() => setFeatured(dog.id, true)}
+                          className="text-brand-charcoal/70 hover:underline"
+                        >
+                          Feature
                         </button>
                       )}
                       <button

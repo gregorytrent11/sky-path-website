@@ -22,6 +22,7 @@ type FormState = {
   name: string;
   slug: string;
   status: DogStatus;
+  featured: boolean;
   breed: string;
   sex: DogSex | "";
   age_category: DogAgeCategory | "";
@@ -43,6 +44,7 @@ const emptyForm: FormState = {
   name: "",
   slug: "",
   status: "draft",
+  featured: false,
   breed: "",
   sex: "",
   age_category: "",
@@ -65,6 +67,7 @@ function dogToForm(dog: Dog): FormState {
     name: dog.name,
     slug: dog.slug,
     status: dog.status,
+    featured: dog.featured,
     breed: dog.breed ?? "",
     sex: dog.sex ?? "",
     age_category: dog.age_category ?? "",
@@ -133,6 +136,7 @@ function EditDogForm() {
       name: form.name.trim(),
       slug: form.slug.trim() || slugify(form.name),
       status: form.status,
+      featured: form.featured,
       breed: form.breed.trim() || null,
       sex: form.sex || null,
       age_category: form.age_category || null,
@@ -254,6 +258,18 @@ function EditDogForm() {
             <option value="adopted">Adopted</option>
             <option value="archived">Archived</option>
           </select>
+          <label className="mt-2 flex items-center gap-2 text-sm text-brand-charcoal">
+            <input
+              type="checkbox"
+              checked={form.featured}
+              onChange={(e) => update("featured", e.target.checked)}
+            />
+            Feature on homepage
+          </label>
+          <p className="mt-1 text-xs text-brand-charcoal/60">
+            Shows this dog in the &ldquo;Featured Available Dogs&rdquo; section on the homepage. Only
+            published or pending dogs that are visible on the site will actually appear there.
+          </p>
         </div>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">

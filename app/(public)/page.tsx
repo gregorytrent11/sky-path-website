@@ -3,6 +3,7 @@ import Link from "next/link";
 import DonateButton from "@/components/layout/DonateButton";
 import RecoveryRedirect from "@/components/RecoveryRedirect";
 import SuccessStoriesPreview from "@/components/dogs/SuccessStoriesPreview";
+import FeaturedDogsPreview from "@/components/dogs/FeaturedDogsPreview";
 import { siteConfig } from "@/lib/site-config";
 
 export default function HomePage() {
@@ -59,10 +60,7 @@ export default function HomePage() {
             View all dogs &rarr;
           </Link>
         </div>
-        <p className="rounded-xl border border-dashed border-brand-soft-blue bg-brand-gray/50 p-8 text-center text-brand-charcoal/70">
-          Dog profiles are being added. Check back soon to meet the dogs currently looking
-          for a home.
-        </p>
+        <FeaturedDogsPreview />
       </section>
 
       {/* How it works */}
