@@ -51,6 +51,12 @@ export default function AdoptPage() {
 
         <div className="mt-10 flex flex-wrap justify-center gap-4">
           <Link
+            href="/adopt/application"
+            className="inline-flex items-center justify-center rounded-full bg-brand-purple px-6 py-3 text-base font-semibold text-brand-white shadow-sm transition-colors hover:bg-brand-deep-blue"
+          >
+            Start Adoption Application
+          </Link>
+          <Link
             href="/dogs"
             className="inline-flex items-center justify-center rounded-full bg-brand-deep-blue px-6 py-3 text-base font-semibold text-brand-white shadow-sm transition-colors hover:bg-brand-blue"
           >
