@@ -5,11 +5,13 @@ on:
     branches: [main]
   # Dogs are published/edited straight from the live admin UI, not through
   # a commit -- new dogs only get their own pretty static URL after a
-  # rebuild (see app/(public)/dogs/[slug]/page.tsx). This periodic rebuild
-  # keeps that lag to a few hours instead of "whenever someone next pushes
-  # code." The /dogs listing itself is always live regardless.
+  # rebuild (see app/(public)/dogs/[slug]/page.tsx). The admin panel now
+  # triggers an immediate rebuild via the trigger-deploy Edge Function on
+  # publish/hide/delete, so this periodic run is just a safety net for
+  # anything that slips past that (failed trigger, direct DB edit, etc.).
+  # The /dogs listing itself is always live regardless.
   schedule:
-    - cron: "17 */6 * * *"
+    - cron: "*/30 * * * *"
   workflow_dispatch: {}
 
 permissions:
@@ -19,7 +21,10 @@ permissions:
 
 concurrency:
   group: pages
-  cancel-in-progress: false
+  # A newer trigger (e.g. several admin edits in a row) supersedes an
+  # older queued/running build rather than piling up redundant runs --
+  # only the latest content matters for a rebuild.
+  cancel-in-progress: true
 
 jobs:
   build:

@@ -16,6 +16,7 @@ import type {
 } from "@/types/database";
 import DogMediaManager from "@/components/admin/DogMediaManager";
 import { slugify } from "@/lib/slugify";
+import { triggerDeploy } from "@/lib/trigger-deploy";
 
 type FormState = {
   name: string;
@@ -97,6 +98,7 @@ function EditDogForm() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [dogName, setDogName] = useState<string | null>(null);
+  const [originalSlug, setOriginalSlug] = useState<string | null>(null);
 
   useEffect(() => {
     if (!dogId) return;
@@ -111,6 +113,7 @@ function EditDogForm() {
         setForm(dogToForm(loadedDog));
         setSlugTouched(true);
         setDogName(loadedDog.name);
+        setOriginalSlug(loadedDog.slug);
       }
       setLoading(false);
     }
@@ -154,6 +157,11 @@ function EditDogForm() {
         setError(updateError.message);
         return;
       }
+      // A brand-new page shell is only needed when the URL itself changes
+      // -- editing content on an existing page doesn't, since the page
+      // fetches live data from Supabase on load regardless of the static
+      // build.
+      if (payload.slug !== originalSlug) triggerDeploy();
       router.push("/admin/dogs/");
     } else {
       const {
@@ -175,6 +183,7 @@ function EditDogForm() {
         setError(insertError?.message ?? "Could not create dog.");
         return;
       }
+      triggerDeploy();
       router.push(`/admin/dogs/edit/?id=${data.id}`);
     }
   }

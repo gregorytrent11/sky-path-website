@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase/client";
+import { triggerDeploy } from "@/lib/trigger-deploy";
 import type { Dog, DogStatus } from "@/types/database";
 
 const statusStyles: Record<DogStatus, string> = {
@@ -39,12 +40,14 @@ export default function AdminDogsPage() {
     await supabase.from("dogs").update({ status }).eq("id", id);
     await reload();
     setBusyId(null);
+    triggerDeploy();
   }
 
   async function markAdopted(id: string) {
     setBusyId(id);
     await supabase.from("dogs").update({ status: "adopted" }).eq("id", id);
     setBusyId(null);
+    triggerDeploy();
     // Send the admin straight to the edit form, where a success story can
     // now be added -- marking adopted from the list alone left no obvious
     // way to find that field.
@@ -56,6 +59,7 @@ export default function AdminDogsPage() {
     await supabase.from("dogs").update({ is_visible }).eq("id", id);
     await reload();
     setBusyId(null);
+    triggerDeploy();
   }
 
   async function remove(id: string, name: string) {
@@ -66,6 +70,7 @@ export default function AdminDogsPage() {
     await supabase.from("dogs").delete().eq("id", id);
     await reload();
     setBusyId(null);
+    triggerDeploy();
   }
 
   return (

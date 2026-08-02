@@ -7,6 +7,7 @@ import Image from "next/image";
 import { supabase } from "@/lib/supabase/client";
 import type { Event, EventInsert, EventStatus, EventUpdate } from "@/types/database";
 import { slugify } from "@/lib/slugify";
+import { triggerDeploy } from "@/lib/trigger-deploy";
 import FocalPointPicker from "@/components/admin/FocalPointPicker";
 
 const MAX_COVER_IMAGE_BYTES = 2 * 1024 * 1024;
@@ -68,6 +69,7 @@ function EditEventForm() {
   const [error, setError] = useState<string | null>(null);
   const [coverUploading, setCoverUploading] = useState(false);
   const [coverError, setCoverError] = useState<string | null>(null);
+  const [originalSlug, setOriginalSlug] = useState<string | null>(null);
 
   useEffect(() => {
     if (!eventId) return;
@@ -80,6 +82,7 @@ function EditEventForm() {
       if (data) {
         setForm(eventToForm(data));
         setSlugTouched(true);
+        setOriginalSlug(data.slug);
       }
       setLoading(false);
     }
@@ -150,6 +153,11 @@ function EditEventForm() {
         setError(updateError.message);
         return;
       }
+      // A brand-new page shell is only needed when the URL itself changes
+      // -- editing content on an existing page doesn't, since the page
+      // fetches live data from Supabase on load regardless of the static
+      // build.
+      if (payload.slug !== originalSlug) triggerDeploy();
       router.push("/admin/events/");
     } else {
       const {
@@ -167,6 +175,7 @@ function EditEventForm() {
         setError(insertError.message);
         return;
       }
+      triggerDeploy();
       router.push("/admin/events/");
     }
   }

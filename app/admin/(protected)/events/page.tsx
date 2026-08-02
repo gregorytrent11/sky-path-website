@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase/client";
+import { triggerDeploy } from "@/lib/trigger-deploy";
 import type { Event, EventStatus } from "@/types/database";
 import { formatEventDate } from "@/components/events/event-display";
 
@@ -36,6 +37,7 @@ export default function AdminEventsPage() {
     await supabase.from("events").update({ status }).eq("id", id);
     await reload();
     setBusyId(null);
+    triggerDeploy();
   }
 
   async function remove(id: string, title: string) {
@@ -46,6 +48,7 @@ export default function AdminEventsPage() {
     await supabase.from("events").delete().eq("id", id);
     await reload();
     setBusyId(null);
+    triggerDeploy();
   }
 
   return (
