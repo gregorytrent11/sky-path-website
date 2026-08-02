@@ -18,10 +18,9 @@ const values = [
   "Long-term commitment",
 ];
 
-const skyPhotos = [
+const skySquarePhotos = [
   { src: "/about/sky-pawshake.jpg", alt: "Sky shaking paws with a member of her family" },
   { src: "/about/sky-couch.jpg", alt: "Sky curled up on the couch" },
-  { src: "/about/sky-laying.jpg", alt: "Sky lying on the floor with a toy" },
   { src: "/about/sky-harley.jpg", alt: "Sky on a hike with her two dog siblings by a waterfall" },
 ];
 
@@ -119,8 +118,8 @@ export default function AboutPage() {
           </p>
         </div>
 
-        <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
-          {skyPhotos.map((photo) => (
+        <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-3">
+          {skySquarePhotos.map((photo) => (
             <div
               key={photo.src}
               className="relative aspect-square overflow-hidden rounded-xl bg-brand-soft-blue/40"
@@ -130,10 +129,19 @@ export default function AboutPage() {
                 alt={photo.alt}
                 fill
                 className="object-cover"
-                sizes="(min-width: 640px) 25vw, 50vw"
+                sizes="(min-width: 640px) 33vw, 100vw"
               />
             </div>
           ))}
+        </div>
+        <div className="relative mt-3 aspect-video w-full overflow-hidden rounded-xl bg-brand-soft-blue/40">
+          <Image
+            src="/about/sky-laying.jpg"
+            alt="Sky lying on the floor with her toy"
+            fill
+            className="object-cover"
+            sizes="(min-width: 640px) 90vw, 100vw"
+          />
         </div>
 
         <h2 className="mt-12 font-heading text-2xl font-semibold text-brand-deep-blue">

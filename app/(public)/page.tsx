@@ -23,10 +23,7 @@ export default function HomePage() {
             Every Dog Deserves a Safe Path Home
           </h1>
           <p className="max-w-3xl text-lg leading-relaxed text-brand-charcoal">
-            Sky&rsquo;s Path to Home&rsquo;s goal is to rescue dogs that have been abused,
-            have medical issues, are elderly, or are on the euthanasia list. We rehabilitate,
-            foster, and provide veterinary care to prepare each dog to be adopted into a loving
-            family.
+            {siteConfig.missionStatement}
           </p>
           <div className="flex flex-wrap items-center justify-center gap-4">
             <Link
@@ -75,18 +72,6 @@ export default function HomePage() {
           Dog profiles are being added. Check back soon to meet the dogs currently looking
           for a home.
         </p>
-      </section>
-
-      {/* Mission */}
-      <section aria-labelledby="mission-heading" className="bg-brand-deep-blue text-brand-white">
-        <div className="mx-auto max-w-4xl px-4 py-16 text-center sm:px-6">
-          <h2 id="mission-heading" className="font-heading text-3xl font-semibold">
-            Our Mission
-          </h2>
-          <p className="mt-4 text-lg leading-relaxed text-brand-white/90">
-            {siteConfig.missionStatement}
-          </p>
-        </div>
       </section>
 
       {/* How it works */}
