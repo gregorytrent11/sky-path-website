@@ -34,8 +34,8 @@ export const primaryNav: NavLink[] = [
   { label: "Adopt", href: "/adopt" },
   { label: "Foster", href: "/foster" },
   { label: "Events", href: "/events" },
-  { label: "Get Involved", href: "/volunteer" },
   { label: "About", href: "/about" },
+  { label: "Get Involved", href: "/volunteer" },
   { label: "Contact", href: "/contact" },
 ];
 
