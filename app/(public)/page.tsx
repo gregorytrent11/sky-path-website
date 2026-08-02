@@ -49,21 +49,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Status summary */}
-      <section aria-labelledby="status-heading" className="border-y border-brand-soft-blue/40 bg-brand-gray">
-        <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
-          <h2 id="status-heading" className="sr-only">
-            Current rescue status
-          </h2>
-          <dl className="grid grid-cols-2 gap-6 text-center md:grid-cols-4">
-            <StatusStat label="Dogs currently available" value="Coming soon" />
-            <StatusStat label="Dogs in foster care" value="Coming soon" />
-            <StatusStat label="Adoptions completed" value="Coming soon" />
-            <StatusStat label="Current urgent need" value="Foster homes" />
-          </dl>
-        </div>
-      </section>
-
       {/* Featured available dogs */}
       <section aria-labelledby="featured-dogs-heading" className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
         <div className="mb-8 flex items-center justify-between">
@@ -162,15 +147,6 @@ export default function HomePage() {
         </div>
       </section>
     </>
-  );
-}
-
-function StatusStat({ label, value }: { label: string; value: string }) {
-  return (
-    <div>
-      <dt className="text-sm font-medium text-brand-charcoal/70">{label}</dt>
-      <dd className="mt-1 font-heading text-2xl font-semibold text-brand-deep-blue">{value}</dd>
-    </div>
   );
 }
 
