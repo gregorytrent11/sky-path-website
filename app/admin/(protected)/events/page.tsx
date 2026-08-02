@@ -90,7 +90,7 @@ export default function AdminEventsPage() {
                     </span>
                   </td>
                   <td className="px-4 py-3 text-brand-charcoal/80">
-                    {formatEventDate(event.event_date) || "—"}
+                    {formatEventDate(event.event_date) || "-"}
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex flex-wrap justify-end gap-2">

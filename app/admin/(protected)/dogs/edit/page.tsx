@@ -308,7 +308,7 @@ function EditDogForm() {
               onChange={(e) => update("sex", e.target.value as DogSex)}
               className={selectClasses()}
             >
-              <option value="">—</option>
+              <option value="">-</option>
               <option value="male">Male</option>
               <option value="female">Female</option>
               <option value="unknown">Unknown</option>
@@ -324,7 +324,7 @@ function EditDogForm() {
               onChange={(e) => update("age_category", e.target.value as DogAgeCategory)}
               className={selectClasses()}
             >
-              <option value="">—</option>
+              <option value="">-</option>
               <option value="puppy">Puppy</option>
               <option value="young">Young</option>
               <option value="adult">Adult</option>
@@ -341,7 +341,7 @@ function EditDogForm() {
               onChange={(e) => update("size", e.target.value as DogSize)}
               className={selectClasses()}
             >
-              <option value="">—</option>
+              <option value="">-</option>
               <option value="small">Small</option>
               <option value="medium">Medium</option>
               <option value="large">Large</option>
@@ -373,7 +373,7 @@ function EditDogForm() {
             onChange={(e) => update("energy_level", e.target.value as DogEnergyLevel)}
             className={selectClasses()}
           >
-            <option value="">—</option>
+            <option value="">-</option>
             <option value="low">Low</option>
             <option value="medium">Medium</option>
             <option value="high">High</option>

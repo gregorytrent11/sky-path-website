@@ -130,7 +130,7 @@ export default function FosterApplicationForm() {
             "Behavioral cases",
             "Puppies",
             "Senior dogs",
-            "Not sure — flexible",
+            "Not sure, flexible",
           ]}
         />
         <TextAreaField

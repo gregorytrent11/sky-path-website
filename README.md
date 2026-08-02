@@ -12,7 +12,7 @@ npm run dev
 ```
 
 Admin login is at `/admin/login`. Accounts are created manually in the
-Supabase dashboard (Authentication → Users) — there's no public sign-up.
+Supabase dashboard (Authentication → Users); there's no public sign-up.
 
 ## Architecture
 
@@ -45,7 +45,7 @@ email/password at runtime.
 
 `.github/workflows/deploy.yml` builds and deploys to GitHub Pages on push to
 `main`, on a schedule (so newly-published dogs get their own static URL
-without waiting on a code push — the `/dogs` listing itself is always live
+without waiting on a code push; the `/dogs` listing itself is always live
 regardless), and via manual dispatch.
 
 Before this can run, the repo needs:

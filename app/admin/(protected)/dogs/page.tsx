@@ -128,7 +128,7 @@ export default function AdminDogsPage() {
                       </span>
                     )}
                   </td>
-                  <td className="px-4 py-3 text-brand-charcoal/80">{dog.breed || "—"}</td>
+                  <td className="px-4 py-3 text-brand-charcoal/80">{dog.breed || "-"}</td>
                   <td className="px-4 py-3">
                     <div className="flex flex-wrap justify-end gap-2">
                       <Link
