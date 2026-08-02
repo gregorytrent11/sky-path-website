@@ -37,6 +37,9 @@ yarn-error.log*
 # vercel
 .vercel
 
+# local source photos (dog imports, staff headshots) -- never committed raw
+/Photos/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

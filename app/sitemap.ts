@@ -12,6 +12,7 @@ const STATIC_ROUTES = [
   "foster",
   "foster/application",
   "events",
+  "faq",
   "volunteer",
   "about",
   "contact",

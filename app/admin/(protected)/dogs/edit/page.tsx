@@ -388,12 +388,18 @@ function EditDogForm() {
         </div>
 
         <div>
-          <label htmlFor="dog-description" className="block text-sm font-medium text-brand-charcoal">
-            Public description
-          </label>
+          <div className="flex items-baseline justify-between">
+            <label htmlFor="dog-description" className="block text-sm font-medium text-brand-charcoal">
+              Public description
+            </label>
+            <span className="text-xs text-brand-charcoal/60">
+              {form.description.length}/500
+            </span>
+          </div>
           <textarea
             id="dog-description"
             rows={6}
+            maxLength={500}
             value={form.description}
             onChange={(e) => update("description", e.target.value)}
             className={selectClasses()}

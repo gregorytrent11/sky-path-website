@@ -39,6 +39,7 @@ export const primaryNav: NavLink[] = [
 ];
 
 export const footerLinks: NavLink[] = [
+  { label: "Adoption FAQ", href: "/faq" },
   { label: "Success Stories", href: "/success-stories" },
   { label: "Resources", href: "/resources" },
   { label: "Request Help", href: "/request-help" },

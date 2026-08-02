@@ -49,12 +49,18 @@ export default function AdoptPage() {
           ))}
         </ol>
 
-        <div className="mt-10 flex justify-center">
+        <div className="mt-10 flex flex-wrap justify-center gap-4">
           <Link
             href="/dogs"
             className="inline-flex items-center justify-center rounded-full bg-brand-deep-blue px-6 py-3 text-base font-semibold text-brand-white shadow-sm transition-colors hover:bg-brand-blue"
           >
             View Available Dogs
+          </Link>
+          <Link
+            href="/faq"
+            className="inline-flex items-center justify-center rounded-full border-2 border-brand-purple px-6 py-3 text-base font-semibold text-brand-purple transition-colors hover:bg-brand-purple hover:text-brand-white"
+          >
+            Read the Adoption FAQ
           </Link>
         </div>
       </section>

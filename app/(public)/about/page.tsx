@@ -1,3 +1,4 @@
+import Image from "next/image";
 import PageHero from "@/components/layout/PageHero";
 import { siteConfig } from "@/lib/site-config";
 import { pageMetadata } from "@/lib/metadata";
@@ -18,9 +19,32 @@ const values = [
 ];
 
 const boardMembers = [
-  { name: "Brianna Trent", title: "President and Director" },
-  { name: "Greg Trent", title: "Treasurer and Director" },
-  { name: "Amanda Milam", title: "Secretary and Director" },
+  {
+    name: "Brianna Trent",
+    title: "President and Director",
+    photo: "/board/brianna-trent.jpg",
+    bio: [
+      "Leads the rescue and board meetings",
+      "Oversees daily operations",
+      "Coordinates intake, veterinary care, fostering and adoptions",
+      "Loves special needs animals and caring for them",
+    ],
+  },
+  {
+    name: "Gregory Trent",
+    title: "Treasurer and Director",
+    photo: "/board/gregory-trent.jpg",
+    bio: ["Leads finance and information technology development", "Has a love for all animals"],
+  },
+  {
+    name: "Amanda Milam",
+    title: "Secretary and Director",
+    photo: "/board/amanda-milam.jpg",
+    bio: [
+      "Communications operator and leads the social media presence",
+      "Has a passion for dogs of all shapes and sizes",
+    ],
+  },
 ];
 
 export default function AboutPage() {
@@ -43,8 +67,8 @@ export default function AboutPage() {
           </p>
           <p>
             After returning to the United States, I began researching rescue organizations and
-            searching for a dog who needed a home. That search led me to Dog Rescue
-            Thailand—and to Sky.
+            searching for a dog who needed a home. That search led me to Dog Rescue Thailand,
+            and to Sky.
           </p>
           <p>
             Sky had been found on the streets when she was approximately six months old. She had
@@ -127,11 +151,28 @@ export default function AboutPage() {
         <h2 className="font-heading text-2xl font-semibold text-brand-deep-blue">
           Leadership &amp; Board
         </h2>
-        <ul className="mt-6 grid gap-4 sm:grid-cols-3">
+        <ul className="mt-6 grid gap-6 sm:grid-cols-3">
           {boardMembers.map((member) => (
             <li key={member.name} className="rounded-xl bg-brand-gray p-5 text-center">
-              <p className="font-heading font-semibold text-brand-deep-blue">{member.name}</p>
+              <div className="relative mx-auto h-28 w-28 overflow-hidden rounded-full bg-brand-soft-blue/40">
+                <Image
+                  src={member.photo}
+                  alt={member.name}
+                  fill
+                  className="object-cover"
+                  sizes="112px"
+                />
+              </div>
+              <p className="mt-4 font-heading font-semibold text-brand-deep-blue">{member.name}</p>
               <p className="mt-1 text-sm text-brand-charcoal/80">{member.title}</p>
+              <ul className="mt-3 space-y-1 text-left text-xs leading-relaxed text-brand-charcoal/80">
+                {member.bio.map((line) => (
+                  <li key={line} className="flex gap-1.5">
+                    <span aria-hidden="true">&bull;</span>
+                    <span>{line}</span>
+                  </li>
+                ))}
+              </ul>
             </li>
           ))}
         </ul>

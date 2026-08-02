@@ -8,7 +8,7 @@ import type { DogMedia } from "@/types/database";
 const MAX_DOG_PHOTOS = 10;
 const MAX_IMAGE_BYTES = 10 * 1024 * 1024;
 const MAX_VIDEO_BYTES = 150 * 1024 * 1024;
-const MAX_DOG_VIDEO_SECONDS = 30;
+const MAX_DOG_VIDEO_SECONDS = 15;
 
 function readVideoDuration(file: File): Promise<number> {
   return new Promise((resolve, reject) => {
