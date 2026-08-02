@@ -14,7 +14,7 @@ const ways = [
   },
   {
     heading: "Spreading Awareness",
-    body: "Please share our organization with others — this helps get our name out there and helps more dogs find the people who are looking for them.",
+    body: "Please share our organization with others, this helps get our name out there and helps more dogs find the people who are looking for them.",
   },
   {
     heading: "Adopt",
@@ -24,7 +24,7 @@ const ways = [
   },
   {
     heading: "Donate",
-    body: "Any donation helps our organization — it goes toward food, medical costs, transport costs (many of our dogs come from high-kill shelters on the euthanasia list in other states), and spaying and neutering.",
+    body: "Any donation helps our organization, it goes toward food, medical costs, transport costs (many of our dogs come from high-kill shelters on the euthanasia list in other states), and spaying and neutering.",
     href: "/donate/",
     cta: "Make a Donation",
   },

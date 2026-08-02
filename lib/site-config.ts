@@ -3,7 +3,7 @@ export const siteConfig = {
   orgName: "Sky's Path to Home",
   tagline: "Every Dog Deserves a Safe Path Home",
   shortDescription:
-    "Sky's Path to Home is a Montana nonprofit dog rescue serving Billings and surrounding communities. We work through foster homes to provide dogs with safety, veterinary care, stability, and the time they need to find the right permanent family.",
+    "Sky's Path to Home is a Montana nonprofit dog rescue serving Billings and surrounding communities. We work through foster homes to provide dogs with safety, veterinary care, stability, and the time they need to find the right permanent family. In addition, we intake dogs across the U.S. and can support adoption outside of Montana.",
   missionStatement:
     "To rescue dogs that have been abused, have medical issues, are elderly, or are on the euthanasia list. We rehabilitate, foster, and provide veterinary care to prepare each dog to be adopted into a loving family.",
   visionStatement:

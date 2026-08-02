@@ -5,9 +5,10 @@ import Image from "next/image";
 import { supabase } from "@/lib/supabase/client";
 import type { DogMedia } from "@/types/database";
 
-const MAX_DOG_PHOTOS = 10;
-const MAX_IMAGE_BYTES = 10 * 1024 * 1024;
-const MAX_VIDEO_BYTES = 150 * 1024 * 1024;
+const MAX_DOG_PHOTOS = 8;
+const MAX_DOG_VIDEOS = 1;
+const MAX_IMAGE_BYTES = 2.5 * 1024 * 1024;
+const MAX_VIDEO_BYTES = 5 * 1024 * 1024;
 const MAX_DOG_VIDEO_SECONDS = 15;
 
 function readVideoDuration(file: File): Promise<number> {
@@ -58,7 +59,9 @@ export default function DogMediaManager({ dogId, dogName }: { dogId: string; dog
     setError(null);
 
     const photoCount = media.filter((m) => m.media_type === "image").length;
+    const videoCount = media.filter((m) => m.media_type === "video").length;
     let addedPhotos = 0;
+    let addedVideos = 0;
 
     for (const file of Array.from(files)) {
       const isImage = file.type.startsWith("image/");
@@ -73,7 +76,11 @@ export default function DogMediaManager({ dogId, dogName }: { dogId: string; dog
         continue;
       }
       if (isImage && file.size > MAX_IMAGE_BYTES) {
-        setError(`${file.name}: images must be under ${Math.round(MAX_IMAGE_BYTES / 1024 / 1024)}MB.`);
+        setError(`${file.name}: images must be under ${MAX_IMAGE_BYTES / 1024 / 1024}MB.`);
+        continue;
+      }
+      if (isVideo && videoCount + addedVideos >= MAX_DOG_VIDEOS) {
+        setError(`A dog can have at most ${MAX_DOG_VIDEOS} video.`);
         continue;
       }
       if (isVideo && file.size > MAX_VIDEO_BYTES) {
@@ -121,6 +128,7 @@ export default function DogMediaManager({ dogId, dogName }: { dogId: string; dog
       });
 
       if (isImage) addedPhotos += 1;
+      if (isVideo) addedVideos += 1;
       setUploading(false);
     }
 

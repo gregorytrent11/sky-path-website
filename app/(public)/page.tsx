@@ -23,9 +23,10 @@ export default function HomePage() {
             Every Dog Deserves a Safe Path Home
           </h1>
           <p className="max-w-2xl text-lg leading-relaxed text-brand-charcoal">
-            Sky&rsquo;s Path to Home helps dogs move from uncertainty to safety through
-            foster care, veterinary support, responsible placement, and a community
-            committed to giving them a lasting home.
+            Sky&rsquo;s Path to Home&rsquo;s goal is to rescue dogs that have been abused,
+            have medical issues, are elderly, or are on the euthanasia list. We rehabilitate,
+            foster, and provide veterinary care to prepare each dog to be adopted into a
+            loving family.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-4">
             <Link

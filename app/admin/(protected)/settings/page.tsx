@@ -118,16 +118,6 @@ export default function AdminSettingsPage() {
     await loadFactors();
   }
 
-  async function handleDisable(factorId: string) {
-    if (!window.confirm("Disable two-factor authentication? You'll only need your password to sign in.")) {
-      return;
-    }
-    setBusy(true);
-    await supabase.auth.mfa.unenroll({ factorId });
-    setBusy(false);
-    await loadFactors();
-  }
-
   return (
     <div>
       <h1 className="font-heading text-2xl font-semibold text-brand-deep-blue">Settings</h1>
@@ -258,17 +248,8 @@ export default function AdminSettingsPage() {
                 {error}
               </p>
             )}
-            <button
-              type="button"
-              onClick={() => handleDisable(verifiedFactor.id)}
-              disabled={busy}
-              className="mt-4 rounded-full border border-red-300 px-5 py-2 text-sm font-semibold text-red-700 hover:bg-red-50 disabled:opacity-60"
-            >
-              Disable two-factor authentication
-            </button>
             <p className="mt-2 text-xs text-brand-charcoal/60">
-              Two-factor is required for all admins. Disabling it will immediately prompt you to
-              set up a new authenticator.
+              Two-factor authentication is required for all admins and cannot be disabled.
             </p>
           </div>
         ) : (

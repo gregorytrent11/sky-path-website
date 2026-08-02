@@ -147,9 +147,9 @@ export default function AdminLoginPage() {
           <Image
             src="/brand/logo.png"
             alt={`${siteConfig.orgName} logo`}
-            width={72}
-            height={72}
-            className="h-18 w-18 object-contain"
+            width={144}
+            height={144}
+            className="h-36 w-36 object-contain"
           />
           <h1 className="mt-4 font-heading text-2xl font-semibold text-brand-deep-blue">
             Staff Login

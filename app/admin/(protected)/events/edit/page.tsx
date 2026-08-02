@@ -3,9 +3,12 @@
 import { FormEvent, Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { supabase } from "@/lib/supabase/client";
 import type { Event, EventInsert, EventStatus, EventUpdate } from "@/types/database";
 import { slugify } from "@/lib/slugify";
+
+const MAX_COVER_IMAGE_BYTES = 2 * 1024 * 1024;
 
 type FormState = {
   title: string;
@@ -56,6 +59,8 @@ function EditEventForm() {
   const [loading, setLoading] = useState(!!eventId);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [coverUploading, setCoverUploading] = useState(false);
+  const [coverError, setCoverError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!eventId) return;
@@ -76,6 +81,36 @@ function EditEventForm() {
 
   function update<K extends keyof FormState>(key: K, value: FormState[K]) {
     setForm((prev) => ({ ...prev, [key]: value }));
+  }
+
+  async function handleCoverUpload(file: File | undefined) {
+    if (!file) return;
+    setCoverError(null);
+
+    if (!file.type.startsWith("image/")) {
+      setCoverError("Cover photo must be an image.");
+      return;
+    }
+    if (file.size > MAX_COVER_IMAGE_BYTES) {
+      setCoverError(`Cover photo must be under ${MAX_COVER_IMAGE_BYTES / 1024 / 1024}MB.`);
+      return;
+    }
+
+    setCoverUploading(true);
+    const ext = file.name.split(".").pop() || "jpg";
+    const path = `covers/${crypto.randomUUID()}.${ext}`;
+    const { error: uploadError } = await supabase.storage.from("event-photos").upload(path, file, {
+      cacheControl: "3600",
+      upsert: false,
+    });
+    if (uploadError) {
+      setCoverUploading(false);
+      setCoverError(`Upload failed: ${uploadError.message}`);
+      return;
+    }
+    const { data: publicUrlData } = supabase.storage.from("event-photos").getPublicUrl(path);
+    update("cover_image_url", publicUrlData.publicUrl);
+    setCoverUploading(false);
   }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -216,16 +251,41 @@ function EditEventForm() {
 
         <div>
           <label htmlFor="event-cover-image" className="block text-sm font-medium text-brand-charcoal">
-            Cover image URL
+            Cover photo
           </label>
-          <input
-            id="event-cover-image"
-            type="url"
-            placeholder="https://…"
-            value={form.cover_image_url}
-            onChange={(e) => update("cover_image_url", e.target.value)}
-            className={fieldClasses()}
-          />
+          {form.cover_image_url && (
+            <div className="relative mt-2 h-32 w-full max-w-xs overflow-hidden rounded-lg bg-brand-gray">
+              <Image src={form.cover_image_url} alt="" fill className="object-cover" />
+            </div>
+          )}
+          <div className="mt-2 flex items-center gap-3">
+            <label className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-brand-purple px-4 py-2 text-sm font-semibold text-brand-purple hover:bg-brand-lavender/20">
+              {coverUploading ? "Uploading…" : form.cover_image_url ? "Replace photo" : "Upload photo"}
+              <input
+                id="event-cover-image"
+                type="file"
+                accept="image/*"
+                disabled={coverUploading}
+                onChange={(e) => handleCoverUpload(e.target.files?.[0])}
+                className="sr-only"
+              />
+            </label>
+            {form.cover_image_url && (
+              <button
+                type="button"
+                onClick={() => update("cover_image_url", "")}
+                className="text-sm text-red-700 hover:underline"
+              >
+                Remove
+              </button>
+            )}
+          </div>
+          <p className="mt-1 text-xs text-brand-charcoal/60">Images up to 2MB.</p>
+          {coverError && (
+            <p role="alert" className="mt-1 text-sm text-red-700">
+              {coverError}
+            </p>
+          )}
         </div>
 
         <div>

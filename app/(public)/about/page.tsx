@@ -147,20 +147,20 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
+      <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
         <h2 className="font-heading text-2xl font-semibold text-brand-deep-blue">
           Leadership &amp; Board
         </h2>
         <ul className="mt-6 grid gap-6 sm:grid-cols-3">
           {boardMembers.map((member) => (
             <li key={member.name} className="rounded-xl bg-brand-gray p-5 text-center">
-              <div className="relative mx-auto h-28 w-28 overflow-hidden rounded-full bg-brand-soft-blue/40">
+              <div className="relative mx-auto aspect-square w-full max-w-[336px] overflow-hidden rounded-2xl bg-brand-soft-blue/40">
                 <Image
                   src={member.photo}
                   alt={member.name}
                   fill
                   className="object-cover"
-                  sizes="112px"
+                  sizes="(min-width: 640px) 336px, 90vw"
                 />
               </div>
               <p className="mt-4 font-heading font-semibold text-brand-deep-blue">{member.name}</p>
