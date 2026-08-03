@@ -6,15 +6,36 @@ import { supabase } from "@/lib/supabase/client";
 import type { DogMedia } from "@/types/database";
 import FocalPointPicker from "@/components/admin/FocalPointPicker";
 
-const MAX_DOG_PHOTOS = 8;
+const MAX_DOG_PHOTOS = 5;
 const MAX_DOG_VIDEOS = 1;
-const MAX_IMAGE_BYTES = 2.5 * 1024 * 1024;
+const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
 const MAX_VIDEO_BYTES = 5 * 1024 * 1024;
 const MAX_DOG_VIDEO_SECONDS = 15;
+
+const IMAGE_EXTENSIONS = ["jpg", "jpeg", "png", "gif", "webp", "heic", "heif"];
+const VIDEO_EXTENSIONS = ["mp4", "mov", "webm", "m4v"];
 
 function fileExtension(path: string): string {
   const ext = path.split(".").pop();
   return ext ? ext.toUpperCase() : "FILE";
+}
+
+// Phone cameras (especially iPhones shooting HEIC) sometimes hand the browser
+// a File with an empty or non-standard `type`, so MIME sniffing alone can
+// wrongly reject a real photo/video taken on a mobile device -- fall back to
+// the file extension in that case.
+function isImageFile(file: File): boolean {
+  if (file.type.startsWith("image/")) return true;
+  if (file.type) return false;
+  const ext = file.name.split(".").pop()?.toLowerCase();
+  return !!ext && IMAGE_EXTENSIONS.includes(ext);
+}
+
+function isVideoFile(file: File): boolean {
+  if (file.type.startsWith("video/")) return true;
+  if (file.type) return false;
+  const ext = file.name.split(".").pop()?.toLowerCase();
+  return !!ext && VIDEO_EXTENSIONS.includes(ext);
 }
 
 function readVideoDuration(file: File): Promise<number> {
@@ -78,8 +99,8 @@ export default function DogMediaManager({ dogId, dogName }: { dogId: string; dog
     let addedVideos = 0;
 
     for (const file of Array.from(files)) {
-      const isImage = file.type.startsWith("image/");
-      const isVideo = file.type.startsWith("video/");
+      const isImage = isImageFile(file);
+      const isVideo = !isImage && isVideoFile(file);
 
       if (!isImage && !isVideo) {
         setError(`${file.name}: unsupported file type.`);
