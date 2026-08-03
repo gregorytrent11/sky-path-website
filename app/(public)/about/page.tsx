@@ -49,6 +49,7 @@ const boardMembers = [
     bio: [
       "Communications operator and leads the social media presence",
       "Has a passion for dogs of all shapes and sizes",
+      "Pictured with my rescue dog, Enzo. Every dog deserves a loving home, no matter their breed, size, or story.",
     ],
   },
 ];

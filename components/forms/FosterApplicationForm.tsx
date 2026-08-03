@@ -86,9 +86,6 @@ type FormState = {
   willingCommunicateHonestly: string;
   willingMeetGreets: string;
   willingSpeakWithApplicants: string;
-  understandFinalDecision: string;
-  understandNoOwnership: string;
-  interestedAdoptingFoster: string;
   // Emergencies and Travel
   emergencyBackupCare: string;
   upcomingChanges: string;
@@ -176,9 +173,6 @@ const emptyForm: FormState = {
   willingCommunicateHonestly: "",
   willingMeetGreets: "",
   willingSpeakWithApplicants: "",
-  understandFinalDecision: "",
-  understandNoOwnership: "",
-  interestedAdoptingFoster: "",
   emergencyBackupCare: "",
   upcomingChanges: "",
   upcomingChangesExplain: "",
@@ -464,9 +458,6 @@ export default function FosterApplicationForm() {
         <YesNoField name="willingCommunicateHonestly" label="Are you willing to communicate honestly about the dog's behavior, health, temperament, and progress?" value={form.willingCommunicateHonestly} onChange={(v) => update("willingCommunicateHonestly", v)} required />
         <YesNoField name="willingMeetGreets" label="Are you willing to make the foster dog available for approved meet-and-greets and adoption events?" value={form.willingMeetGreets} onChange={(v) => update("willingMeetGreets", v)} required />
         <YesNoField name="willingSpeakWithApplicants" label="Are you willing to speak with approved applicants about the foster dog's personality and routine?" value={form.willingSpeakWithApplicants} onChange={(v) => update("willingSpeakWithApplicants", v)} required />
-        <YesNoField name="understandFinalDecision" label="Do you understand that Sky's Path to Home makes the final adoption decision?" value={form.understandFinalDecision} onChange={(v) => update("understandFinalDecision", v)} required />
-        <YesNoField name="understandNoOwnership" label="Do you understand that fostering does not automatically give you ownership of the dog?" value={form.understandNoOwnership} onChange={(v) => update("understandNoOwnership", v)} required />
-        <RadioGroupField name="interestedAdoptingFoster" label="Would you be interested in adopting your foster dog if approved?" value={form.interestedAdoptingFoster} onChange={(v) => update("interestedAdoptingFoster", v)} options={["Yes", "No", "Maybe"]} required />
       </div>
 
       <div className="space-y-4">

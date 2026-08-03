@@ -25,7 +25,7 @@ const sections = [
     body: "Foster length varies by dog. Some dogs are matched quickly, while others need more time. We'll discuss expected timelines with you before placement.",
   },
   {
-    heading: "Dog-Matching Process",
+    heading: "Dog Matching Process",
     body: "We consider your home, experience, schedule, and any current pets when matching you with a foster dog.",
   },
   {

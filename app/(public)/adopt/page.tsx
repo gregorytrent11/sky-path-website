@@ -25,7 +25,7 @@ const disclosures = [
   "Information must be accurate and complete.",
   "Adoption criteria should be applied consistently.",
   "Fees and requirements may differ based on a dog's age and medical needs.",
-  "The website must not promise that every dog is fully trained or compatible with every household.",
+  "Our organization cannot promise that every dog is fully trained or compatible with every household.",
 ];
 
 export default function AdoptPage() {

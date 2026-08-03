@@ -44,10 +44,8 @@ export default function FaqPage() {
               By adopting from a nonprofit rescue, you are putting money into an organization that
               fights endlessly to save the lives of euthanasia-listed dogs every day, save dogs with
               medical issues, seniors, and those that have been abused, and is committed to ending
-              the overpopulation of pet animals in this country. When you purchase a dog from a
-              breeder, you are lining the pockets of those breeders and continuing the suffering
-              of the mom who will be continually subjected to a life of bankrolling her owner. YOU
-              have the power to help us fight the overpopulation crisis.
+              the overpopulation of pet animals in this country. YOU have the power to help us
+              fight the overpopulation crisis.
             </p>
             <p>
               When you adopt from Sky&rsquo;s Path to Home, you save TWO lives. You have given a
@@ -76,7 +74,7 @@ export default function FaqPage() {
             <ul className="space-y-2">
               <li className="flex gap-2">
                 <span aria-hidden="true" className="text-brand-purple">&bull;</span>
-                <span>Adopters must be 18 years of age or older.</span>
+                <span>Adopters must be 21 years of age or older.</span>
               </li>
               <li className="flex gap-2">
                 <span aria-hidden="true" className="text-brand-purple">&bull;</span>
@@ -111,7 +109,7 @@ export default function FaqPage() {
                 "Spayed or neutered",
                 "Microchipped",
                 "Vaccinated according to their age",
-                "Tested for heartworm and tick-borne parasites",
+                "Tested for heartworm",
                 "Treated for any illnesses or injuries",
               ].map((item) => (
                 <li key={item} className="flex gap-2">

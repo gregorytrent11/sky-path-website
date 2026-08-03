@@ -36,13 +36,10 @@ type FormState = {
   whyInterested: string;
   landlordInfo: string;
   currentPets: string;
-  previousPets: string;
   vetName: string;
   vetPhone: string;
   currentPetVetStatus: string;
   behavioralPlan: string;
-  travelPlan: string;
-  additionalInfo: string;
   signatureName: string;
   signatureDate: string;
 };
@@ -72,13 +69,10 @@ function emptyForm(dogName: string): FormState {
     whyInterested: "",
     landlordInfo: "",
     currentPets: "",
-    previousPets: "",
     vetName: "",
     vetPhone: "",
     currentPetVetStatus: "",
     behavioralPlan: "",
-    travelPlan: "",
-    additionalInfo: "",
     signatureName: "",
     signatureDate: "",
   };
@@ -287,24 +281,17 @@ function AdoptApplicationFormInner() {
           onChange={(v) => update("willingScreening", v)}
           required
         />
-      </div>
-
-      <div className="space-y-4">
-        <SectionHeading>Optional Information</SectionHeading>
-        <TextAreaField id="adopt-why" label="Why are you interested in this dog?" value={form.whyInterested} onChange={(v) => update("whyInterested", v)} />
+        <TextAreaField id="adopt-why" label="Why are you interested in this dog?" value={form.whyInterested} onChange={(v) => update("whyInterested", v)} required />
         {!renting && (
-          <TextAreaField id="adopt-landlord-optional" label="Landlord or property manager information" value={form.landlordInfo} onChange={(v) => update("landlordInfo", v)} />
+          <TextAreaField id="adopt-landlord-optional" label="Landlord or property manager information" value={form.landlordInfo} onChange={(v) => update("landlordInfo", v)} required />
         )}
-        <TextAreaField id="adopt-current-pets" label="Current pets" value={form.currentPets} onChange={(v) => update("currentPets", v)} />
-        <TextAreaField id="adopt-previous-pets" label="Previous pets, and what happened to them" value={form.previousPets} onChange={(v) => update("previousPets", v)} />
+        <TextAreaField id="adopt-current-pets" label="Current Pets" value={form.currentPets} onChange={(v) => update("currentPets", v)} required />
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <TextField id="adopt-vet-name" label="Veterinarian or clinic name" value={form.vetName} onChange={(v) => update("vetName", v)} />
-          <TextField id="adopt-vet-phone" label="Veterinarian phone number" type="tel" value={form.vetPhone} onChange={(v) => update("vetPhone", v)} />
+          <TextField id="adopt-vet-name" label="Veterinarian or clinic name" value={form.vetName} onChange={(v) => update("vetName", v)} required />
+          <TextField id="adopt-vet-phone" label="Veterinarian phone number" type="tel" value={form.vetPhone} onChange={(v) => update("vetPhone", v)} required />
         </div>
-        <TextAreaField id="adopt-vet-status" label="Current pet vaccination and veterinary-care status" value={form.currentPetVetStatus} onChange={(v) => update("currentPetVetStatus", v)} />
-        <TextAreaField id="adopt-behavior-plan" label="Plan for handling behavioral or adjustment challenges" value={form.behavioralPlan} onChange={(v) => update("behavioralPlan", v)} />
-        <TextAreaField id="adopt-travel-plan" label="Travel and pet-care plan" value={form.travelPlan} onChange={(v) => update("travelPlan", v)} />
-        <TextAreaField id="adopt-additional" label="Additional information" value={form.additionalInfo} onChange={(v) => update("additionalInfo", v)} />
+        <TextAreaField id="adopt-vet-status" label="Current pet vaccination and veterinary care status" value={form.currentPetVetStatus} onChange={(v) => update("currentPetVetStatus", v)} required />
+        <TextAreaField id="adopt-behavior-plan" label="Plan for handling behavioral or adjustment challenges" value={form.behavioralPlan} onChange={(v) => update("behavioralPlan", v)} required />
       </div>
 
       <div className="space-y-4">

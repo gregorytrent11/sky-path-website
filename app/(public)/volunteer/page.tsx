@@ -28,6 +28,18 @@ const ways = [
     href: "/donate/",
     cta: "Make a Donation",
   },
+  {
+    heading: "Donate Needed Supplies",
+    body: "You can support Sky's Path to Home by donating new or gently used supplies from our wish list. Needed items may include dog crates in sizes small through extra-large, new blankets, dog beds, food and water bowls, harnesses, leashes, dog treats, and toys. These donations help us provide safe, comfortable care for dogs while they wait for their permanent homes. Please contact us through social media, email, or phone to coordinate supply drop offs.",
+    href: "/contact/",
+    cta: "Contact Us",
+  },
+];
+
+const socialLinks = [
+  { name: "Instagram", handle: "@SkysPathtoHome", href: "https://www.instagram.com/SkysPathtoHome/" },
+  { name: "TikTok", handle: "skys.path.to.home", href: "https://www.tiktok.com/@skys.path.to.home" },
+  { name: "LinkedIn", handle: "Sky's Path to Home", href: "https://www.linkedin.com/company/136974435/" },
 ];
 
 export default function VolunteerPage() {
@@ -56,6 +68,28 @@ export default function VolunteerPage() {
               )}
             </div>
           ))}
+        </div>
+      </section>
+
+      <section className="border-t border-brand-soft-blue/40">
+        <div className="mx-auto max-w-2xl px-4 py-14 text-center sm:px-6">
+          <h2 className="font-heading text-2xl font-semibold text-brand-deep-blue">Follow Us on Social Media</h2>
+          <p className="mt-3 text-sm leading-relaxed text-brand-charcoal">
+            Stay up to date on new dogs, adoption stories, and events by following along.
+          </p>
+          <div className="mt-6 flex flex-wrap items-center justify-center gap-4">
+            {socialLinks.map((social) => (
+              <a
+                key={social.name}
+                href={social.href}
+                target="_blank"
+                rel="noreferrer"
+                className="rounded-full border-2 border-brand-purple px-6 py-3 text-sm font-semibold text-brand-purple transition-colors hover:bg-brand-purple hover:text-brand-white"
+              >
+                {social.name} &middot; {social.handle}
+              </a>
+            ))}
+          </div>
         </div>
       </section>
 
