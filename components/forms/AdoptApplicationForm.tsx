@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import Turnstile from "@/components/forms/Turnstile";
 import { submitForm } from "@/lib/submit-form";
 import {
+  PhoneField,
   RadioGroupField,
   SectionHeading,
   TextAreaField,
@@ -166,8 +167,8 @@ function AdoptApplicationFormInner() {
           <TextField id="adopt-last-name" label="Last name" value={form.lastName} onChange={(v) => update("lastName", v)} required />
         </div>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <TextField id="adopt-email" label="Email address" type="email" value={form.email} onChange={(v) => update("email", v)} required />
-          <TextField id="adopt-phone" label="Phone number" type="tel" value={form.phone} onChange={(v) => update("phone", v)} required />
+          <TextField id="adopt-email" label="Email address" type="email" placeholder="you@example.com" value={form.email} onChange={(v) => update("email", v)} required />
+          <PhoneField id="adopt-phone" label="Phone number" value={form.phone} onChange={(v) => update("phone", v)} required />
         </div>
         <TextField id="adopt-street" label="Street address" value={form.streetAddress} onChange={(v) => update("streetAddress", v)} required />
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
@@ -288,7 +289,7 @@ function AdoptApplicationFormInner() {
         <TextAreaField id="adopt-current-pets" label="Current Pets" value={form.currentPets} onChange={(v) => update("currentPets", v)} required />
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <TextField id="adopt-vet-name" label="Veterinarian or clinic name" value={form.vetName} onChange={(v) => update("vetName", v)} required />
-          <TextField id="adopt-vet-phone" label="Veterinarian phone number" type="tel" value={form.vetPhone} onChange={(v) => update("vetPhone", v)} required />
+          <PhoneField id="adopt-vet-phone" label="Veterinarian phone number" value={form.vetPhone} onChange={(v) => update("vetPhone", v)} required />
         </div>
         <TextAreaField id="adopt-vet-status" label="Current pet vaccination and veterinary care status" value={form.currentPetVetStatus} onChange={(v) => update("currentPetVetStatus", v)} required />
         <TextAreaField id="adopt-behavior-plan" label="Plan for handling behavioral or adjustment challenges" value={form.behavioralPlan} onChange={(v) => update("behavioralPlan", v)} required />

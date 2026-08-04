@@ -1,4 +1,5 @@
 import { inputClasses } from "@/components/forms/FormField";
+import { formatUsPhone } from "@/lib/format-phone";
 
 function Label({ label, required }: { label: string; required?: boolean }) {
   return (
@@ -49,6 +50,42 @@ export function TextField({
         placeholder={placeholder}
         min={min}
         max={max}
+        className={`mt-1 ${inputClasses}`}
+      />
+    </div>
+  );
+}
+
+export function PhoneField({
+  id,
+  label,
+  value,
+  onChange,
+  required,
+}: {
+  id: string;
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  required?: boolean;
+}) {
+  return (
+    <div>
+      <label htmlFor={id}>
+        <Label label={label} required={required} />
+      </label>
+      <input
+        id={id}
+        type="tel"
+        inputMode="tel"
+        autoComplete="tel"
+        value={value}
+        onChange={(e) => onChange(formatUsPhone(e.target.value))}
+        required={required}
+        placeholder="(555) 123-4567"
+        pattern="\(\d{3}\) \d{3}-\d{4}"
+        title="Phone number in the format (555) 123-4567"
+        maxLength={14}
         className={`mt-1 ${inputClasses}`}
       />
     </div>

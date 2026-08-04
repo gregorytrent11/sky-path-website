@@ -5,6 +5,7 @@ import Turnstile from "@/components/forms/Turnstile";
 import { submitForm } from "@/lib/submit-form";
 import {
   CheckboxGroupField,
+  PhoneField,
   RadioGroupField,
   SectionHeading,
   TextAreaField,
@@ -296,8 +297,8 @@ export default function FosterApplicationForm() {
           <TextField id="foster-last-name" label="Last name" value={form.lastName} onChange={(v) => update("lastName", v)} required />
         </div>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <TextField id="foster-email" label="Email address" type="email" value={form.email} onChange={(v) => update("email", v)} required />
-          <TextField id="foster-phone" label="Phone number" type="tel" value={form.phone} onChange={(v) => update("phone", v)} required />
+          <TextField id="foster-email" label="Email address" type="email" placeholder="you@example.com" value={form.email} onChange={(v) => update("email", v)} required />
+          <PhoneField id="foster-phone" label="Phone number" value={form.phone} onChange={(v) => update("phone", v)} required />
         </div>
         <TextField id="foster-street" label="Street address" value={form.streetAddress} onChange={(v) => update("streetAddress", v)} required />
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
@@ -397,7 +398,7 @@ export default function FosterApplicationForm() {
           <>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <TextField id="foster-vet-name" label="Veterinarian or clinic name" value={form.vetName} onChange={(v) => update("vetName", v)} required />
-              <TextField id="foster-vet-phone" label="Veterinarian phone number" type="tel" value={form.vetPhone} onChange={(v) => update("vetPhone", v)} />
+              <PhoneField id="foster-vet-phone" label="Veterinarian phone number" value={form.vetPhone} onChange={(v) => update("vetPhone", v)} />
             </div>
             <TextField id="foster-vet-records" label="Name under which veterinary records are listed" value={form.vetRecordsName} onChange={(v) => update("vetRecordsName", v)} />
           </>
