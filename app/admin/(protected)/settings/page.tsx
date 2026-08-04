@@ -2,6 +2,7 @@
 
 import { FormEvent, useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase/client";
+import { useAdminSession } from "@/lib/supabase/auth";
 
 interface TotpFactor {
   id: string;
@@ -29,6 +30,7 @@ function formatDate(value: string | null): string {
 }
 
 export default function AdminSettingsPage() {
+  const { session } = useAdminSession();
   const [factors, setFactors] = useState<TotpFactor[] | null>(null);
   const [enroll, setEnroll] = useState<EnrollState>(null);
   const [code, setCode] = useState("");
@@ -47,6 +49,7 @@ export default function AdminSettingsPage() {
   const [inviteBusy, setInviteBusy] = useState(false);
   const [inviteError, setInviteError] = useState<string | null>(null);
   const [inviteSent, setInviteSent] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   async function handlePasswordSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -114,6 +117,22 @@ export default function AdminSettingsPage() {
     }
     setInviteEmail("");
     setInviteSent(true);
+    await loadAdmins();
+  }
+
+  async function handleDeleteAdmin(admin: AdminUser) {
+    if (!window.confirm(`Are you sure you want to delete ${admin.email}?`)) return;
+
+    setAdminsError(null);
+    setDeletingId(admin.id);
+    const { data, error: invokeError } = await supabase.functions.invoke("manage-admins", {
+      body: { action: "delete", userId: admin.id },
+    });
+    setDeletingId(null);
+    if (invokeError || !data || data.error) {
+      setAdminsError(data?.error ?? invokeError?.message ?? "Could not delete admin.");
+      return;
+    }
     await loadAdmins();
   }
 
@@ -340,15 +359,31 @@ export default function AdminSettingsPage() {
           <p className="mt-3 text-sm text-brand-charcoal/80">Loading…</p>
         ) : (
           <ul className="mt-4 divide-y divide-brand-soft-blue/40">
-            {admins.map((admin) => (
-              <li key={admin.id} className="flex flex-wrap items-center justify-between gap-2 py-2 text-sm">
-                <span className="text-brand-charcoal">{admin.email}</span>
-                <span className="text-xs text-brand-charcoal/60">
-                  Joined {formatDate(admin.created_at)} &middot; Last sign-in{" "}
-                  {formatDate(admin.last_sign_in_at)}
-                </span>
-              </li>
-            ))}
+            {admins.map((admin) => {
+              const isSelf = admin.id === session?.user.id;
+              return (
+                <li key={admin.id} className="flex flex-wrap items-center justify-between gap-2 py-2 text-sm">
+                  <span className="text-brand-charcoal">
+                    {admin.email}
+                    {isSelf && <span className="ml-1 text-xs text-brand-charcoal/60">(you)</span>}
+                  </span>
+                  <span className="flex items-center gap-3 text-xs text-brand-charcoal/60">
+                    Joined {formatDate(admin.created_at)} &middot; Last sign-in{" "}
+                    {formatDate(admin.last_sign_in_at)}
+                    {!isSelf && (
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteAdmin(admin)}
+                        disabled={deletingId === admin.id}
+                        className="font-medium text-red-700 hover:underline disabled:opacity-60"
+                      >
+                        {deletingId === admin.id ? "Deleting…" : "Delete"}
+                      </button>
+                    )}
+                  </span>
+                </li>
+              );
+            })}
           </ul>
         )}
 

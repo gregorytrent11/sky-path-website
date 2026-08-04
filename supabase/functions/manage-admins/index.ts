@@ -66,7 +66,7 @@ Deno.serve(async (req) => {
   }
   const adminClient = createClient(Deno.env.get("SUPABASE_URL")!, serviceRoleKey);
 
-  let body: { action?: string; email?: string };
+  let body: { action?: string; email?: string; userId?: string };
   try {
     body = await req.json();
   } catch {
@@ -100,6 +100,27 @@ Deno.serve(async (req) => {
     const { error } = await adminClient.auth.admin.inviteUserByEmail(email, {
       redirectTo: `${SITE_URL}/admin/reset-password/`,
     });
+    if (error) {
+      return new Response(JSON.stringify({ error: error.message }), { status: 400, headers });
+    }
+    return new Response(JSON.stringify({ ok: true }), { status: 200, headers });
+  }
+
+  if (body.action === "delete") {
+    const userId = body.userId?.trim();
+    if (!userId) {
+      return new Response(JSON.stringify({ error: "A user id is required" }), {
+        status: 400,
+        headers,
+      });
+    }
+    if (userId === caller.id) {
+      return new Response(JSON.stringify({ error: "You can't delete your own account." }), {
+        status: 400,
+        headers,
+      });
+    }
+    const { error } = await adminClient.auth.admin.deleteUser(userId);
     if (error) {
       return new Response(JSON.stringify({ error: error.message }), { status: 400, headers });
     }
