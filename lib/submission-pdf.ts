@@ -9,9 +9,12 @@ const formTypeTitles: Record<Submission["form_type"], string> = {
   foster_application: "Foster Application",
 };
 
-// Renders a submission as a simple paginated PDF and triggers a browser
-// download. Uses jsPDF client-side (no server round trip) since this is a
+// Renders a submission as a paginated PDF and triggers a browser download.
+// Uses jsPDF client-side (no server round trip) since this is a
 // static-export site with no API routes to generate files server-side.
+// Field selection, order, and the two-column layout for extra fields are
+// kept in step with the admin Submissions page's expanded view so the PDF
+// matches what the admin sees on screen.
 export async function downloadSubmissionPdf(submission: Submission) {
   const { jsPDF } = await import("jspdf");
   const doc = new jsPDF({ unit: "pt", format: "letter" });
@@ -20,6 +23,9 @@ export async function downloadSubmissionPdf(submission: Submission) {
   const pageWidth = doc.internal.pageSize.getWidth();
   const pageHeight = doc.internal.pageSize.getHeight();
   const maxWidth = pageWidth - marginX * 2;
+  const colGap = 24;
+  const colWidth = (maxWidth - colGap) / 2;
+  const colXs = [marginX, marginX + colWidth + colGap];
   let y = 56;
 
   function ensureSpace(lineHeight: number) {
@@ -50,22 +56,59 @@ export async function downloadSubmissionPdf(submission: Submission) {
     writeLines(value, { size: 11, gap: 8 });
   }
 
-  writeLines(formTypeTitles[submission.form_type] || "Form Submission", { size: 16, bold: true, gap: 4 });
-  writeLines(`Submitted ${new Date(submission.created_at).toLocaleString()}`, { size: 9, gap: 12 });
+  // Same two-per-row flow as the browser's `sm:grid-cols-2` details grid --
+  // pairs of fields sit side by side, and a row's height follows whichever
+  // of the pair wraps to more lines (matching how CSS grid rows behave).
+  function writeFieldGridRow(entries: [string, string][]) {
+    const labelSize = 9;
+    const valueSize = 11;
+    const lineHeight = valueSize + 4;
 
-  writeField("Name", submission.name);
+    doc.setFontSize(valueSize);
+    doc.setFont("helvetica", "normal");
+    const wrapped = entries.map(([, value]) => doc.splitTextToSize(value, colWidth) as string[]);
+    const rowHeight = Math.max(...wrapped.map((lines) => 12 + lines.length * lineHeight)) + 8;
+
+    ensureSpace(rowHeight);
+    entries.forEach(([label], i) => {
+      let cy = y;
+      doc.setFontSize(labelSize);
+      doc.setFont("helvetica", "bold");
+      doc.text(label.toUpperCase(), colXs[i], cy);
+      cy += 12;
+      doc.setFontSize(valueSize);
+      doc.setFont("helvetica", "normal");
+      for (const line of wrapped[i]) {
+        doc.text(line, colXs[i], cy);
+        cy += lineHeight;
+      }
+    });
+    y += rowHeight;
+  }
+
+  writeLines(formTypeTitles[submission.form_type] || "Form Submission", { size: 16, bold: true, gap: 4 });
+  writeLines(`${submission.name} · Submitted ${new Date(submission.created_at).toLocaleString()}`, {
+    size: 9,
+    gap: 12,
+  });
+
   writeField("Email", submission.email);
   if (submission.phone) writeField("Phone", submission.phone);
+  const subject = humanizeValue(submission.payload?.subject);
+  if (subject) writeField("Subject", subject);
   if (submission.message) writeField("Message", submission.message);
 
   const payload = submission.payload || {};
-  const entries = Object.entries(payload).filter(([, value]) => humanizeValue(value) !== null);
+  const entries = Object.entries(payload)
+    .filter(([key, value]) => key !== "subject" && humanizeValue(value) !== null)
+    .map(([key, value]): [string, string] => [humanizeKey(key), humanizeValue(value) ?? ""]);
+
   if (entries.length > 0) {
     ensureSpace(20);
     y += 4;
     writeLines("Application Details", { size: 12, bold: true, gap: 6 });
-    for (const [key, value] of entries) {
-      writeField(humanizeKey(key), humanizeValue(value) ?? "");
+    for (let i = 0; i < entries.length; i += 2) {
+      writeFieldGridRow(entries.slice(i, i + 2));
     }
   }
 

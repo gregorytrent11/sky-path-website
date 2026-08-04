@@ -4,8 +4,14 @@
 // anon insert, so a bad actor hitting PostgREST directly can't skip the
 // spam check (see supabase/migrations/20260731220000_init_schema.sql).
 //
+// Also fires an email alert via Resend on every successful submission --
+// a temporary stand-in for real inbox notifications until Google Workspace
+// is set up. Remove the notifyByEmail call (and the RESEND_API_KEY secret)
+// once that's in place.
+//
 // Required secrets (supabase secrets set ...):
 //   TURNSTILE_SECRET_KEY
+//   RESEND_API_KEY
 // SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are injected automatically.
 
 import { createClient } from "jsr:@supabase/supabase-js@2";
@@ -17,6 +23,58 @@ const ALLOWED_FORM_TYPES = new Set([
   "adopt_application",
   "foster_application",
 ]);
+
+const NOTIFY_EMAIL = "skyspathtohome@gmail.com";
+
+const FORM_TYPE_LABELS: Record<string, string> = {
+  contact: "Contact Form",
+  volunteer: "Volunteer Interest",
+  request_help: "Request Help",
+  adopt_application: "Adoption Application",
+  foster_application: "Foster Application",
+};
+
+async function notifyByEmail(details: {
+  formType: string;
+  name: string;
+  email: string;
+  phone: string | null;
+  message: string | null;
+}) {
+  const apiKey = Deno.env.get("RESEND_API_KEY");
+  if (!apiKey) return;
+
+  const label = FORM_TYPE_LABELS[details.formType] ?? details.formType;
+  const lines = [
+    `New ${label} submission from ${details.name}.`,
+    "",
+    `Name: ${details.name}`,
+    `Email: ${details.email}`,
+    details.phone ? `Phone: ${details.phone}` : null,
+    details.message ? `Message: ${details.message}` : null,
+    "",
+    "Full details: https://skyspath.com/admin/submissions/",
+  ].filter((line) => line !== null);
+
+  try {
+    await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        from: "Sky's Path to Home <onboarding@resend.dev>",
+        to: NOTIFY_EMAIL,
+        subject: `New ${label} Submission - ${details.name}`,
+        text: lines.join("\n"),
+      }),
+    });
+  } catch {
+    // Email is a best-effort alert -- never let a Resend outage block a
+    // submission that already saved successfully.
+  }
+}
 
 const ALLOWED_ORIGINS = new Set([
   "https://skyspath.com",
@@ -105,12 +163,15 @@ Deno.serve(async (req) => {
     Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
   );
 
+  const phone = body.phone ? String(body.phone) : null;
+  const message = body.message ? String(body.message) : null;
+
   const { error: insertError } = await supabase.from("submissions").insert({
     form_type: formType,
     name,
     email,
-    phone: body.phone ? String(body.phone) : null,
-    message: body.message ? String(body.message) : null,
+    phone,
+    message,
     payload: typeof body.payload === "object" && body.payload !== null ? body.payload : {},
     dog_id: body.dogId ? String(body.dogId) : null,
     turnstile_verified: true,
@@ -123,6 +184,8 @@ Deno.serve(async (req) => {
       headers,
     });
   }
+
+  await notifyByEmail({ formType, name, email, phone, message });
 
   return new Response(JSON.stringify({ ok: true }), { status: 200, headers });
 });
