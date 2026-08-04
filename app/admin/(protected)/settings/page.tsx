@@ -21,7 +21,6 @@ interface AdminUser {
   email: string | null;
   created_at: string;
   last_sign_in_at: string | null;
-  mfa_enabled: boolean;
 }
 
 function formatDate(value: string | null): string {
@@ -347,11 +346,6 @@ export default function AdminSettingsPage() {
                 <span className="text-xs text-brand-charcoal/60">
                   Joined {formatDate(admin.created_at)} &middot; Last sign-in{" "}
                   {formatDate(admin.last_sign_in_at)}
-                  {!admin.mfa_enabled && (
-                    <span className="ml-2 rounded-full bg-amber-100 px-2 py-0.5 font-medium text-amber-900">
-                      2FA not set up
-                    </span>
-                  )}
                 </span>
               </li>
             ))}

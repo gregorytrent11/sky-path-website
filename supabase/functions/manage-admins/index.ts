@@ -85,7 +85,6 @@ Deno.serve(async (req) => {
         email: u.email,
         created_at: u.created_at,
         last_sign_in_at: u.last_sign_in_at,
-        mfa_enabled: (u.factors ?? []).some((f) => f.status === "verified"),
       }));
     return new Response(JSON.stringify({ admins }), { status: 200, headers });
   }
