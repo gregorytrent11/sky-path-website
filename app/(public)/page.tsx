@@ -4,7 +4,9 @@ import DonateButton from "@/components/layout/DonateButton";
 import RecoveryRedirect from "@/components/RecoveryRedirect";
 import SuccessStoriesPreview from "@/components/dogs/SuccessStoriesPreview";
 import FeaturedDogsPreview from "@/components/dogs/FeaturedDogsPreview";
+import { socialIcons } from "@/components/icons/SocialIcons";
 import { siteConfig } from "@/lib/site-config";
+import { socialLinks } from "@/lib/social-links";
 
 export default function HomePage() {
   return (
@@ -126,6 +128,33 @@ export default function HomePage() {
           <Link href="/success-stories" className="text-sm font-semibold text-brand-purple hover:underline">
             View all success stories &rarr;
           </Link>
+        </div>
+      </section>
+
+      {/* Follow us on social media */}
+      <section aria-labelledby="social-heading" className="mx-auto max-w-6xl px-4 py-16 text-center sm:px-6">
+        <h2 id="social-heading" className="font-heading text-3xl font-semibold text-brand-deep-blue">
+          Follow Us on Social Media
+        </h2>
+        <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-brand-charcoal">
+          Stay up to date on new dogs, adoption stories, and events by following along.
+        </p>
+        <div className="mt-6 flex flex-wrap items-center justify-center gap-4">
+          {socialLinks.map((social) => {
+            const Icon = socialIcons[social.name];
+            return (
+              <a
+                key={social.name}
+                href={social.href}
+                target="_blank"
+                rel="noreferrer"
+                aria-label={`${social.name}: ${social.handle}`}
+                className="flex h-14 w-14 items-center justify-center rounded-full border-2 border-brand-purple text-brand-purple transition-colors hover:bg-brand-purple hover:text-brand-white"
+              >
+                <Icon className="h-6 w-6" />
+              </a>
+            );
+          })}
         </div>
       </section>
 

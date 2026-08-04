@@ -2,6 +2,7 @@ import Link from "next/link";
 import PageHero from "@/components/layout/PageHero";
 import VolunteerForm from "@/components/forms/VolunteerForm";
 import { pageMetadata } from "@/lib/metadata";
+import { socialLinks } from "@/lib/social-links";
 
 export const metadata = pageMetadata("Get Involved", "Volunteer opportunities with Sky's Path to Home.");
 
@@ -34,12 +35,6 @@ const ways = [
     href: "/contact/",
     cta: "Contact Us",
   },
-];
-
-const socialLinks = [
-  { name: "Instagram", handle: "@SkysPathtoHome", href: "https://www.instagram.com/SkysPathtoHome/" },
-  { name: "TikTok", handle: "skys.path.to.home", href: "https://www.tiktok.com/@skys.path.to.home" },
-  { name: "LinkedIn", handle: "Sky's Path to Home", href: "https://www.linkedin.com/company/skys-path-to-home/" },
 ];
 
 export default function VolunteerPage() {

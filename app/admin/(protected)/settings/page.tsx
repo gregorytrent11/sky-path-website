@@ -16,6 +16,19 @@ type EnrollState = {
   secret: string;
 } | null;
 
+interface AdminUser {
+  id: string;
+  email: string | null;
+  created_at: string;
+  last_sign_in_at: string | null;
+  mfa_enabled: boolean;
+}
+
+function formatDate(value: string | null): string {
+  if (!value) return "Never";
+  return new Date(value).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
+}
+
 export default function AdminSettingsPage() {
   const [factors, setFactors] = useState<TotpFactor[] | null>(null);
   const [enroll, setEnroll] = useState<EnrollState>(null);
@@ -28,6 +41,13 @@ export default function AdminSettingsPage() {
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [passwordSaved, setPasswordSaved] = useState(false);
   const [passwordBusy, setPasswordBusy] = useState(false);
+
+  const [admins, setAdmins] = useState<AdminUser[] | null>(null);
+  const [adminsError, setAdminsError] = useState<string | null>(null);
+  const [inviteEmail, setInviteEmail] = useState("");
+  const [inviteBusy, setInviteBusy] = useState(false);
+  const [inviteError, setInviteError] = useState<string | null>(null);
+  const [inviteSent, setInviteSent] = useState(false);
 
   async function handlePasswordSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -60,11 +80,43 @@ export default function AdminSettingsPage() {
     setFactors(data?.totp ?? []);
   }
 
+  async function loadAdmins() {
+    setAdminsError(null);
+    const { data, error: invokeError } = await supabase.functions.invoke("manage-admins", {
+      body: { action: "list" },
+    });
+    if (invokeError || !data || data.error) {
+      setAdminsError(data?.error ?? invokeError?.message ?? "Could not load admins.");
+      return;
+    }
+    setAdmins(data.admins);
+  }
+
   useEffect(() => {
     // Initial external data fetch on mount, not derived state.
     // eslint-disable-next-line react-hooks/set-state-in-effect
     loadFactors();
+    loadAdmins();
   }, []);
+
+  async function handleInvite(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setInviteError(null);
+    setInviteSent(false);
+
+    setInviteBusy(true);
+    const { data, error: invokeError } = await supabase.functions.invoke("manage-admins", {
+      body: { action: "invite", email: inviteEmail.trim() },
+    });
+    setInviteBusy(false);
+    if (invokeError || !data || data.error) {
+      setInviteError(data?.error ?? invokeError?.message ?? "Could not send invite.");
+      return;
+    }
+    setInviteEmail("");
+    setInviteSent(true);
+    await loadAdmins();
+  }
 
   const verifiedFactor = factors?.find((f) => f.status === "verified");
 
@@ -274,6 +326,72 @@ export default function AdminSettingsPage() {
             </button>
           </div>
         )}
+      </div>
+
+      <div className="mt-6 max-w-lg rounded-xl border border-brand-soft-blue/60 bg-brand-white p-6">
+        <h2 className="font-heading text-lg font-semibold text-brand-deep-blue">Admins</h2>
+
+        {adminsError && (
+          <p role="alert" className="mt-3 text-sm text-red-700">
+            {adminsError}
+          </p>
+        )}
+
+        {!admins ? (
+          <p className="mt-3 text-sm text-brand-charcoal/80">Loading…</p>
+        ) : (
+          <ul className="mt-4 divide-y divide-brand-soft-blue/40">
+            {admins.map((admin) => (
+              <li key={admin.id} className="flex flex-wrap items-center justify-between gap-2 py-2 text-sm">
+                <span className="text-brand-charcoal">{admin.email}</span>
+                <span className="text-xs text-brand-charcoal/60">
+                  Joined {formatDate(admin.created_at)} &middot; Last sign-in{" "}
+                  {formatDate(admin.last_sign_in_at)}
+                  {!admin.mfa_enabled && (
+                    <span className="ml-2 rounded-full bg-amber-100 px-2 py-0.5 font-medium text-amber-900">
+                      2FA not set up
+                    </span>
+                  )}
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
+
+        <form onSubmit={handleInvite} className="mt-6 space-y-3 border-t border-brand-soft-blue/40 pt-4">
+          <div>
+            <label htmlFor="invite-email" className="block text-sm font-medium text-brand-charcoal">
+              Invite a new admin
+            </label>
+            <input
+              id="invite-email"
+              type="email"
+              required
+              autoComplete="email"
+              placeholder="name@example.com"
+              value={inviteEmail}
+              onChange={(e) => setInviteEmail(e.target.value)}
+              className="mt-1 block w-full rounded-md border border-brand-soft-blue bg-brand-white px-3 py-2 text-sm text-brand-charcoal shadow-sm focus:border-brand-purple focus:outline-none focus:ring-1 focus:ring-brand-purple"
+            />
+            <p className="mt-1 text-xs text-brand-charcoal/60">
+              They&rsquo;ll get an email with a link to set a password, then be required to set up
+              two-factor authentication before using the dashboard.
+            </p>
+          </div>
+          {inviteSent && <p className="text-sm text-green-700">Invite sent.</p>}
+          {inviteError && (
+            <p role="alert" className="text-sm text-red-700">
+              {inviteError}
+            </p>
+          )}
+          <button
+            type="submit"
+            disabled={inviteBusy}
+            className="rounded-full bg-brand-purple px-5 py-2 text-sm font-semibold text-brand-white shadow-sm hover:bg-brand-deep-blue disabled:opacity-60"
+          >
+            {inviteBusy ? "Sending…" : "Send Invite"}
+          </button>
+        </form>
       </div>
     </div>
   );
