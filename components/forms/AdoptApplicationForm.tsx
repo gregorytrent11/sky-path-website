@@ -147,7 +147,7 @@ function AdoptApplicationFormInner() {
   }
 
   return (
-    <form onSubmit={handleSubmit} noValidate className="space-y-8">
+    <form onSubmit={handleSubmit} className="space-y-8">
       <div className="space-y-4">
         <SectionHeading>Dog Information</SectionHeading>
         <TextField

@@ -288,7 +288,7 @@ export default function FosterApplicationForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} noValidate className="space-y-8">
+    <form onSubmit={handleSubmit} className="space-y-8">
       <div className="space-y-4">
         <SectionHeading>Applicant Information</SectionHeading>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
