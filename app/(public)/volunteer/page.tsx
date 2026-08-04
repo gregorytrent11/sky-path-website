@@ -1,6 +1,7 @@
 import Link from "next/link";
 import PageHero from "@/components/layout/PageHero";
 import VolunteerForm from "@/components/forms/VolunteerForm";
+import { socialIcons } from "@/components/icons/SocialIcons";
 import { pageMetadata } from "@/lib/metadata";
 import { socialLinks } from "@/lib/social-links";
 
@@ -73,17 +74,21 @@ export default function VolunteerPage() {
             Stay up to date on new dogs, adoption stories, and events by following along.
           </p>
           <div className="mt-6 flex flex-wrap items-center justify-center gap-4">
-            {socialLinks.map((social) => (
-              <a
-                key={social.name}
-                href={social.href}
-                target="_blank"
-                rel="noreferrer"
-                className="rounded-full border-2 border-brand-purple px-6 py-3 text-sm font-semibold text-brand-purple transition-colors hover:bg-brand-purple hover:text-brand-white"
-              >
-                {social.name} &middot; {social.handle}
-              </a>
-            ))}
+            {socialLinks.map((social) => {
+              const Icon = socialIcons[social.name];
+              return (
+                <a
+                  key={social.name}
+                  href={social.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label={`${social.name}: ${social.handle}`}
+                  className="flex h-14 w-14 items-center justify-center rounded-full border-2 border-brand-purple text-brand-purple transition-colors hover:bg-brand-purple hover:text-brand-white"
+                >
+                  <Icon className="h-6 w-6" />
+                </a>
+              );
+            })}
           </div>
         </div>
       </section>
