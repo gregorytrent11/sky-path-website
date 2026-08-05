@@ -1,3 +1,4 @@
+import Image from "next/image";
 import PageHero from "@/components/layout/PageHero";
 import DonateButton from "@/components/layout/DonateButton";
 import { siteConfig } from "@/lib/site-config";
@@ -52,7 +53,25 @@ export default function DonatePage() {
           </p>
         </div>
 
-        <div className="mx-auto mt-12 max-w-xl rounded-lg border border-brand-soft-blue bg-brand-gray p-6 text-left">
+        <div className="mx-auto mt-12 max-w-xl rounded-lg border border-brand-soft-blue bg-brand-gray p-6 text-center">
+          <h2 className="font-heading text-lg font-semibold text-brand-deep-blue">
+            Give via Zelle
+          </h2>
+          <p className="mt-2 text-sm leading-relaxed text-brand-charcoal/90">
+            Scan the QR code below in your banking app, or send to{" "}
+            <span className="font-semibold">skyspathtohome</span> on Zelle.
+          </p>
+          <div className="relative mx-auto mt-4 aspect-[700/775] w-full max-w-[280px] overflow-hidden rounded-lg bg-white">
+            <Image
+              src="/donate/zelle-qr-code.png"
+              alt="Zelle QR code to send a donation to Sky's Path to Home"
+              fill
+              className="object-contain"
+            />
+          </div>
+        </div>
+
+        <div className="mx-auto mt-6 max-w-xl rounded-lg border border-brand-soft-blue bg-brand-gray p-6 text-left">
           <h2 className="font-heading text-lg font-semibold text-brand-deep-blue">
             Our Nonprofit Status
           </h2>
