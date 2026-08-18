@@ -1,11 +1,16 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import RichText from "@/components/RichText";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { toHtml } from "@/components/RichText";
 
-// A plain textarea plus toolbar buttons that insert the same markers
-// components/RichText.tsx understands, and a preview that renders through that
-// exact component -- so the preview can't drift from the live page.
+// A WYSIWYG editor: bold looks bold and bullets look like bullets, so there is
+// nothing left to preview.
+//
+// What it *stores* is unchanged -- the same plain-text markers
+// components/RichText.tsx reads ("- item", "**bold**", and so on). The
+// contenteditable surface is converted to and from that text at the edges, so
+// the database format, existing content, and the public pages all stay exactly
+// as they were, and there is still no HTML anywhere to sanitise.
 
 type Props = {
   id: string;
@@ -21,9 +26,11 @@ type Props = {
   showWordCount?: boolean;
 };
 
-// Square icon buttons in a ribbon, the way Word's formatting group looks.
 const TOOLBAR_BUTTON =
-  "flex h-8 w-8 items-center justify-center rounded border border-transparent text-brand-charcoal hover:border-brand-soft-blue hover:bg-brand-lavender/40 focus:outline-none focus:ring-1 focus:ring-brand-purple";
+  "flex h-8 w-8 items-center justify-center rounded border text-brand-charcoal focus:outline-none focus:ring-1 focus:ring-brand-purple";
+const TOOLBAR_IDLE = "border-transparent hover:border-brand-soft-blue hover:bg-brand-lavender/40";
+// Word shows an active format as a pressed button; mirror that.
+const TOOLBAR_ACTIVE = "border-brand-soft-blue bg-brand-lavender/70";
 
 function BulletListIcon() {
   return (
@@ -61,6 +68,60 @@ function ToolbarDivider() {
   return <span aria-hidden="true" className="mx-1 h-5 w-px bg-brand-soft-blue" />;
 }
 
+// --- contenteditable DOM -> stored marker text ------------------------------
+
+function serializeInline(node: Node): string {
+  if (node.nodeType === Node.TEXT_NODE) return node.textContent ?? "";
+  if (!(node instanceof HTMLElement)) return "";
+
+  if (node.tagName === "BR") return "\n";
+
+  const inner = Array.from(node.childNodes).map(serializeInline).join("");
+  // Wrapping empty text would leave stray ** behind in the stored value.
+  if (!inner) return "";
+
+  switch (node.tagName) {
+    case "STRONG":
+    case "B":
+      return `**${inner}**`;
+    case "EM":
+    case "I":
+      return `*${inner}*`;
+    case "U":
+      return `__${inner}__`;
+    default:
+      return inner;
+  }
+}
+
+function serializeBlock(node: Node): string {
+  if (node.nodeType === Node.TEXT_NODE) return node.textContent ?? "";
+  if (!(node instanceof HTMLElement)) return "";
+
+  if (node.tagName === "UL") {
+    return Array.from(node.children)
+      .map((li) => `- ${serializeInline(li)}`)
+      .join("\n");
+  }
+  if (node.tagName === "OL") {
+    return Array.from(node.children)
+      .map((li, index) => `${index + 1}. ${serializeInline(li)}`)
+      .join("\n");
+  }
+  return serializeInline(node);
+}
+
+function serialize(root: HTMLElement): string {
+  return Array.from(root.childNodes)
+    .map(serializeBlock)
+    // contenteditable pads empty lines with non-breaking spaces.
+    .map((block) => block.replace(/ /g, " ").trimEnd())
+    .filter((block) => block.trim() !== "")
+    .join("\n\n");
+}
+
+// ---------------------------------------------------------------------------
+
 export default function RichTextField({
   id,
   label,
@@ -72,98 +133,59 @@ export default function RichTextField({
   placeholder,
   showWordCount = false,
 }: Props) {
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
-  // Where to put the cursor after a toolbar edit. React re-renders with the
-  // new value first, so the selection has to be reapplied afterwards.
-  const pendingSelection = useRef<[number, number] | null>(null);
-  const [showPreview, setShowPreview] = useState(true);
+  const editorRef = useRef<HTMLDivElement>(null);
+  // The last value this component produced. Rewriting innerHTML on every
+  // render would send the caret back to the start on each keystroke, so an
+  // incoming value is only applied when it came from somewhere else.
+  const lastEmitted = useRef<string | null>(null);
+  const [active, setActive] = useState({ bold: false, italic: false, underline: false });
 
   useEffect(() => {
-    const selection = pendingSelection.current;
-    if (!selection) return;
-    pendingSelection.current = null;
-    const textarea = textareaRef.current;
-    if (!textarea) return;
-    textarea.focus();
-    textarea.setSelectionRange(selection[0], selection[1]);
+    const editor = editorRef.current;
+    if (!editor) return;
+    if (value === lastEmitted.current) return;
+    editor.innerHTML = toHtml(value);
+    lastEmitted.current = value;
   }, [value]);
 
-  function applyEdit(next: string, selectionStart: number, selectionEnd: number) {
-    // Toolbar insertions add characters, so they have to respect the same cap
-    // the textarea enforces for typing.
-    if (maxLength !== undefined && next.length > maxLength) return;
-    pendingSelection.current = [selectionStart, selectionEnd];
+  const refreshActive = useCallback(() => {
+    setActive({
+      bold: document.queryCommandState("bold"),
+      italic: document.queryCommandState("italic"),
+      underline: document.queryCommandState("underline"),
+    });
+  }, []);
+
+  function emit() {
+    const editor = editorRef.current;
+    if (!editor) return;
+    const next = serialize(editor);
+    lastEmitted.current = next;
     onChange(next);
+    refreshActive();
   }
 
-  // Expands the selection to whole lines, so clicking "Bullet" with the caret
-  // mid-sentence still prefixes that entire line.
-  function selectedLineRange() {
-    const textarea = textareaRef.current;
-    if (!textarea) return null;
-    const start = value.lastIndexOf("\n", textarea.selectionStart - 1) + 1;
-    const endIndex = value.indexOf("\n", textarea.selectionEnd);
-    const end = endIndex === -1 ? value.length : endIndex;
-    return { start, end };
+  function run(command: string) {
+    // Without this Chrome writes <span style="font-weight:bold"> rather than
+    // <strong>, which serialize() has no marker for.
+    document.execCommand("styleWithCSS", false, "false");
+    document.execCommand(command);
+    editorRef.current?.focus();
+    emit();
   }
 
-  function prefixLines(makePrefix: (index: number) => string) {
-    const range = selectedLineRange();
-    if (!range) return;
-    const lines = value.slice(range.start, range.end).split("\n");
-    // Toggle off if every line already carries a marker of some kind.
-    const allMarked = lines.every((line) => /^\s*([-*•]|\d+[.)])\s+/.test(line));
-    const rewritten = lines
-      .map((line, index) =>
-        allMarked
-          ? line.replace(/^\s*([-*•]|\d+[.)])\s+/, "")
-          : `${makePrefix(index)}${line.replace(/^\s*([-*•]|\d+[.)])\s+/, "")}`,
-      )
-      .join("\n");
-    const next = value.slice(0, range.start) + rewritten + value.slice(range.end);
-    applyEdit(next, range.start, range.start + rewritten.length);
+  // Pasting from Word or a web page would otherwise drop styled markup into
+  // the editor that has no marker equivalent.
+  function handlePaste(event: React.ClipboardEvent<HTMLDivElement>) {
+    event.preventDefault();
+    document.execCommand("insertText", false, event.clipboardData.getData("text/plain"));
   }
 
-  // Bold, italic, and underline differ only in the marker they wrap with.
-  function toggleWrap(marker: string) {
-    const textarea = textareaRef.current;
-    if (!textarea) return;
-    const { selectionStart, selectionEnd } = textarea;
-    const selected = value.slice(selectionStart, selectionEnd);
-    const width = marker.length;
-
-    if (
-      selected.startsWith(marker) &&
-      selected.endsWith(marker) &&
-      selected.length > width * 2
-    ) {
-      const stripped = selected.slice(width, -width);
-      const next = value.slice(0, selectionStart) + stripped + value.slice(selectionEnd);
-      applyEdit(next, selectionStart, selectionStart + stripped.length);
-      return;
-    }
-
-    // Applying a format leaves the inner text selected, so clicking the same
-    // button again should undo it. That means also checking the characters
-    // just outside the selection, not only inside it.
-    const before = value.slice(Math.max(0, selectionStart - width), selectionStart);
-    const after = value.slice(selectionEnd, selectionEnd + width);
-    // The single-star italic marker has to ignore "**", which belongs to bold
-    // -- otherwise un-italicising inside a bold run would eat one of its stars
-    // and silently turn the bold into italic.
-    const insideWiderMarker =
-      marker === "*" && value.slice(Math.max(0, selectionStart - 2), selectionStart) === "**";
-
-    if (before === marker && after === marker && !insideWiderMarker) {
-      const next = value.slice(0, selectionStart - width) + selected + value.slice(selectionEnd + width);
-      applyEdit(next, selectionStart - width, selectionStart - width + selected.length);
-      return;
-    }
-
-    const next = `${value.slice(0, selectionStart)}${marker}${selected}${marker}${value.slice(selectionEnd)}`;
-    // With nothing selected this drops the caret between the markers so the
-    // next thing typed picks up the format.
-    applyEdit(next, selectionStart + width, selectionStart + width + selected.length);
+  function handleBeforeInput(event: React.FormEvent<HTMLDivElement>) {
+    if (maxLength === undefined) return;
+    const inputType = (event.nativeEvent as InputEvent).inputType ?? "";
+    if (inputType.startsWith("delete") || inputType.startsWith("history")) return;
+    if (value.length >= maxLength) event.preventDefault();
   }
 
   const overLimit = maxLength !== undefined && value.length > maxLength;
@@ -183,33 +205,36 @@ export default function RichTextField({
         </span>
       </div>
 
-      {/* Ribbon sits flush on top of the textarea, so the pair reads as one
-          editor the way a Word document window does. */}
+      {/* Ribbon sits flush on top of the editor, so the pair reads as one
+          window the way a Word document does. */}
       <div className="mt-1 flex items-center gap-0.5 rounded-t-md border border-brand-soft-blue bg-brand-gray px-1.5 py-1">
         <button
           type="button"
-          onClick={() => toggleWrap("**")}
+          onClick={() => run("bold")}
           title="Bold"
           aria-label="Bold"
-          className={`${TOOLBAR_BUTTON} font-serif text-base font-bold`}
+          aria-pressed={active.bold}
+          className={`${TOOLBAR_BUTTON} ${active.bold ? TOOLBAR_ACTIVE : TOOLBAR_IDLE} font-serif text-base font-bold`}
         >
           B
         </button>
         <button
           type="button"
-          onClick={() => toggleWrap("*")}
+          onClick={() => run("italic")}
           title="Italic"
           aria-label="Italic"
-          className={`${TOOLBAR_BUTTON} font-serif text-base italic`}
+          aria-pressed={active.italic}
+          className={`${TOOLBAR_BUTTON} ${active.italic ? TOOLBAR_ACTIVE : TOOLBAR_IDLE} font-serif text-base italic`}
         >
           I
         </button>
         <button
           type="button"
-          onClick={() => toggleWrap("__")}
+          onClick={() => run("underline")}
           title="Underline"
           aria-label="Underline"
-          className={`${TOOLBAR_BUTTON} font-serif text-base underline`}
+          aria-pressed={active.underline}
+          className={`${TOOLBAR_BUTTON} ${active.underline ? TOOLBAR_ACTIVE : TOOLBAR_IDLE} font-serif text-base underline`}
         >
           U
         </button>
@@ -218,64 +243,56 @@ export default function RichTextField({
 
         <button
           type="button"
-          onClick={() => prefixLines(() => "- ")}
+          onClick={() => run("insertUnorderedList")}
           title="Bulleted list"
           aria-label="Bulleted list"
-          className={TOOLBAR_BUTTON}
+          className={`${TOOLBAR_BUTTON} ${TOOLBAR_IDLE}`}
         >
           <BulletListIcon />
         </button>
         <button
           type="button"
-          onClick={() => prefixLines((index) => `${index + 1}. `)}
+          onClick={() => run("insertOrderedList")}
           title="Numbered list"
           aria-label="Numbered list"
-          className={TOOLBAR_BUTTON}
+          className={`${TOOLBAR_BUTTON} ${TOOLBAR_IDLE}`}
         >
           <NumberedListIcon />
         </button>
-
-        <button
-          type="button"
-          onClick={() => setShowPreview((current) => !current)}
-          className="ml-auto rounded px-2 py-1 text-xs font-medium text-brand-charcoal hover:bg-brand-lavender/40 focus:outline-none focus:ring-1 focus:ring-brand-purple"
-        >
-          {showPreview ? "Hide preview" : "Show preview"}
-        </button>
       </div>
 
-      <textarea
-        id={id}
-        ref={textareaRef}
-        rows={rows}
-        maxLength={maxLength}
-        placeholder={placeholder}
-        value={value}
-        onChange={(event) => onChange(event.target.value)}
-        className="block w-full rounded-b-md border border-t-0 border-brand-soft-blue bg-brand-white px-3 py-2 text-sm text-brand-charcoal shadow-sm focus:border-brand-purple focus:outline-none focus:ring-1 focus:ring-brand-purple"
-      />
+      <div className="relative">
+        <div
+          id={id}
+          ref={editorRef}
+          contentEditable
+          suppressContentEditableWarning
+          role="textbox"
+          aria-multiline="true"
+          aria-label={label}
+          onInput={emit}
+          onBeforeInput={handleBeforeInput}
+          onPaste={handlePaste}
+          onKeyUp={refreshActive}
+          onMouseUp={refreshActive}
+          onFocus={refreshActive}
+          style={{ minHeight: `${rows * 1.5 + 1}rem` }}
+          className="block w-full rounded-b-md border border-t-0 border-brand-soft-blue bg-brand-white px-3 py-2 text-sm text-brand-charcoal shadow-sm focus:border-brand-purple focus:outline-none focus:ring-1 focus:ring-brand-purple [&_em]:italic [&_li]:my-0.5 [&_ol]:my-2 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:my-2 [&_strong]:font-semibold [&_u]:underline [&_ul]:my-2 [&_ul]:list-disc [&_ul]:pl-5"
+        />
+        {value.trim() === "" && placeholder && (
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute left-3 top-2 text-sm text-brand-charcoal/40"
+          >
+            {placeholder}
+          </span>
+        )}
+      </div>
 
       <p className="mt-1 text-xs text-brand-charcoal/60">
-        {hint ? `${hint} ` : ""}Select text and use the buttons above, or type it directly: start a
-        line with <code>-</code> for a bullet or <code>1.</code> for a numbered list, wrap text in{" "}
-        <code>**stars**</code> for bold, <code>*one star*</code> for italic, or{" "}
-        <code>__underscores__</code> for underline, and leave a blank line between paragraphs.
+        {hint ? `${hint} ` : ""}Select text and use the buttons above to format it. What you see
+        here is how it will appear on the site.
       </p>
-
-      {showPreview && (
-        <div className="mt-3 rounded-md border border-brand-soft-blue/60 bg-brand-gray p-3">
-          <p className="text-xs font-medium uppercase tracking-wide text-brand-charcoal/60">
-            Preview
-          </p>
-          {value.trim() ? (
-            <RichText text={value} className="mt-2 text-sm leading-relaxed text-brand-charcoal" />
-          ) : (
-            <p className="mt-2 text-sm text-brand-charcoal/50">
-              Nothing to preview yet.
-            </p>
-          )}
-        </div>
-      )}
     </div>
   );
 }

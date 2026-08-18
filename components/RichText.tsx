@@ -112,6 +112,52 @@ function renderInline(text: string): ReactNode {
   );
 }
 
+// The admin editor is a contenteditable surface, so it needs the same marker
+// text expressed as HTML rather than React nodes. Keeping this next to
+// renderInline means the two directions can't drift apart.
+function escapeHtml(text: string): string {
+  return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+function inlineToHtml(text: string): string {
+  let earliest: { index: number; match: RegExpMatchArray; rule: (typeof INLINE_RULES)[number] } | null =
+    null;
+
+  for (const rule of INLINE_RULES) {
+    const match = text.match(rule.regex);
+    if (!match || match.index === undefined) continue;
+    if (!earliest || match.index < earliest.index) {
+      earliest = { index: match.index, match, rule };
+    }
+  }
+
+  if (!earliest) return escapeHtml(text);
+
+  const { index, match, rule } = earliest;
+  // *** is bold+italic, which needs two nested tags rather than one.
+  const inner = inlineToHtml(match[1]);
+  const wrapped =
+    rule.tag === "strong" && rule.className.includes("italic")
+      ? `<strong><em>${inner}</em></strong>`
+      : `<${rule.tag}>${inner}</${rule.tag}>`;
+
+  return escapeHtml(text.slice(0, index)) + wrapped + inlineToHtml(text.slice(index + match[0].length));
+}
+
+export function toHtml(text: string): string {
+  return parseBlocks(text)
+    .map((block) => {
+      if (block.kind === "ul") {
+        return `<ul>${block.items.map((item) => `<li>${inlineToHtml(item)}</li>`).join("")}</ul>`;
+      }
+      if (block.kind === "ol") {
+        return `<ol>${block.items.map((item) => `<li>${inlineToHtml(item)}</li>`).join("")}</ol>`;
+      }
+      return `<p>${block.lines.map(inlineToHtml).join("<br>")}</p>`;
+    })
+    .join("");
+}
+
 export function hasContent(text: string | null | undefined): boolean {
   return Boolean(text && parseBlocks(text).length > 0);
 }
