@@ -139,6 +139,121 @@ export default function FaqPage() {
           </FaqItem>
         </div>
 
+        <section aria-labelledby="adoption-criteria" className="mt-14">
+          <h2
+            id="adoption-criteria"
+            className="border-b border-brand-soft-blue/60 pb-2 font-heading text-2xl font-semibold text-brand-deep-blue"
+          >
+            Adoption Criteria
+          </h2>
+          <p className="mt-4 text-sm leading-relaxed text-brand-charcoal">
+            At Sky&rsquo;s Path to Home, our goal is to place every dog in a safe, responsible, and
+            loving home. Adoption applicants must meet the following minimum requirements and agree
+            to provide appropriate care for the dog throughout its life.
+          </p>
+
+          <h3 className="mt-6 font-heading text-lg font-semibold text-brand-deep-blue">
+            Basic Adoption Requirements
+          </h3>
+          <ul className="mt-3 space-y-2 text-sm leading-relaxed text-brand-charcoal">
+            {[
+              "The adopter must be 21 years of age or older.",
+              "The adopter must be willing and able to provide a safe, stable, and appropriate home for the dog.",
+              "The dog may never be used for dog fighting, baiting, fighting-related activities, or any other form of animal cruelty or exploitation.",
+              "The dog may never be left unattended in a hot vehicle or placed in any situation where excessive heat or cold could endanger the dog.",
+              "The dog may not be transported unsecured in the open bed of a pickup truck.",
+              "The dog may not be left outdoors alone overnight.",
+              "The dog may not be left outdoors unsupervised for extended periods of time.",
+              "The adopter must provide appropriate veterinary care and follow any known medical or medication requirements disclosed at the time of adoption.",
+            ].map((item) => (
+              <li key={item} className="flex gap-2">
+                <span aria-hidden="true" className="text-brand-purple">&bull;</span>
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
+
+          <p className="mt-4 text-sm font-semibold leading-relaxed text-brand-charcoal">
+            Sky&rsquo;s Path to Home reserves the right to deny an adoption when we believe the
+            placement is not in the best interest of the dog.
+          </p>
+        </section>
+
+        <section aria-labelledby="bringing-home-tips" className="mt-14">
+          <h2
+            id="bringing-home-tips"
+            className="border-b border-brand-soft-blue/60 pb-2 font-heading text-2xl font-semibold text-brand-deep-blue"
+          >
+            Tips for Bringing Home Your New Friend!
+          </h2>
+          <p className="mt-4 text-sm leading-relaxed text-brand-charcoal">
+            Bringing home a rescue dog is exciting, but remember that everything is new to them.
+            Give your new friend time, patience, and consistency as they adjust.
+          </p>
+
+          <h3 className="mt-6 font-heading text-lg font-semibold text-brand-deep-blue">
+            Before They Come Home
+          </h3>
+          <p className="mt-3 text-sm leading-relaxed text-brand-charcoal">Have the basics ready:</p>
+          <ul className="mt-2 space-y-2 text-sm leading-relaxed text-brand-charcoal">
+            {[
+              "Properly fitted harness and leash",
+              "Food and water bowls",
+              "Their current food, if possible",
+              "Comfortable bed",
+              "Toys and chews",
+              "Crate or safe space, if needed",
+            ].map((item) => (
+              <li key={item} className="flex gap-2">
+                <span aria-hidden="true" className="text-brand-purple">&bull;</span>
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
+          <p className="mt-3 text-sm leading-relaxed text-brand-charcoal">
+            Make sure doors, gates, and fences are secure.
+          </p>
+
+          <h3 className="mt-6 font-heading text-lg font-semibold text-brand-deep-blue">
+            Give Them Time
+          </h3>
+          <p className="mt-3 text-sm leading-relaxed text-brand-charcoal">
+            Some dogs adjust quickly, while others may need days or weeks to feel comfortable.
+            Avoid overwhelming them with too many visitors, outings, or new experiences right away.
+          </p>
+
+          <h3 className="mt-6 font-heading text-lg font-semibold text-brand-deep-blue">
+            Keep a Routine
+          </h3>
+          <p className="mt-3 text-sm leading-relaxed text-brand-charcoal">
+            A consistent schedule for meals, potty breaks, walks, medications, and bedtime helps
+            dogs feel safe and understand what to expect.
+          </p>
+
+          <h3 className="mt-6 font-heading text-lg font-semibold text-brand-deep-blue">
+            Introduce Pets Slowly
+          </h3>
+          <p className="mt-3 text-sm leading-relaxed text-brand-charcoal">
+            Keep introductions calm and supervised. Give your new dog their own quiet space and
+            allow relationships with other pets to develop gradually.
+          </p>
+
+          <h3 className="mt-6 font-heading text-lg font-semibold text-brand-deep-blue">
+            Be Patient
+          </h3>
+          <p className="mt-3 text-sm leading-relaxed text-brand-charcoal">
+            Your dog may have accidents, seem nervous, sleep more, or need extra reassurance at
+            first. Use positive reinforcement and give them time to learn their new home and
+            routine.
+          </p>
+
+          <p className="mt-4 text-sm leading-relaxed text-brand-charcoal">
+            Most importantly, remember that while this is exciting for you, your dog&rsquo;s entire
+            world has changed. Give them the time they need to feel safe, comfortable, and part of
+            the family.
+          </p>
+        </section>
+
         <div className="mt-10 flex justify-center">
           <Link
             href="/dogs/"

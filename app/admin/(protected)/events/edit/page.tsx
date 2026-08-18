@@ -334,6 +334,7 @@ function EditEventForm() {
           label="Summary (shown on the events list)"
           value={form.summary}
           onChange={(value) => update("summary", value)}
+          maxLength={750}
           rows={3}
           hint="The events list clamps this to three lines of plain text, so formatting here won't be visible to visitors."
         />
@@ -343,6 +344,7 @@ function EditEventForm() {
           label="Full post"
           value={form.body}
           onChange={(value) => update("body", value)}
+          maxLength={1500}
           rows={10}
         />
 

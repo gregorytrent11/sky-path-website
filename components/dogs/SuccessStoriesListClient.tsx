@@ -16,6 +16,7 @@ export default function SuccessStoriesListClient() {
       .from("dogs")
       .select("*")
       .eq("status", "adopted")
+      .eq("success_story_status", "published")
       .not("success_story", "is", null)
       .order("updated_at", { ascending: false })
       .then(({ data, error: fetchError }) => {

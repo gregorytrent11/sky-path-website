@@ -12,6 +12,7 @@ import type {
   DogSex,
   DogSize,
   DogStatus,
+  SuccessStoryStatus,
   DogUpdate,
 } from "@/types/database";
 import DogMediaManager from "@/components/admin/DogMediaManager";
@@ -39,6 +40,7 @@ type FormState = {
   description: string;
   foster_notes: string;
   success_story: string;
+  success_story_status: SuccessStoryStatus;
 };
 
 const emptyForm: FormState = {
@@ -61,6 +63,7 @@ const emptyForm: FormState = {
   description: "",
   foster_notes: "",
   success_story: "",
+  success_story_status: "draft",
 };
 
 function dogToForm(dog: Dog): FormState {
@@ -84,6 +87,7 @@ function dogToForm(dog: Dog): FormState {
     description: dog.description ?? "",
     foster_notes: dog.foster_notes ?? "",
     success_story: dog.success_story ?? "",
+    success_story_status: dog.success_story_status ?? "draft",
   };
 }
 
@@ -153,6 +157,9 @@ function EditDogForm() {
       description: form.description.trim() || null,
       foster_notes: form.foster_notes.trim() || null,
       success_story: form.status === "adopted" ? form.success_story.trim() || null : null,
+      // A story with no text can't be "published" -- keep the flag honest so
+      // the Success Stories page never has to guess.
+      success_story_status: form.success_story.trim() ? form.success_story_status : "draft",
     };
 
     if (dogId) {
@@ -434,16 +441,56 @@ function EditDogForm() {
         />
 
         {form.status === "adopted" && (
-          <RichTextField
-            id="dog-success-story"
-            label="Success story (shown on the Success Stories page)"
-            value={form.success_story}
-            onChange={(value) => update("success_story", value)}
-            maxLength={1500}
-            showWordCount
-            placeholder={`Tell adopters about ${form.name || "this dog"}'s journey home...`}
-            hint="Leave blank to keep this dog off the Success Stories page."
-          />
+          <div className="space-y-3 rounded-lg border border-brand-soft-blue/60 p-4">
+            <RichTextField
+              id="dog-success-story"
+              label="Success story (shown on the Success Stories page)"
+              value={form.success_story}
+              onChange={(value) => update("success_story", value)}
+              maxLength={1500}
+              showWordCount
+              placeholder={`Tell adopters about ${form.name || "this dog"}'s journey home...`}
+              hint="Drafts are saved but stay off the Success Stories page until you publish."
+            />
+
+            <div className="flex flex-wrap items-center gap-3">
+              <span className="text-sm font-medium text-brand-charcoal">Story status</span>
+              {(["draft", "published"] as const).map((option) => (
+                <label
+                  key={option}
+                  className="flex items-center gap-1.5 text-sm text-brand-charcoal"
+                >
+                  <input
+                    type="radio"
+                    name="success-story-status"
+                    value={option}
+                    checked={form.success_story_status === option}
+                    onChange={() => update("success_story_status", option)}
+                    disabled={!form.success_story.trim()}
+                  />
+                  {option === "draft" ? "Draft" : "Published"}
+                </label>
+              ))}
+              {form.success_story.trim() && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (!window.confirm("Delete this success story? The text will be cleared.")) return;
+                    update("success_story", "");
+                    update("success_story_status", "draft");
+                  }}
+                  className="ml-auto text-xs font-medium text-red-700 hover:underline"
+                >
+                  Delete story
+                </button>
+              )}
+            </div>
+            {!form.success_story.trim() && (
+              <p className="text-xs text-brand-charcoal/60">
+                Write a story above to enable publishing.
+              </p>
+            )}
+          </div>
         )}
 
         {error && (

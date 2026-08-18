@@ -111,14 +111,24 @@ export default function AdminEventsPage() {
                         </button>
                       )}
                       {event.status === "published" && (
-                        <button
-                          type="button"
-                          disabled={busyId === event.id}
-                          onClick={() => setStatus(event.id, "archived")}
-                          className="text-brand-charcoal/70 hover:underline"
-                        >
-                          Archive
-                        </button>
+                        <>
+                          <button
+                            type="button"
+                            disabled={busyId === event.id}
+                            onClick={() => setStatus(event.id, "draft")}
+                            className="text-brand-charcoal/70 hover:underline"
+                          >
+                            Unpublish
+                          </button>
+                          <button
+                            type="button"
+                            disabled={busyId === event.id}
+                            onClick={() => setStatus(event.id, "archived")}
+                            className="text-brand-charcoal/70 hover:underline"
+                          >
+                            Archive
+                          </button>
+                        </>
                       )}
                       <button
                         type="button"
