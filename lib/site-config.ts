@@ -9,7 +9,7 @@ export const siteConfig = {
   visionStatement:
     "A community where every dog has a safe path from uncertainty to a permanent, loving home.",
   nonprofitStatus:
-    "Sky's Path to Home is a Montana nonprofit corporation. Our application for federal tax-exempt status under Section 501(c)(3) is pending. Contributions may qualify as tax-deductible retroactive to our formation date if the IRS approves our application.",
+    "Sky's Path to Home is a federally recognized 501(c)(3) nonprofit organization. Donations made to Sky's Path to Home are tax-deductible.",
   ein: "42-4149525",
   emergencyDisclaimer:
     "Sky's Path to Home is not an emergency veterinary clinic or animal-control agency. For an immediate medical emergency, contact a veterinarian. For an immediate public-safety concern, contact the appropriate local authority.",
