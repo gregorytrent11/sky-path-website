@@ -25,6 +25,7 @@ export function TextField({
   placeholder,
   min,
   max,
+  describedBy,
 }: {
   id: string;
   label: string;
@@ -35,6 +36,7 @@ export function TextField({
   placeholder?: string;
   min?: number;
   max?: number;
+  describedBy?: string;
 }) {
   return (
     <div>
@@ -50,11 +52,17 @@ export function TextField({
         placeholder={placeholder}
         min={min}
         max={max}
+        aria-describedby={describedBy}
         className={`mt-1 ${inputClasses}`}
       />
     </div>
   );
 }
+
+const PHONE_PATTERN = "\\(\\d{3}\\) \\d{3}-\\d{4}";
+// Accepts N/A, n/a, NA -- what people actually type when a phone number
+// doesn't apply to them.
+const NA_PATTERN = "[Nn]/?[Aa]";
 
 export function PhoneField({
   id,
@@ -62,12 +70,16 @@ export function PhoneField({
   value,
   onChange,
   required,
+  allowNA,
+  describedBy,
 }: {
   id: string;
   label: string;
   value: string;
   onChange: (value: string) => void;
   required?: boolean;
+  allowNA?: boolean;
+  describedBy?: string;
 }) {
   return (
     <div>
@@ -80,12 +92,23 @@ export function PhoneField({
         inputMode="tel"
         autoComplete="tel"
         value={value}
-        onChange={(e) => onChange(formatUsPhone(e.target.value))}
+        // formatUsPhone strips every non-digit, so on an allowNA field it
+        // would silently eat "N/A" as the applicant typed it. Letters mean
+        // they're not entering a number, so pass the text straight through.
+        onChange={(e) => {
+          const raw = e.target.value;
+          onChange(allowNA && /[a-zA-Z]/.test(raw) ? raw : formatUsPhone(raw));
+        }}
         required={required}
-        placeholder="(555) 123-4567"
-        pattern="\(\d{3}\) \d{3}-\d{4}"
-        title="Phone number in the format (555) 123-4567"
+        placeholder={allowNA ? "(555) 123-4567 or N/A" : "(555) 123-4567"}
+        pattern={allowNA ? `(${PHONE_PATTERN})|(${NA_PATTERN})` : PHONE_PATTERN}
+        title={
+          allowNA
+            ? "Phone number in the format (555) 123-4567, or N/A"
+            : "Phone number in the format (555) 123-4567"
+        }
         maxLength={14}
+        aria-describedby={describedBy}
         className={`mt-1 ${inputClasses}`}
       />
     </div>
