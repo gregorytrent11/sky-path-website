@@ -7,6 +7,8 @@ import { Fragment, ReactNode } from "react";
 //   - item / * item   bulleted list
 //   1. item / 1) item numbered list
 //   **bold**          bold run
+//   *italic*          italic run
+//   __underline__     underlined run
 //   blank line        paragraph break
 //
 // Anything else is left as literal text. Both the public dog page and the
@@ -21,7 +23,24 @@ type Block =
 const BULLET = /^\s*[-*•]\s+(.*)$/;
 const NUMBERED = /^\s*\d+[.)]\s+(.*)$/;
 // [\s\S] rather than `.` with the `s` flag, which this tsconfig target rejects.
-const BOLD = /\*\*([\s\S]+?)\*\*/g;
+// Order matters: ** is tried before * so "**bold**" isn't read as an italic
+// run wrapping a stray asterisk.
+// *** is listed first because applying bold and then italic to the same
+// selection in the editor produces ***text***, which would otherwise be read
+// as a bold run wrapping a stray asterisk.
+const INLINE_RULES = [
+  { regex: /\*\*\*([\s\S]+?)\*\*\*/, tag: "strong", className: "font-semibold italic" },
+  { regex: /\*\*([\s\S]+?)\*\*/, tag: "strong", className: "font-semibold" },
+  { regex: /__([\s\S]+?)__/, tag: "u", className: "underline" },
+  { regex: /\*([\s\S]+?)\*/, tag: "em", className: "italic" },
+] as const;
+
+const STRIP_INLINE = [
+  /\*\*\*([\s\S]+?)\*\*\*/g,
+  /\*\*([\s\S]+?)\*\*/g,
+  /__([\s\S]+?)__/g,
+  /\*([\s\S]+?)\*/g,
+];
 
 export function parseBlocks(text: string): Block[] {
   const blocks: Block[] = [];
@@ -61,18 +80,35 @@ export function parseBlocks(text: string): Block[] {
   return blocks.filter((block) => (block.kind === "p" ? block.lines.length > 0 : block.items.length > 0));
 }
 
-// Splits on **bold** runs. An unmatched ** is left alone as literal text so a
-// half-typed bio in the live preview never swallows the rest of the bio.
+// Recursively applies the earliest inline marker, then re-runs over both the
+// wrapped text and the remainder, so formats nest ("**bold with _*italic*_**")
+// instead of only the outermost one winning. An unmatched marker is left as
+// literal text, so a half-typed bio in the live preview never swallows the
+// rest of the bio.
 function renderInline(text: string): ReactNode {
-  const parts = text.split(BOLD);
-  return parts.map((part, index) =>
-    index % 2 === 1 ? (
-      <strong key={index} className="font-semibold">
-        {part}
-      </strong>
-    ) : (
-      <Fragment key={index}>{part}</Fragment>
-    ),
+  let earliest: { index: number; match: RegExpMatchArray; rule: (typeof INLINE_RULES)[number] } | null =
+    null;
+
+  for (const rule of INLINE_RULES) {
+    const match = text.match(rule.regex);
+    if (!match || match.index === undefined) continue;
+    // Strictly less-than keeps the INLINE_RULES order as the tie-break, which
+    // is what makes ** beat * when both match at the same position.
+    if (!earliest || match.index < earliest.index) {
+      earliest = { index: match.index, match, rule };
+    }
+  }
+
+  if (!earliest) return text;
+
+  const { index, match, rule } = earliest;
+  const Tag = rule.tag;
+  return (
+    <Fragment>
+      {text.slice(0, index)}
+      <Tag className={rule.className}>{renderInline(match[1])}</Tag>
+      {renderInline(text.slice(index + match[0].length))}
+    </Fragment>
   );
 }
 
@@ -84,10 +120,10 @@ export function hasContent(text: string | null | undefined): boolean {
 // one-line summary rather than rendered elements (SEO meta descriptions,
 // social card blurbs).
 export function toPlainText(text: string): string {
-  return parseBlocks(text)
+  const joined = parseBlocks(text)
     .flatMap((block) => (block.kind === "p" ? block.lines : block.items))
-    .join(" ")
-    .replace(BOLD, "$1")
+    .join(" ");
+  return STRIP_INLINE.reduce((acc, regex) => acc.replace(regex, "$1"), joined)
     .replace(/\s+/g, " ")
     .trim();
 }

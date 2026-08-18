@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { Event } from "@/types/database";
 import { formatEventDate } from "@/components/events/event-display";
+import { toPlainText } from "@/components/RichText";
 
 export default function EventCard({ event }: { event: Event }) {
   return (
@@ -33,8 +34,12 @@ export default function EventCard({ event }: { event: Event }) {
         <h2 className="mt-1 font-heading text-lg font-semibold text-brand-deep-blue">
           {event.title}
         </h2>
+        {/* line-clamp-3 only clamps a single text block, so the summary is
+            flattened to prose here rather than rendered as real elements. */}
         {event.summary && (
-          <p className="mt-1 line-clamp-3 text-sm text-brand-charcoal/80">{event.summary}</p>
+          <p className="mt-1 line-clamp-3 text-sm text-brand-charcoal/80">
+            {toPlainText(event.summary)}
+          </p>
         )}
       </div>
     </Link>

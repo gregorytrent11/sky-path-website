@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase/client";
 import type { Dog } from "@/types/database";
-import { toPlainText } from "@/components/dogs/RichText";
+import { toPlainText } from "@/components/RichText";
 
 export default function SuccessStoriesPreview() {
   const [dogs, setDogs] = useState<Dog[] | null>(null);

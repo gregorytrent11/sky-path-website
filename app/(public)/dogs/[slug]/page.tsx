@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import DogDetailClient from "@/components/dogs/DogDetailClient";
-import { toPlainText } from "@/components/dogs/RichText";
+import { toPlainText } from "@/components/RichText";
 import { fetchDogsForBuild } from "@/lib/build-time-dogs";
 
 // A slug that can never collide with a real dog (see dogs table: slug is a

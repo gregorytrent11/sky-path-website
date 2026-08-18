@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { supabase } from "@/lib/supabase/client";
 import type { Dog } from "@/types/database";
-import RichText from "@/components/dogs/RichText";
+import RichText from "@/components/RichText";
 
 export default function SuccessStoriesListClient() {
   const [dogs, setDogs] = useState<Dog[] | null>(null);

@@ -23,7 +23,7 @@ type FormState = {
   city: string;
   state: string;
   zip: string;
-  applicantAge: string;
+  atLeastTwentyOne: string;
   housingType: string;
   homeOwnership: string;
   yardFenced: string;
@@ -79,7 +79,7 @@ function emptyForm(dogName: string): FormState {
     city: "",
     state: "",
     zip: "",
-    applicantAge: "",
+    atLeastTwentyOne: "",
     housingType: "",
     homeOwnership: "",
     yardFenced: "",
@@ -219,8 +219,8 @@ function AdoptApplicationFormInner() {
     event.preventDefault();
     setError(null);
 
-    if (Number(form.applicantAge) < 18) {
-      setError("You must be at least 18 years old to apply.");
+    if (form.atLeastTwentyOne !== "Yes") {
+      setError("You must be at least 21 years old to apply.");
       return;
     }
     if (renting && !form.landlordInfo.trim()) {
@@ -302,13 +302,11 @@ function AdoptApplicationFormInner() {
           <TextField id="adopt-state" label="State" value={form.state} onChange={(v) => update("state", v)} required />
           <TextField id="adopt-zip" label="ZIP code" value={form.zip} onChange={(v) => update("zip", v)} required />
         </div>
-        <TextField
-          id="adopt-age"
-          label="Your age"
-          type="number"
-          min={18}
-          value={form.applicantAge}
-          onChange={(v) => update("applicantAge", v)}
+        <YesNoField
+          name="atLeastTwentyOne"
+          label="Are you at least 21 years of age or older?"
+          value={form.atLeastTwentyOne}
+          onChange={(v) => update("atLeastTwentyOne", v)}
           required
         />
       </div>

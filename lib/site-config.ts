@@ -33,10 +33,12 @@ export const primaryNav: NavLink[] = [
   { label: "About", href: "/about" },
   { label: "Get Involved", href: "/volunteer" },
   { label: "Contact", href: "/contact" },
+  { label: "Adoption FAQ", href: "/faq" },
 ];
 
+// The footer renders [...primaryNav, ...footerLinks], so Adoption FAQ lives
+// only in primaryNav now -- listing it here too would print it twice.
 export const footerLinks: NavLink[] = [
-  { label: "Adoption FAQ", href: "/faq" },
   { label: "Success Stories", href: "/success-stories" },
   { label: "Resources", href: "/resources" },
   { label: "Request Help", href: "/request-help" },

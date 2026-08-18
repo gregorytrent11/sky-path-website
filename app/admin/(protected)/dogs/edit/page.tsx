@@ -425,18 +425,13 @@ function EditDogForm() {
           maxLength={1500}
         />
 
-        <div>
-          <label htmlFor="dog-foster-notes" className="block text-sm font-medium text-brand-charcoal">
-            Foster notes (internal only, never shown publicly)
-          </label>
-          <textarea
-            id="dog-foster-notes"
-            rows={4}
-            value={form.foster_notes}
-            onChange={(e) => update("foster_notes", e.target.value)}
-            className={selectClasses()}
-          />
-        </div>
+        <RichTextField
+          id="dog-foster-notes"
+          label="Foster notes (internal only, never shown publicly)"
+          value={form.foster_notes}
+          onChange={(value) => update("foster_notes", value)}
+          rows={4}
+        />
 
         {form.status === "adopted" && (
           <RichTextField

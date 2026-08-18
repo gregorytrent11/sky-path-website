@@ -10,7 +10,7 @@ import {
   compatibilityBadges,
   sizeLabel,
 } from "@/components/dogs/dog-display";
-import RichText from "@/components/dogs/RichText";
+import RichText from "@/components/RichText";
 import { siteConfig } from "@/lib/site-config";
 
 type LoadState = "loading" | "found" | "not-found" | "error";

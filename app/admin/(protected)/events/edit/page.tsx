@@ -9,6 +9,7 @@ import type { Event, EventInsert, EventStatus, EventUpdate } from "@/types/datab
 import { slugify } from "@/lib/slugify";
 import { triggerDeploy } from "@/lib/trigger-deploy";
 import FocalPointPicker from "@/components/admin/FocalPointPicker";
+import RichTextField from "@/components/admin/RichTextField";
 
 const MAX_COVER_IMAGE_BYTES = 2 * 1024 * 1024;
 
@@ -328,31 +329,22 @@ function EditEventForm() {
           )}
         </div>
 
-        <div>
-          <label htmlFor="event-summary" className="block text-sm font-medium text-brand-charcoal">
-            Summary (shown on the events list)
-          </label>
-          <textarea
-            id="event-summary"
-            rows={3}
-            value={form.summary}
-            onChange={(e) => update("summary", e.target.value)}
-            className={fieldClasses()}
-          />
-        </div>
+        <RichTextField
+          id="event-summary"
+          label="Summary (shown on the events list)"
+          value={form.summary}
+          onChange={(value) => update("summary", value)}
+          rows={3}
+          hint="The events list clamps this to three lines of plain text, so formatting here won't be visible to visitors."
+        />
 
-        <div>
-          <label htmlFor="event-body" className="block text-sm font-medium text-brand-charcoal">
-            Full post
-          </label>
-          <textarea
-            id="event-body"
-            rows={10}
-            value={form.body}
-            onChange={(e) => update("body", e.target.value)}
-            className={fieldClasses()}
-          />
-        </div>
+        <RichTextField
+          id="event-body"
+          label="Full post"
+          value={form.body}
+          onChange={(value) => update("body", value)}
+          rows={10}
+        />
 
         {error && (
           <p role="alert" className="text-sm text-red-700">

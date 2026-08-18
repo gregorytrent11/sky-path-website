@@ -6,6 +6,7 @@ import Link from "next/link";
 import { supabase } from "@/lib/supabase/client";
 import type { Event } from "@/types/database";
 import { formatEventDate } from "@/components/events/event-display";
+import RichText from "@/components/RichText";
 
 type LoadState = "loading" | "found" | "not-found" | "error";
 
@@ -116,9 +117,10 @@ export default function EventDetailClient({ slug }: { slug: string }) {
         )}
 
         {event.body && (
-          <div className="mt-8 whitespace-pre-line text-base leading-relaxed text-brand-charcoal">
-            {event.body}
-          </div>
+          <RichText
+            text={event.body}
+            className="mt-8 text-base leading-relaxed text-brand-charcoal"
+          />
         )}
 
         <div className="mt-10">
