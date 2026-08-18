@@ -439,29 +439,16 @@ function EditDogForm() {
         </div>
 
         {form.status === "adopted" && (
-          <div>
-            <div className="flex items-baseline justify-between">
-              <label htmlFor="dog-success-story" className="block text-sm font-medium text-brand-charcoal">
-                Success story (shown on the Success Stories page)
-              </label>
-              <span className="text-xs text-brand-charcoal/60">
-                {form.success_story.trim() === "" ? 0 : form.success_story.trim().split(/\s+/).length}{" "}
-                words &middot; {form.success_story.length}/500 characters
-              </span>
-            </div>
-            <textarea
-              id="dog-success-story"
-              rows={5}
-              maxLength={500}
-              placeholder={`Tell adopters about ${form.name || "this dog"}'s journey home...`}
-              value={form.success_story}
-              onChange={(e) => update("success_story", e.target.value)}
-              className={selectClasses()}
-            />
-            <p className="mt-1 text-xs text-brand-charcoal/60">
-              Leave blank to keep this dog off the Success Stories page.
-            </p>
-          </div>
+          <RichTextField
+            id="dog-success-story"
+            label="Success story (shown on the Success Stories page)"
+            value={form.success_story}
+            onChange={(value) => update("success_story", value)}
+            maxLength={1500}
+            showWordCount
+            placeholder={`Tell adopters about ${form.name || "this dog"}'s journey home...`}
+            hint="Leave blank to keep this dog off the Success Stories page."
+          />
         )}
 
         {error && (

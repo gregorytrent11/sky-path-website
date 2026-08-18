@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase/client";
 import type { Dog } from "@/types/database";
+import { toPlainText } from "@/components/dogs/RichText";
 
 export default function SuccessStoriesPreview() {
   const [dogs, setDogs] = useState<Dog[] | null>(null);
@@ -60,8 +61,11 @@ export default function SuccessStoriesPreview() {
           </div>
           <div className="p-5">
             <h3 className="font-heading text-lg font-semibold text-brand-deep-blue">{dog.name}</h3>
+            {/* Flattened to prose rather than rendered: line-clamp-3 only
+                clamps a single text block, so real <ul>/<p> children here
+                would escape the 3-line teaser on the homepage. */}
             <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-brand-charcoal">
-              {dog.success_story}
+              {toPlainText(dog.success_story ?? "")}
             </p>
           </div>
         </Link>

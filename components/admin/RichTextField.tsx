@@ -15,6 +15,8 @@ type Props = {
   maxLength: number;
   rows?: number;
   hint?: string;
+  placeholder?: string;
+  showWordCount?: boolean;
 };
 
 const TOOLBAR_BUTTON =
@@ -28,6 +30,8 @@ export default function RichTextField({
   maxLength,
   rows = 8,
   hint,
+  placeholder,
+  showWordCount = false,
 }: Props) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   // Where to put the cursor after a toolbar edit. React re-renders with the
@@ -105,6 +109,7 @@ export default function RichTextField({
   }
 
   const overLimit = value.length > maxLength;
+  const wordCount = value.trim() === "" ? 0 : value.trim().split(/\s+/).length;
 
   return (
     <div>
@@ -113,7 +118,9 @@ export default function RichTextField({
           {label}
         </label>
         <span className={`text-xs ${overLimit ? "text-red-600" : "text-brand-charcoal/60"}`}>
+          {showWordCount ? `${wordCount} words · ` : ""}
           {value.length}/{maxLength}
+          {showWordCount ? " characters" : ""}
         </span>
       </div>
 
@@ -145,6 +152,7 @@ export default function RichTextField({
         ref={textareaRef}
         rows={rows}
         maxLength={maxLength}
+        placeholder={placeholder}
         value={value}
         onChange={(event) => onChange(event.target.value)}
         className="mt-2 block w-full rounded-md border border-brand-soft-blue bg-brand-white px-3 py-2 text-sm text-brand-charcoal shadow-sm focus:border-brand-purple focus:outline-none focus:ring-1 focus:ring-brand-purple"

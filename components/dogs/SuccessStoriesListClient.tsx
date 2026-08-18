@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { supabase } from "@/lib/supabase/client";
 import type { Dog } from "@/types/database";
+import RichText from "@/components/dogs/RichText";
 
 export default function SuccessStoriesListClient() {
   const [dogs, setDogs] = useState<Dog[] | null>(null);
@@ -81,9 +82,10 @@ export default function SuccessStoriesListClient() {
           </div>
           <div className="p-5">
             <h2 className="font-heading text-lg font-semibold text-brand-deep-blue">{dog.name}</h2>
-            <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-brand-charcoal">
-              {dog.success_story}
-            </p>
+            <RichText
+              text={dog.success_story ?? ""}
+              className="mt-2 text-sm leading-relaxed text-brand-charcoal"
+            />
           </div>
         </div>
       ))}
