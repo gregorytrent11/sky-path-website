@@ -15,6 +15,7 @@ import type {
   DogUpdate,
 } from "@/types/database";
 import DogMediaManager from "@/components/admin/DogMediaManager";
+import RichTextField from "@/components/admin/RichTextField";
 import { slugify } from "@/lib/slugify";
 import { triggerDeploy } from "@/lib/trigger-deploy";
 
@@ -416,24 +417,13 @@ function EditDogForm() {
           />
         </div>
 
-        <div>
-          <div className="flex items-baseline justify-between">
-            <label htmlFor="dog-description" className="block text-sm font-medium text-brand-charcoal">
-              Public description
-            </label>
-            <span className="text-xs text-brand-charcoal/60">
-              {form.description.length}/500
-            </span>
-          </div>
-          <textarea
-            id="dog-description"
-            rows={6}
-            maxLength={500}
-            value={form.description}
-            onChange={(e) => update("description", e.target.value)}
-            className={selectClasses()}
-          />
-        </div>
+        <RichTextField
+          id="dog-description"
+          label="Public description"
+          value={form.description}
+          onChange={(value) => update("description", value)}
+          maxLength={1500}
+        />
 
         <div>
           <label htmlFor="dog-foster-notes" className="block text-sm font-medium text-brand-charcoal">

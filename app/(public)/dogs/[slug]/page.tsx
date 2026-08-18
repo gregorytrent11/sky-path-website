@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import DogDetailClient from "@/components/dogs/DogDetailClient";
+import { toPlainText } from "@/components/dogs/RichText";
 import { fetchDogsForBuild } from "@/lib/build-time-dogs";
 
 // A slug that can never collide with a real dog (see dogs table: slug is a
@@ -35,12 +36,17 @@ export async function generateMetadata({
   if (!dog) {
     return { title: "Dog Profile" };
   }
+  // Bios can contain list markers and **bold**, which would read as noise in
+  // a search result or social card, so flatten them back to prose first.
+  const summary =
+    (dog.description ? toPlainText(dog.description).slice(0, 160) : "") ||
+    `Meet ${dog.name}, available for adoption.`;
   return {
     title: dog.name,
-    description: dog.description?.slice(0, 160) || `Meet ${dog.name}, available for adoption.`,
+    description: summary,
     openGraph: {
       title: dog.name,
-      description: dog.description?.slice(0, 160) || `Meet ${dog.name}, available for adoption.`,
+      description: summary,
     },
   };
 }

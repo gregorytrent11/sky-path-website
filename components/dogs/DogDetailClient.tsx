@@ -10,6 +10,7 @@ import {
   compatibilityBadges,
   sizeLabel,
 } from "@/components/dogs/dog-display";
+import RichText from "@/components/dogs/RichText";
 import { siteConfig } from "@/lib/site-config";
 
 type LoadState = "loading" | "found" | "not-found" | "error";
@@ -247,9 +248,7 @@ export default function DogDetailClient({ slug }: { slug: string }) {
           )}
 
           {dog.description && (
-            <p className="mt-6 whitespace-pre-line leading-relaxed text-brand-charcoal">
-              {dog.description}
-            </p>
+            <RichText text={dog.description} className="mt-6 leading-relaxed text-brand-charcoal" />
           )}
 
           {dog.status !== "adopted" && (
