@@ -41,6 +41,24 @@ already exist (matched by slug), uploads every image/video inside, and skips
 folders that already have media (safe to re-run). Prompts for an admin
 email/password at runtime.
 
+## Cleaning up orphaned media
+
+Deleting a row in Supabase never deletes the file in Storage, so the admin UI
+removes the object explicitly on every path that drops a reference (deleting a
+dog or event, removing or replacing a photo). Anything orphaned before that was
+in place is still sitting in the buckets:
+
+```
+npm run cleanup-media            # dry run -- lists what it would delete
+npm run cleanup-media -- --delete
+```
+
+It compares every object in `dog-photos`, `dog-videos`, and `event-photos`
+against `dog_media.storage_path`, `dogs.primary_photo_url`, and
+`events.cover_image_url`, and reports anything nothing points at. Dry run by
+default; read the list before passing `--delete`, since Storage deletes can't
+be undone. Prompts for an admin email/password at runtime.
+
 ## Deploying
 
 `.github/workflows/deploy.yml` builds and deploys to GitHub Pages on push to

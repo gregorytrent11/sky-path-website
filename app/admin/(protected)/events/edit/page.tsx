@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, Suspense, useEffect, useState } from "react";
+import { FormEvent, Suspense, useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -8,6 +8,7 @@ import { supabase } from "@/lib/supabase/client";
 import type { Event, EventInsert, EventStatus, EventUpdate } from "@/types/database";
 import { slugify } from "@/lib/slugify";
 import { triggerDeploy } from "@/lib/trigger-deploy";
+import { removeEventCoverObject } from "@/lib/storage-cleanup";
 import FocalPointPicker from "@/components/admin/FocalPointPicker";
 import RichTextField from "@/components/admin/RichTextField";
 
@@ -94,9 +95,25 @@ function EditEventForm() {
     setForm((prev) => ({ ...prev, [key]: value }));
   }
 
+  // Covers that this edit replaced or removed. They're deleted only once the
+  // save succeeds -- deleting on the spot would leave the still-saved row
+  // pointing at a missing file if the admin then navigated away.
+  const supersededCovers = useRef<string[]>([]);
+
+  function supersedeCover(url: string) {
+    if (url) supersededCovers.current.push(url);
+  }
+
+  async function flushSupersededCovers() {
+    const urls = supersededCovers.current;
+    supersededCovers.current = [];
+    await Promise.all(urls.map((url) => removeEventCoverObject(url)));
+  }
+
   async function handleCoverUpload(file: File | undefined) {
     if (!file) return;
     setCoverError(null);
+    const replacedCover = form.cover_image_url;
 
     if (!file.type.startsWith("image/")) {
       setCoverError("Cover photo must be an image.");
@@ -120,6 +137,7 @@ function EditEventForm() {
       return;
     }
     const { data: publicUrlData } = supabase.storage.from("event-photos").getPublicUrl(path);
+    supersedeCover(replacedCover);
     setForm((prev) => ({
       ...prev,
       cover_image_url: publicUrlData.publicUrl,
@@ -158,6 +176,7 @@ function EditEventForm() {
       // -- editing content on an existing page doesn't, since the page
       // fetches live data from Supabase on load regardless of the static
       // build.
+      await flushSupersededCovers();
       if (payload.slug !== originalSlug) triggerDeploy();
       router.push("/admin/events/");
     } else {
@@ -176,6 +195,7 @@ function EditEventForm() {
         setError(insertError.message);
         return;
       }
+      await flushSupersededCovers();
       triggerDeploy();
       router.push("/admin/events/");
     }
@@ -314,7 +334,10 @@ function EditEventForm() {
             {form.cover_image_url && (
               <button
                 type="button"
-                onClick={() => update("cover_image_url", "")}
+                onClick={() => {
+                  supersedeCover(form.cover_image_url);
+                  update("cover_image_url", "");
+                }}
                 className="text-sm text-red-700 hover:underline"
               >
                 Remove

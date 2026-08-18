@@ -152,7 +152,7 @@ export default function DogMediaManager({ dogId, dogName }: { dogId: string; dog
 
       const { data: publicUrlData } = supabase.storage.from(bucket).getPublicUrl(path);
 
-      await supabase.from("dog_media").insert({
+      const { error: insertError } = await supabase.from("dog_media").insert({
         dog_id: dogId,
         media_type: isImage ? "image" : "video",
         storage_path: path,
@@ -161,6 +161,14 @@ export default function DogMediaManager({ dogId, dogName }: { dogId: string; dog
         sort_order: media.length + addedPhotos,
         is_primary: media.length === 0 && addedPhotos === 0,
       });
+      if (insertError) {
+        // The file uploaded but nothing references it, so put the bucket back
+        // how it was rather than leaving an invisible orphan behind.
+        await supabase.storage.from(bucket).remove([path]);
+        setError(`${file.name}: could not be saved (${insertError.message}).`);
+        setUploading(false);
+        continue;
+      }
 
       if (isImage) addedPhotos += 1;
       if (isVideo) addedVideos += 1;

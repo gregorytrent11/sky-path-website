@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase/client";
 import { triggerDeploy } from "@/lib/trigger-deploy";
+import { removeDogMediaObjects } from "@/lib/storage-cleanup";
 import type { Dog, DogStatus } from "@/types/database";
 
 const statusStyles: Record<DogStatus, string> = {
@@ -76,6 +77,9 @@ export default function AdminDogsPage() {
       return;
     }
     setBusyId(id);
+    // Before the row goes: dog_media is `on delete cascade`, so once the dog
+    // is deleted there's no record of which files in Storage were hers.
+    await removeDogMediaObjects(id);
     await supabase.from("dogs").delete().eq("id", id);
     await reload();
     setBusyId(null);

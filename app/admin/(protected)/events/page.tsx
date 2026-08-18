@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase/client";
 import { triggerDeploy } from "@/lib/trigger-deploy";
+import { removeEventCoverObject } from "@/lib/storage-cleanup";
 import type { Event, EventStatus } from "@/types/database";
 import { formatEventDate } from "@/components/events/event-display";
 
@@ -40,11 +41,14 @@ export default function AdminEventsPage() {
     triggerDeploy();
   }
 
-  async function remove(id: string, title: string) {
-    if (!window.confirm(`Delete "${title}"? This cannot be undone.`)) {
+  async function remove(id: string, title: string, coverImageUrl: string | null) {
+    if (!window.confirm(`Delete "${title}"? This also removes its cover photo and cannot be undone.`)) {
       return;
     }
     setBusyId(id);
+    // Storage isn't touched by the row delete, so the cover would otherwise
+    // sit in the bucket forever with nothing pointing at it.
+    await removeEventCoverObject(coverImageUrl);
     await supabase.from("events").delete().eq("id", id);
     await reload();
     setBusyId(null);
@@ -133,7 +137,7 @@ export default function AdminEventsPage() {
                       <button
                         type="button"
                         disabled={busyId === event.id}
-                        onClick={() => remove(event.id, event.title)}
+                        onClick={() => remove(event.id, event.title, event.cover_image_url)}
                         className="text-red-700 hover:underline"
                       >
                         Delete

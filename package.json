@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "lint": "eslint",
-    "import-photos": "node --env-file=.env.local scripts/import-photos.mjs"
+    "import-photos": "node --env-file=.env.local scripts/import-photos.mjs",
+    "cleanup-media": "node --env-file=.env.local scripts/cleanup-orphaned-media.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.111.0",
