@@ -53,6 +53,11 @@ npm run cleanup-media            # dry run -- lists what it would delete
 npm run cleanup-media -- --delete
 ```
 
+Note that Storage deletes need a **SELECT** policy on `storage.objects`, not
+just DELETE -- `remove()` looks the object up first, and without SELECT the
+delete matches nothing and returns success having deleted nothing. See
+`supabase/migrations/20260817010000_storage_admin_read_policy.sql`.
+
 It compares every object in `dog-photos`, `dog-videos`, and `event-photos`
 against `dog_media.storage_path`, `dogs.primary_photo_url`, and
 `events.cover_image_url`, and reports anything nothing points at. Dry run by
