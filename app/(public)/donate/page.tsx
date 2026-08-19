@@ -67,7 +67,7 @@ export default function DonatePage() {
             Give with PayPal, Venmo, or a card
           </h2>
           <p className="mt-2 text-sm leading-relaxed text-brand-charcoal/90">
-            One-time or monthly. You don&rsquo;t need a PayPal account to give by card.
+            You don&rsquo;t need a PayPal account to give by card.
           </p>
           <div className="mt-4">
             <PayPalDonateButton />
