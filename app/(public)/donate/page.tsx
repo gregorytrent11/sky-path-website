@@ -1,6 +1,7 @@
 import Image from "next/image";
 import PageHero from "@/components/layout/PageHero";
 import PayPalDonateButton from "@/components/donate/PayPalDonateButton";
+import ZeffyDonationForm from "@/components/donate/ZeffyDonationForm";
 import { siteConfig } from "@/lib/site-config";
 import { pageMetadata } from "@/lib/metadata";
 
@@ -47,7 +48,21 @@ export default function DonatePage() {
           </p>
         </div>
 
+        {/* Zeffy passes on 100% of a donation -- it charges nonprofits nothing
+            and asks donors for an optional tip -- so it leads. The form needs
+            the full column width; the two compact options pair up below it. */}
         <div className="mx-auto mt-12 max-w-xl rounded-lg border border-brand-soft-blue bg-brand-gray p-6 text-center">
+          <h2 className="font-heading text-lg font-semibold text-brand-deep-blue">
+            Give online
+          </h2>
+          <p className="mt-2 text-sm leading-relaxed text-brand-charcoal/90">
+            One-time or monthly, by card. 100% of your donation reaches the dogs.
+          </p>
+          <ZeffyDonationForm />
+        </div>
+
+        <div className="mt-6 grid gap-6 sm:grid-cols-2">
+        <div className="rounded-lg border border-brand-soft-blue bg-brand-gray p-6 text-center">
           <h2 className="font-heading text-lg font-semibold text-brand-deep-blue">
             Give with PayPal, Venmo, or a card
           </h2>
@@ -59,7 +74,7 @@ export default function DonatePage() {
           </div>
         </div>
 
-        <div className="mx-auto mt-6 max-w-xl rounded-lg border border-brand-soft-blue bg-brand-gray p-6 text-center">
+        <div className="rounded-lg border border-brand-soft-blue bg-brand-gray p-6 text-center">
           <h2 className="font-heading text-lg font-semibold text-brand-deep-blue">
             Give via Zelle
           </h2>
@@ -75,6 +90,8 @@ export default function DonatePage() {
               className="object-contain"
             />
           </div>
+        </div>
+
         </div>
 
         <div className="mx-auto mt-6 max-w-xl rounded-lg border border-brand-soft-blue bg-brand-gray p-6 text-left">

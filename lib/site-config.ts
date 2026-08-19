@@ -24,6 +24,12 @@ export const siteConfig = {
   paypalClientId:
     "BAAunqyQnZk04eujsqwha0mdGtJ66os7ZE2DYGh5XG2zBseME29URE4aVlgcp0yZnKm2dRdOGbU885y2fU",
   paypalHostedButtonId: "UYB2NMP6T5K6E",
+  // Zeffy charges nonprofits nothing -- it asks donors for an optional tip --
+  // so this is the option that gets the most of each gift to the dogs.
+  zeffyDonationFormUrl:
+    "https://www.zeffy.com/embed/donation-form/support-the-dogs-of-skys-path-to-home",
+  zeffyDonationPageUrl:
+    "https://www.zeffy.com/en-US/donation-form/support-the-dogs-of-skys-path-to-home",
 } as const;
 
 export type NavLink = {
