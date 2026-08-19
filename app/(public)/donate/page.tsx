@@ -15,19 +15,7 @@ export default function DonatePage() {
       <PageHero title="Help Give a Dog a Safe Path Home" />
 
       <section className="mx-auto max-w-3xl px-4 py-14 sm:px-6">
-        <div className="mx-auto max-w-xl rounded-lg border border-brand-soft-blue bg-brand-gray p-6 text-center">
-          <h2 className="font-heading text-lg font-semibold text-brand-deep-blue">
-            Give with PayPal, Venmo, or a card
-          </h2>
-          <p className="mt-2 text-sm leading-relaxed text-brand-charcoal/90">
-            One-time or monthly. You don&rsquo;t need a PayPal account to give by card.
-          </p>
-          <div className="mt-4">
-            <PayPalDonateButton />
-          </div>
-        </div>
-
-        <h2 className="mt-14 text-center font-heading text-2xl font-semibold text-brand-deep-blue">
+        <h2 className="text-center font-heading text-2xl font-semibold text-brand-deep-blue">
           Your Donation Saves Lives
         </h2>
         <div className="mx-auto mt-4 max-w-2xl space-y-4 text-left text-base leading-relaxed text-brand-charcoal">
@@ -60,6 +48,18 @@ export default function DonatePage() {
         </div>
 
         <div className="mx-auto mt-12 max-w-xl rounded-lg border border-brand-soft-blue bg-brand-gray p-6 text-center">
+          <h2 className="font-heading text-lg font-semibold text-brand-deep-blue">
+            Give with PayPal, Venmo, or a card
+          </h2>
+          <p className="mt-2 text-sm leading-relaxed text-brand-charcoal/90">
+            One-time or monthly. You don&rsquo;t need a PayPal account to give by card.
+          </p>
+          <div className="mt-4">
+            <PayPalDonateButton />
+          </div>
+        </div>
+
+        <div className="mx-auto mt-6 max-w-xl rounded-lg border border-brand-soft-blue bg-brand-gray p-6 text-center">
           <h2 className="font-heading text-lg font-semibold text-brand-deep-blue">
             Give via Zelle
           </h2>
