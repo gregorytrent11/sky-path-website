@@ -17,6 +17,13 @@ export const siteConfig = {
   contactEmail: "skyspathtohome@gmail.com",
   contactPhone: "813-373-1918",
   donationUrl: process.env.NEXT_PUBLIC_DONATION_URL || "",
+  // PayPal hosted-button identifiers. Both are public by design -- they ship
+  // in the page source on every PayPal integration -- so they live here
+  // rather than in env vars, where a missing GitHub Actions variable would
+  // silently remove the donate button from a deploy.
+  paypalClientId:
+    "BAAunqyQnZk04eujsqwha0mdGtJ66os7ZE2DYGh5XG2zBseME29URE4aVlgcp0yZnKm2dRdOGbU885y2fU",
+  paypalHostedButtonId: "UYB2NMP6T5K6E",
 } as const;
 
 export type NavLink = {

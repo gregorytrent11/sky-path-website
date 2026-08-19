@@ -1,6 +1,6 @@
 import Image from "next/image";
 import PageHero from "@/components/layout/PageHero";
-import DonateButton from "@/components/layout/DonateButton";
+import PayPalDonateButton from "@/components/donate/PayPalDonateButton";
 import { siteConfig } from "@/lib/site-config";
 import { pageMetadata } from "@/lib/metadata";
 
@@ -15,9 +15,15 @@ export default function DonatePage() {
       <PageHero title="Help Give a Dog a Safe Path Home" />
 
       <section className="mx-auto max-w-3xl px-4 py-14 sm:px-6">
-        <div className="text-center">
-          <div className="mt-2">
-            <DonateButton size="lg" variant="external" />
+        <div className="mx-auto max-w-xl rounded-lg border border-brand-soft-blue bg-brand-gray p-6 text-center">
+          <h2 className="font-heading text-lg font-semibold text-brand-deep-blue">
+            Give with PayPal, Venmo, or a card
+          </h2>
+          <p className="mt-2 text-sm leading-relaxed text-brand-charcoal/90">
+            One-time or monthly. You don&rsquo;t need a PayPal account to give by card.
+          </p>
+          <div className="mt-4">
+            <PayPalDonateButton />
           </div>
         </div>
 
