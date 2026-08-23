@@ -4,10 +4,11 @@
 // anon insert, so a bad actor hitting PostgREST directly can't skip the
 // spam check (see supabase/migrations/20260731220000_init_schema.sql).
 //
-// Also fires an email alert via Resend on every successful submission --
-// a temporary stand-in for real inbox notifications until Google Workspace
-// is set up. Remove the notifyByEmail call (and the RESEND_API_KEY secret)
-// once that's in place.
+// Also fires an email alert via Resend on every successful submission.
+// Sends from notifications@skyspath.com (domain verified in Resend; DKIM +
+// send/rsend CNAMEs live in Bluehost DNS) to the contact_us@skyspath.com
+// inbox. Deploying a NOTIFY_EMAIL/from change requires `supabase functions
+// deploy submit-form` -- pushing to GitHub does not deploy this function.
 //
 // Required secrets (supabase secrets set ...):
 //   TURNSTILE_SECRET_KEY
@@ -24,7 +25,7 @@ const ALLOWED_FORM_TYPES = new Set([
   "foster_application",
 ]);
 
-const NOTIFY_EMAIL = "skyspathtohome@gmail.com";
+const NOTIFY_EMAIL = "contact_us@skyspath.com";
 
 const FORM_TYPE_LABELS: Record<string, string> = {
   contact: "Contact Form",
@@ -64,7 +65,7 @@ async function notifyByEmail(details: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        from: "Sky's Path to Home <onboarding@resend.dev>",
+        from: "Sky's Path to Home <notifications@skyspath.com>",
         to: NOTIFY_EMAIL,
         subject: `New ${label} Submission - ${details.name}`,
         text: lines.join("\n"),
