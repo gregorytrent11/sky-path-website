@@ -106,6 +106,45 @@ Deno.serve(async (req) => {
     return new Response(JSON.stringify({ ok: true }), { status: 200, headers });
   }
 
+  if (body.action === "resend") {
+    const userId = body.userId?.trim();
+    if (!userId) {
+      return new Response(JSON.stringify({ error: "A user id is required" }), {
+        status: 400,
+        headers,
+      });
+    }
+    const { data: target, error: lookupError } = await adminClient.auth.admin.getUserById(userId);
+    if (lookupError || !target?.user?.email) {
+      return new Response(JSON.stringify({ error: "That admin no longer exists." }), {
+        status: 404,
+        headers,
+      });
+    }
+    if (target.user.last_sign_in_at) {
+      return new Response(
+        JSON.stringify({ error: "That admin has already signed in and doesn't need an invite." }),
+        { status: 400, headers }
+      );
+    }
+    // inviteUserByEmail refuses an email that's already registered, and
+    // expired invite links can't be refreshed in place -- so recreate the
+    // pending account. Safe only because we just checked they've never
+    // signed in, meaning there's no real account state to lose.
+    const { error: deleteError } = await adminClient.auth.admin.deleteUser(target.user.id);
+    if (deleteError) {
+      return new Response(JSON.stringify({ error: deleteError.message }), { status: 400, headers });
+    }
+    const { error: reinviteError } = await adminClient.auth.admin.inviteUserByEmail(
+      target.user.email,
+      { redirectTo: `${SITE_URL}/admin/reset-password/` }
+    );
+    if (reinviteError) {
+      return new Response(JSON.stringify({ error: reinviteError.message }), { status: 400, headers });
+    }
+    return new Response(JSON.stringify({ ok: true }), { status: 200, headers });
+  }
+
   if (body.action === "delete") {
     const userId = body.userId?.trim();
     if (!userId) {

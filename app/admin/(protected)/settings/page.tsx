@@ -50,6 +50,10 @@ export default function AdminSettingsPage() {
   const [inviteError, setInviteError] = useState<string | null>(null);
   const [inviteSent, setInviteSent] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [resendingId, setResendingId] = useState<string | null>(null);
+  // Keyed by email, not id: resending recreates the pending account, so the
+  // row comes back from loadAdmins with a fresh id.
+  const [resentEmail, setResentEmail] = useState<string | null>(null);
 
   async function handlePasswordSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -117,6 +121,22 @@ export default function AdminSettingsPage() {
     }
     setInviteEmail("");
     setInviteSent(true);
+    await loadAdmins();
+  }
+
+  async function handleResendInvite(admin: AdminUser) {
+    setAdminsError(null);
+    setResentEmail(null);
+    setResendingId(admin.id);
+    const { data, error: invokeError } = await supabase.functions.invoke("manage-admins", {
+      body: { action: "resend", userId: admin.id },
+    });
+    setResendingId(null);
+    if (invokeError || !data || data.error) {
+      setAdminsError(data?.error ?? invokeError?.message ?? "Could not resend the invite.");
+      return;
+    }
+    setResentEmail(admin.email);
     await loadAdmins();
   }
 
@@ -370,6 +390,20 @@ export default function AdminSettingsPage() {
                   <span className="flex items-center gap-3 text-xs text-brand-charcoal/60">
                     Joined {formatDate(admin.created_at)} &middot; Last sign-in{" "}
                     {formatDate(admin.last_sign_in_at)}
+                    {!isSelf && !admin.last_sign_in_at && (
+                      <button
+                        type="button"
+                        onClick={() => handleResendInvite(admin)}
+                        disabled={resendingId === admin.id}
+                        className="font-medium text-brand-purple hover:underline disabled:opacity-60"
+                      >
+                        {resendingId === admin.id
+                          ? "Resending…"
+                          : admin.email !== null && resentEmail === admin.email
+                            ? "Invite resent"
+                            : "Resend Invite"}
+                      </button>
+                    )}
                     {!isSelf && (
                       <button
                         type="button"
