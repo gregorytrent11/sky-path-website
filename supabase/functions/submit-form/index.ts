@@ -26,9 +26,6 @@ const ALLOWED_FORM_TYPES = new Set([
 ]);
 
 const NOTIFY_EMAIL = "contact_us@skyspath.com";
-// Adoption/foster applications additionally alert Sky directly.
-const APPLICATION_NOTIFY_EMAIL = "sky@skyspath.com";
-const APPLICATION_FORM_TYPES = new Set(["adopt_application", "foster_application"]);
 
 const FORM_TYPE_LABELS: Record<string, string> = {
   contact: "Contact Form",
@@ -69,9 +66,7 @@ async function notifyByEmail(details: {
       },
       body: JSON.stringify({
         from: "Sky's Path to Home <notifications@skyspath.com>",
-        to: APPLICATION_FORM_TYPES.has(details.formType)
-          ? [NOTIFY_EMAIL, APPLICATION_NOTIFY_EMAIL]
-          : NOTIFY_EMAIL,
+        to: NOTIFY_EMAIL,
         subject: `New ${label} Submission - ${details.name}`,
         text: lines.join("\n"),
       }),
