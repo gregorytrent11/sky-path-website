@@ -80,7 +80,7 @@ export default function DonatePage() {
           </h2>
           <p className="mt-2 text-sm leading-relaxed text-brand-charcoal/90">
             Scan the QR code below in your banking app, or send to{" "}
-            <span className="font-semibold">skyspathtohome</span> on Zelle.
+            <span className="font-semibold">sky@skyspath.com</span> on Zelle.
           </p>
           <div className="relative mx-auto mt-4 aspect-[700/775] w-full max-w-[280px] overflow-hidden rounded-lg bg-white">
             <Image
