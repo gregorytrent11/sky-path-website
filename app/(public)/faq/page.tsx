@@ -128,7 +128,7 @@ export default function FaqPage() {
                 "Spayed or neutered",
                 "Microchipped",
                 "Vaccinated according to their age",
-                "Tested for heartworm",
+                "Tested for heartworm according to their age",
                 "Treated for any illnesses or injuries",
               ]}
             />
