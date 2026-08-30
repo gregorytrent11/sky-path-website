@@ -94,8 +94,7 @@ type FormState = {
   noticeNeeded: string;
   agreeContactIfCannotFoster: string;
   agreeNoUnauthorizedTransfer: string;
-  // Home Check and References
-  willingHomeCheck: string;
+  // References
   authorizeContact: string;
   ref1Name: string;
   ref1Relationship: string;
@@ -180,7 +179,6 @@ const emptyForm: FormState = {
   noticeNeeded: "",
   agreeContactIfCannotFoster: "",
   agreeNoUnauthorizedTransfer: "",
-  willingHomeCheck: "",
   authorizeContact: "",
   ref1Name: "",
   ref1Relationship: "",
@@ -474,8 +472,7 @@ export default function FosterApplicationForm() {
       </div>
 
       <div className="space-y-4">
-        <SectionHeading>Home Check and References</SectionHeading>
-        <YesNoField name="willingHomeCheck" label="Are you willing to participate in a home visit or virtual home check?" value={form.willingHomeCheck} onChange={(v) => update("willingHomeCheck", v)} required />
+        <SectionHeading>References</SectionHeading>
         <YesNoField name="authorizeContact" label="Do you authorize Sky's Path to Home to contact your landlord, veterinarian, personal references, or other animal-welfare organizations when evaluating your application?" value={form.authorizeContact} onChange={(v) => update("authorizeContact", v)} required />
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           <TextField id="foster-ref1-name" label="Personal reference name" value={form.ref1Name} onChange={(v) => update("ref1Name", v)} required />

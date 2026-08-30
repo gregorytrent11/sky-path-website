@@ -76,21 +76,6 @@ export default function FosterPage() {
           </Link>
         </div>
       </section>
-
-      <section aria-labelledby="foster-faq-heading" className="bg-brand-gray">
-        <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
-          <h2 id="foster-faq-heading" className="font-heading text-2xl font-semibold text-brand-deep-blue">
-            Frequently Asked Questions
-          </h2>
-          <p className="mt-4 text-sm text-brand-charcoal/70">
-            Foster FAQs are being finalized and will be published here soon. In the meantime,{" "}
-            <Link href="/contact" className="font-semibold text-brand-purple hover:underline">
-              contact us
-            </Link>{" "}
-            with any questions about fostering.
-          </p>
-        </div>
-      </section>
     </>
   );
 }

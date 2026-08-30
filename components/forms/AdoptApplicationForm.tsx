@@ -33,7 +33,6 @@ type FormState = {
   whereStay: string;
   exercisePlan: string;
   preparedForCosts: string;
-  willingScreening: string;
   whyInterested: string;
   landlordInfo: string;
   currentPets: string;
@@ -89,7 +88,6 @@ function emptyForm(dogName: string): FormState {
     whereStay: "",
     exercisePlan: "",
     preparedForCosts: "",
-    willingScreening: "",
     whyInterested: "",
     landlordInfo: "",
     currentPets: "",
@@ -399,13 +397,6 @@ function AdoptApplicationFormInner() {
           onChange={(v) => update("preparedForCosts", v)}
           required
         />
-        <YesNoField
-          name="willingScreening"
-          label="Are you willing to participate in requested screening (home visit, virtual home check, reference check, meet-and-greet)?"
-          value={form.willingScreening}
-          onChange={(v) => update("willingScreening", v)}
-          required
-        />
         <TextAreaField id="adopt-why" label="Why are you interested in this dog?" value={form.whyInterested} onChange={(v) => update("whyInterested", v)} required />
         {!renting && (
           <TextAreaField id="adopt-landlord-optional" label="Landlord or property manager information" value={form.landlordInfo} onChange={(v) => update("landlordInfo", v)} required />
@@ -475,7 +466,7 @@ function AdoptApplicationFormInner() {
             <span>
               I authorize Sky&rsquo;s Path to Home to contact the references listed in this
               application and to ask questions regarding my reliability, responsibility,
-              animal-care experience, household stability, and suitability to adopt a dog. I
+              animal-care experience, and suitability to adopt a dog. I
               understand that Sky&rsquo;s Path to Home may consider the information provided by my
               references when reviewing my adoption application. *
             </span>

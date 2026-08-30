@@ -12,7 +12,7 @@ const processSteps = [
   "Read the dog's full profile and requirements.",
   "Submit an adoption application.",
   "Participate in a phone or video conversation.",
-  "Complete reference, veterinary, landlord, or home checks when applicable.",
+  "Complete references.",
   "Meet the dog.",
   "Review and sign the adoption agreement.",
   "Pay the applicable adoption fee.",

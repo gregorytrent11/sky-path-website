@@ -81,14 +81,6 @@ export default function FaqPage() {
             </p>
           </FaqItem>
 
-          <FaqItem question="If I adopt out of state, how do you do a home inspection and/or meet and greet?">
-            <p>
-              We will schedule a video call for a home inspection. We will ask you to provide
-              honest feedback about any current animals you have to ensure the dog you want to
-              adopt will be a good fit.
-            </p>
-          </FaqItem>
-
           <FaqItem question="Who can adopt?">
             <ul className="space-y-2">
               <li className="flex gap-2">
