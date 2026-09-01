@@ -3,7 +3,11 @@ import ContactForm from "@/components/forms/ContactForm";
 import { siteConfig } from "@/lib/site-config";
 import { pageMetadata } from "@/lib/metadata";
 
-export const metadata = pageMetadata("Contact", "Contact Sky's Path to Home.");
+export const metadata = pageMetadata(
+  "Contact",
+  "Contact Sky's Path to Home, a Montana nonprofit dog rescue, about adoption, fostering, volunteering, donations, or a dog that needs help.",
+  "/contact/"
+);
 
 export default function ContactPage() {
   return (

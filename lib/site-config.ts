@@ -4,6 +4,12 @@ export const siteConfig = {
   tagline: "Every Dog Deserves a Safe Path Home",
   shortDescription:
     "Sky's Path to Home is a Montana nonprofit dog rescue serving Billings and surrounding communities. We work through foster homes to provide dogs with safety, veterinary care, stability, and the time they need to find the right permanent family. In addition, we intake dogs across the U.S. and can support adoption outside of Montana.",
+  // Search-result title/description for the homepage. Kept separate from the
+  // tagline and shortDescription (which are on-page copy) so search snippets
+  // can lead with what people actually type: Montana dog rescue / adoption.
+  seoTitle: "Sky's Path to Home | Montana Nonprofit Dog Rescue",
+  seoDescription:
+    "Sky's Path to Home is a 501(c)(3) nonprofit dog rescue in Montana. We rescue abused, senior, medical, and euthanasia-listed dogs, foster them, and find them loving homes.",
   missionStatement:
     "To rescue dogs that have been abused, have medical issues, are elderly, or are on the euthanasia list. We rehabilitate, foster, and provide veterinary care to prepare each dog to be adopted into a loving family.",
   visionStatement:

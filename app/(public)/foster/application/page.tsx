@@ -4,7 +4,8 @@ import { pageMetadata } from "@/lib/metadata";
 
 export const metadata = pageMetadata(
   "Foster Application",
-  "Apply to become a foster home with Sky's Path to Home."
+  "Apply to foster a rescue dog in Montana with Sky's Path to Home. Foster homes give dogs a safe place to recover while they wait for adoption.",
+  "/foster/application/"
 );
 
 export default function FosterApplicationPage() {

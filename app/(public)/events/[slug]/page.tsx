@@ -22,7 +22,8 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   if (slug === PLACEHOLDER_SLUG) {
-    return { title: "Event" };
+    // Build-only shell, never a real page: keep it out of search results.
+    return { title: "Event", robots: { index: false, follow: false } };
   }
   const [event] = await fetchEventsForBuild(slug);
   if (!event) {
@@ -32,12 +33,19 @@ export async function generateMetadata({
   // in a search result or social card, so flatten them back to prose first.
   const blurb =
     (event.summary ? toPlainText(event.summary).slice(0, 160) : "") ||
-    `${event.title} -- Sky's Path to Home.`;
+    `${event.title}, an event from Sky's Path to Home, a Montana nonprofit dog rescue.`;
+  const path = `/events/${event.slug}/`;
   return {
     title: event.title,
     description: blurb,
+    alternates: { canonical: path },
     openGraph: {
-      title: event.title,
+      title: `${event.title} | Sky's Path to Home`,
+      description: blurb,
+      url: path,
+    },
+    twitter: {
+      title: `${event.title} | Sky's Path to Home`,
       description: blurb,
     },
   };

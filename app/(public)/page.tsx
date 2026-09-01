@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import DonateButton from "@/components/layout/DonateButton";
@@ -5,10 +6,20 @@ import RecoveryRedirect from "@/components/RecoveryRedirect";
 import SuccessStoriesPreview from "@/components/dogs/SuccessStoriesPreview";
 import FeaturedDogsPreview from "@/components/dogs/FeaturedDogsPreview";
 import { socialIcons } from "@/components/icons/SocialIcons";
+import { fetchFeaturedDogsForBuild } from "@/lib/build-time-dogs";
 import { siteConfig } from "@/lib/site-config";
 import { socialLinks } from "@/lib/social-links";
 
-export default function HomePage() {
+// The root layout supplies the homepage title/description; this only pins the
+// canonical URL so search engines index skyspath.com/ as the single homepage.
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
+
+export default async function HomePage() {
+  // Build-time snapshot so the homepage HTML crawlers see already lists real
+  // adoptable dogs; FeaturedDogsPreview refreshes it live in the browser.
+  const featuredDogs = await fetchFeaturedDogsForBuild();
   return (
     <>
       <RecoveryRedirect />
@@ -26,6 +37,10 @@ export default function HomePage() {
           <h1 className="max-w-3xl font-heading text-4xl font-semibold text-brand-deep-blue sm:text-5xl">
             Every Dog Deserves a Safe Path Home
           </h1>
+          <p className="max-w-2xl text-base font-medium text-brand-purple sm:text-lg">
+            {siteConfig.orgName} is a 501(c)(3) nonprofit dog rescue serving{" "}
+            {siteConfig.serviceArea}.
+          </p>
           <div className="max-w-3xl">
             <h2 className="text-sm font-semibold uppercase tracking-wide text-brand-purple">
               Our Mission
@@ -62,7 +77,7 @@ export default function HomePage() {
             View all dogs &rarr;
           </Link>
         </div>
-        <FeaturedDogsPreview />
+        <FeaturedDogsPreview initialDogs={featuredDogs} />
       </section>
 
       {/* How it works */}

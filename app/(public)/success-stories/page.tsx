@@ -2,7 +2,11 @@ import PageHero from "@/components/layout/PageHero";
 import SuccessStoriesListClient from "@/components/dogs/SuccessStoriesListClient";
 import { pageMetadata } from "@/lib/metadata";
 
-export const metadata = pageMetadata("Success Stories", "Adoption success stories from Sky's Path to Home.");
+export const metadata = pageMetadata(
+  "Success Stories",
+  "Adoption success stories from Sky's Path to Home, a Montana nonprofit dog rescue: rescued dogs who found their loving homes.",
+  "/success-stories/"
+);
 
 export default function SuccessStoriesPage() {
   return (

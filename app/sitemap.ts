@@ -2,6 +2,10 @@ import type { MetadataRoute } from "next";
 import { fetchDogsForBuild } from "@/lib/build-time-dogs";
 import { fetchEventsForBuild } from "@/lib/build-time-events";
 
+// Required by `output: "export"` for metadata routes. (It also makes any
+// global `fetch` here cache to disk between builds, which once shipped a
+// sitemap missing newer dogs -- the build-time fetchers avoid `fetch` for
+// exactly that reason; see lib/build-time-dogs.ts.)
 export const dynamic = "force-static";
 
 const STATIC_ROUTES = [

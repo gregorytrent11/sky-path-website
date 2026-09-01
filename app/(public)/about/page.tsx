@@ -4,8 +4,9 @@ import { siteConfig } from "@/lib/site-config";
 import { pageMetadata } from "@/lib/metadata";
 
 export const metadata = pageMetadata(
-  "About",
-  "Learn about Sky's Path to Home, our story, mission, and values."
+  "About Our Montana Dog Rescue",
+  "Learn about Sky's Path to Home, a 501(c)(3) nonprofit dog rescue in Montana: our story, our mission to rescue abused, senior, medical, and euthanasia-listed dogs, and our values.",
+  "/about/"
 );
 
 const values = [

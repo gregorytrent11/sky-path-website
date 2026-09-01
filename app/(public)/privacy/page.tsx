@@ -2,7 +2,11 @@ import PageHero from "@/components/layout/PageHero";
 import { siteConfig } from "@/lib/site-config";
 import { pageMetadata } from "@/lib/metadata";
 
-export const metadata = pageMetadata("Privacy Policy", "Privacy policy for Sky's Path to Home.");
+export const metadata = pageMetadata(
+  "Privacy Policy",
+  "Privacy policy for Sky's Path to Home, a Montana nonprofit dog rescue.",
+  "/privacy/"
+);
 
 export default function PrivacyPage() {
   return (

@@ -3,8 +3,9 @@ import PageHero from "@/components/layout/PageHero";
 import { pageMetadata } from "@/lib/metadata";
 
 export const metadata = pageMetadata(
-  "Foster",
-  "Foster homes give rescued dogs a safe place to decompress, recover, learn, and show who they are outside a shelter environment."
+  "Foster a Rescue Dog in Montana",
+  "Become a foster home for Sky's Path to Home, a Montana nonprofit dog rescue. Foster homes give rescued dogs a safe place to decompress, recover, and show who they are.",
+  "/foster/"
 );
 
 const sections = [

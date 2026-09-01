@@ -5,7 +5,8 @@ import { pageMetadata } from "@/lib/metadata";
 
 export const metadata = pageMetadata(
   "Request Help",
-  "Request help from Sky's Path to Home: found dogs, owner surrenders, shelter transfers, and more."
+  "Request help from Sky's Path to Home, a Montana dog rescue: found dogs, owner surrenders, shelter transfers, and dogs at risk of euthanasia.",
+  "/request-help/"
 );
 
 export default function RequestHelpPage() {

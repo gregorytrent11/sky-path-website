@@ -46,6 +46,10 @@ jobs:
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
           NEXT_PUBLIC_TURNSTILE_SITE_KEY: ${{ secrets.NEXT_PUBLIC_TURNSTILE_SITE_KEY }}
           NEXT_PUBLIC_DONATION_URL: ${{ vars.NEXT_PUBLIC_DONATION_URL }}
+          # Optional: Google Search Console HTML-tag verification token
+          # (see app/layout.tsx). Set as a repository variable once you claim
+          # the property in Search Console.
+          NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION: ${{ vars.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION }}
         run: npm run build
 
       - uses: actions/configure-pages@v5

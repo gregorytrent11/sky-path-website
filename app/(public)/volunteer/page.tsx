@@ -5,7 +5,11 @@ import { socialIcons } from "@/components/icons/SocialIcons";
 import { pageMetadata } from "@/lib/metadata";
 import { socialLinks } from "@/lib/social-links";
 
-export const metadata = pageMetadata("Get Involved", "Volunteer opportunities with Sky's Path to Home.");
+export const metadata = pageMetadata(
+  "Get Involved",
+  "Volunteer with Sky's Path to Home, a Montana nonprofit dog rescue: foster, transport, help at events, or share dogs looking for a home.",
+  "/volunteer/"
+);
 
 const ways = [
   {

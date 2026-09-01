@@ -15,18 +15,33 @@ import { siteConfig } from "@/lib/site-config";
 
 type LoadState = "loading" | "found" | "not-found" | "error";
 
-export default function DogDetailClient({ slug }: { slug: string }) {
-  const [dog, setDog] = useState<Dog | null>(null);
-  const [media, setMedia] = useState<DogMedia[]>([]);
-  const [state, setState] = useState<LoadState>("loading");
+// `initialDog`/`initialMedia` are the build-time snapshot for this slug (see
+// lib/build-time-dogs.ts). Rendering them on first paint means the static
+// HTML search engines index already contains the full profile instead of a
+// loading skeleton; the effect below still refreshes from Supabase so admin
+// edits show up without waiting for a rebuild.
+export default function DogDetailClient({
+  slug,
+  initialDog = null,
+  initialMedia = [],
+}: {
+  slug: string;
+  initialDog?: Dog | null;
+  initialMedia?: DogMedia[];
+}) {
+  const hasInitial = initialDog !== null && initialDog.slug === slug;
+  const [dog, setDog] = useState<Dog | null>(hasInitial ? initialDog : null);
+  const [media, setMedia] = useState<DogMedia[]>(hasInitial ? initialMedia : []);
+  const [state, setState] = useState<LoadState>(hasInitial ? "found" : "loading");
   const [activePhoto, setActivePhoto] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
     // Resets load state before an external data fetch keyed on slug, not
-    // derived state.
+    // derived state. When a pre-rendered profile is already showing, keep it
+    // on screen while the refresh runs rather than flashing a skeleton.
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    setState("loading");
+    setState((current) => (current === "found" ? current : "loading"));
 
     async function load() {
       const { data, error } = await supabase
@@ -36,7 +51,9 @@ export default function DogDetailClient({ slug }: { slug: string }) {
         .maybeSingle();
       if (cancelled) return;
       if (error) {
-        setState("error");
+        // A failed refresh shouldn't replace an already-rendered profile
+        // with an error message.
+        setState((current) => (current === "found" ? current : "error"));
         return;
       }
       if (!data) {

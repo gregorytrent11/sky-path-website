@@ -4,7 +4,8 @@ import { pageMetadata } from "@/lib/metadata";
 
 export const metadata = pageMetadata(
   "Adoption FAQ",
-  "Frequently asked questions about adopting a dog from Sky's Path to Home."
+  "Answers to common questions about adopting a dog in Montana from Sky's Path to Home: adoption fees, requirements, meet and greets, and adopting from out of state.",
+  "/faq/"
 );
 
 function FaqItem({ question, children }: { question: string; children: React.ReactNode }) {

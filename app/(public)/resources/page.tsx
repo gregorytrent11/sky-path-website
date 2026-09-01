@@ -5,7 +5,8 @@ import { pageMetadata } from "@/lib/metadata";
 
 export const metadata = pageMetadata(
   "Resources",
-  "Guidance for people who found a dog, need to rehome a dog, or need pet support resources."
+  "Montana dog resources from Sky's Path to Home: what to do if you found a dog, how to rehome a dog responsibly, and where to find pet support.",
+  "/resources/"
 );
 
 const resources = [

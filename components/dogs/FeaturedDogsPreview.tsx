@@ -5,8 +5,13 @@ import { supabase } from "@/lib/supabase/client";
 import type { Dog } from "@/types/database";
 import DogCard from "@/components/dogs/DogCard";
 
-export default function FeaturedDogsPreview() {
-  const [dogs, setDogs] = useState<Dog[] | null>(null);
+// `initialDogs` is the build-time snapshot (see lib/build-time-dogs.ts) so the
+// homepage HTML search engines index already names real adoptable dogs; the
+// live query below then keeps the section current between deploys.
+export default function FeaturedDogsPreview({ initialDogs }: { initialDogs?: Dog[] }) {
+  const [dogs, setDogs] = useState<Dog[] | null>(
+    initialDogs && initialDogs.length > 0 ? initialDogs : null
+  );
 
   useEffect(() => {
     let cancelled = false;

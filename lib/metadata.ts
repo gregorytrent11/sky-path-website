@@ -7,13 +7,20 @@ import { siteConfig } from "@/lib/site-config";
 // links for every page would show the homepage's title/description. This
 // keeps each page's social card in sync with its actual title/description
 // without repeating the openGraph/twitter boilerplate on every page.
-export function pageMetadata(title: string, description: string): Metadata {
+//
+// `path` is the route's public pathname (with trailing slash, matching
+// next.config's `trailingSlash: true`). It becomes the page's canonical URL
+// so search engines index exactly one URL per page, and the og:url so shared
+// links point at the page rather than the homepage.
+export function pageMetadata(title: string, description: string, path: string): Metadata {
   return {
     title,
     description,
+    alternates: { canonical: path },
     openGraph: {
       title: `${title} | ${siteConfig.orgName}`,
       description,
+      url: path,
     },
     twitter: {
       title: `${title} | ${siteConfig.orgName}`,

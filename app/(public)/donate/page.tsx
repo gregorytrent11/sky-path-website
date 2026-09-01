@@ -7,7 +7,8 @@ import { pageMetadata } from "@/lib/metadata";
 
 export const metadata = pageMetadata(
   "Donate",
-  "Help give a dog a safe path home with a donation to Sky's Path to Home."
+  "Support a Montana nonprofit dog rescue. Your tax-deductible donation to Sky's Path to Home pays for veterinary care, medication, and foster support for rescued dogs.",
+  "/donate/"
 );
 
 export default function DonatePage() {

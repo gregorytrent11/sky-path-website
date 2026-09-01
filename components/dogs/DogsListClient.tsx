@@ -5,8 +5,15 @@ import { supabase } from "@/lib/supabase/client";
 import type { Dog } from "@/types/database";
 import DogCard from "@/components/dogs/DogCard";
 
-export default function DogsListClient() {
-  const [dogs, setDogs] = useState<Dog[] | null>(null);
+// `initialDogs` is the build-time snapshot (see lib/build-time-dogs.ts). It
+// renders into the static HTML so crawlers see real dog cards, then the live
+// query below replaces it so visitors always get the current list. An empty
+// array at build time (e.g. Supabase unreachable) falls back to the skeleton
+// so the page never claims "no dogs" before the browser has actually checked.
+export default function DogsListClient({ initialDogs }: { initialDogs?: Dog[] }) {
+  const [dogs, setDogs] = useState<Dog[] | null>(
+    initialDogs && initialDogs.length > 0 ? initialDogs : null
+  );
   const [error, setError] = useState(false);
 
   useEffect(() => {
@@ -30,7 +37,9 @@ export default function DogsListClient() {
     };
   }, []);
 
-  if (error) {
+  // A failed live refresh keeps showing the build-time cards rather than
+  // replacing real dogs with an error message.
+  if (error && !dogs) {
     return (
       <p className="rounded-xl border border-dashed border-brand-soft-blue bg-brand-gray/50 p-8 text-center text-brand-charcoal/70">
         We couldn&rsquo;t load our dogs right now. Please try again in a moment.

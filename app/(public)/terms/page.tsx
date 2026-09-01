@@ -2,7 +2,11 @@ import PageHero from "@/components/layout/PageHero";
 import { siteConfig } from "@/lib/site-config";
 import { pageMetadata } from "@/lib/metadata";
 
-export const metadata = pageMetadata("Terms of Use", "Terms of use for Sky's Path to Home.");
+export const metadata = pageMetadata(
+  "Terms of Use",
+  "Terms of use for the Sky's Path to Home website, a Montana nonprofit dog rescue.",
+  "/terms/"
+);
 
 export default function TermsPage() {
   return (

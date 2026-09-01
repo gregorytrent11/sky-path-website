@@ -4,7 +4,8 @@ import { pageMetadata } from "@/lib/metadata";
 
 export const metadata = pageMetadata(
   "Events",
-  "Upcoming and past events from Sky's Path to Home."
+  "Upcoming adoption events, fundraisers, and community events from Sky's Path to Home, a Montana nonprofit dog rescue.",
+  "/events/"
 );
 
 export default function EventsPage() {
