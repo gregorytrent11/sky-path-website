@@ -2,6 +2,7 @@ import Image from "next/image";
 import PageHero from "@/components/layout/PageHero";
 import PayPalDonateButton from "@/components/donate/PayPalDonateButton";
 import ZeffyDonationForm from "@/components/donate/ZeffyDonationForm";
+import ChariotDafButton from "@/components/donate/ChariotDafButton";
 import { siteConfig } from "@/lib/site-config";
 import { pageMetadata } from "@/lib/metadata";
 
@@ -93,6 +94,49 @@ export default function DonatePage() {
           </div>
         </div>
 
+        </div>
+
+        {/* DAF donors grant through their provider (Fidelity Charitable,
+            Schwab, Vanguard, ...), which matches the charity by EIN. The
+            Chariot DAFpay button shortcuts that, but only once the Chariot
+            plan includes it; the EIN card works regardless. */}
+        <div className="mx-auto mt-6 max-w-xl rounded-lg border border-brand-soft-blue bg-brand-gray p-6 text-center">
+          <h2 className="font-heading text-lg font-semibold text-brand-deep-blue">
+            Give from a Donor-Advised Fund
+          </h2>
+          {siteConfig.chariotConnectId ? (
+            <>
+              <p className="mt-2 text-sm leading-relaxed text-brand-charcoal/90">
+                Have a donor-advised fund with Fidelity Charitable, Schwab Charitable, Vanguard
+                Charitable, or another provider? DAFpay lets you recommend a grant to Sky&rsquo;s
+                Path to Home in a few clicks, with no forms to fill out.
+              </p>
+              <div className="mt-4">
+                <ChariotDafButton />
+              </div>
+              <p className="mt-3 text-xs leading-relaxed text-brand-charcoal/70">
+                Prefer to grant directly through your provider? Our EIN is{" "}
+                <span className="font-semibold">{siteConfig.ein}</span>.
+              </p>
+            </>
+          ) : (
+            <>
+              <p className="mt-2 text-sm leading-relaxed text-brand-charcoal/90">
+                Have a donor-advised fund with Fidelity Charitable, Schwab Charitable, Vanguard
+                Charitable, or another provider? Log in to your fund and recommend a grant to us
+                using the details below.
+              </p>
+              <dl className="mx-auto mt-4 grid max-w-xs grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-left text-sm text-brand-charcoal">
+                <dt className="font-semibold">Legal name</dt>
+                <dd>{siteConfig.legalName}</dd>
+                <dt className="font-semibold">EIN</dt>
+                <dd>{siteConfig.ein}</dd>
+              </dl>
+              <p className="mt-3 text-xs leading-relaxed text-brand-charcoal/70">
+                We are a verified nonprofit with Chariot, so DAF grants reach us electronically.
+              </p>
+            </>
+          )}
         </div>
 
         <div className="mx-auto mt-6 max-w-xl rounded-lg border border-brand-soft-blue bg-brand-gray p-6 text-left">

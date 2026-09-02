@@ -36,6 +36,16 @@ export const siteConfig = {
     "https://www.zeffy.com/embed/donation-form/support-the-dogs-of-skys-path-to-home",
   zeffyDonationPageUrl:
     "https://www.zeffy.com/en-US/donation-form/support-the-dogs-of-skys-path-to-home",
+  // Chariot Connect ID for the DAFpay button (donor-advised fund giving).
+  // Public by design, like the PayPal IDs above -- it identifies the
+  // nonprofit, not a credential -- so it lives here, not in an env var.
+  // Empty until the Chariot plan includes DAFpay Components (Growth tier as
+  // of Sep 2026; Core doesn't); the donate page shows an EIN-based DAF card
+  // meanwhile and adds the button as soon as this is filled in.
+  chariotConnectId: "",
+  // Exact legal name as registered with the IRS -- DAF providers match
+  // grant recommendations against it.
+  legalName: "SKY'S PATH TO HOME",
 } as const;
 
 export type NavLink = {
