@@ -43,6 +43,11 @@ export const siteConfig = {
   // of Sep 2026; Core doesn't); the donate page shows an EIN-based DAF card
   // meanwhile and adds the button as soon as this is filled in.
   chariotConnectId: "",
+  // Free alternative to the Chariot button: a Givebutter donation form with
+  // DAFpay switched on (Givebutter -> Settings -> Account -> Payment methods
+  // -> Donor Advised Fund). Paste the campaign/form URL here and the donate
+  // page adds a "Give from your DAF" button to the DAF card.
+  givebutterDafUrl: "",
   // Exact legal name as registered with the IRS -- DAF providers match
   // grant recommendations against it.
   legalName: "SKY'S PATH TO HOME",

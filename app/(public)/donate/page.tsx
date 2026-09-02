@@ -132,6 +132,16 @@ export default function DonatePage() {
                 <dt className="font-semibold">EIN</dt>
                 <dd>{siteConfig.ein}</dd>
               </dl>
+              {siteConfig.givebutterDafUrl && (
+                <a
+                  href={siteConfig.givebutterDafUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-4 inline-flex items-center justify-center rounded-full bg-brand-purple px-6 py-2.5 text-sm font-semibold text-brand-white shadow-sm transition-colors hover:bg-brand-deep-blue focus-visible:outline-brand-deep-blue"
+                >
+                  Give from your DAF in a few clicks
+                </a>
+              )}
               <p className="mt-3 text-xs leading-relaxed text-brand-charcoal/70">
                 We are a verified nonprofit with Chariot, so DAF grants reach us electronically.
               </p>
