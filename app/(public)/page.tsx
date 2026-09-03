@@ -37,12 +37,8 @@ export default async function HomePage() {
           <h1 className="max-w-3xl font-heading text-4xl font-semibold text-brand-deep-blue sm:text-5xl">
             Every Dog Deserves a Safe Path Home
           </h1>
-          <p className="max-w-2xl text-base font-medium text-brand-purple sm:text-lg">
-            {siteConfig.orgName} is a 501(c)(3) nonprofit dog rescue serving{" "}
-            {siteConfig.serviceArea}.
-          </p>
           <div className="max-w-3xl">
-            <h2 className="text-sm font-semibold uppercase tracking-wide text-brand-purple">
+            <h2 className="text-lg font-semibold leading-relaxed text-brand-charcoal">
               Our Mission
             </h2>
             <p className="mt-2 text-lg leading-relaxed text-brand-charcoal">
