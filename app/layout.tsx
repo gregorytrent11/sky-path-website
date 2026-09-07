@@ -37,6 +37,8 @@ export const metadata: Metadata = {
     "dog rescue in Montana",
     "dogs for adoption in Montana",
     "Billings dog rescue",
+    "Joliet Montana dog rescue",
+    "Stillwater County dog rescue",
     "foster a dog in Montana",
     "501(c)(3) dog rescue",
   ],

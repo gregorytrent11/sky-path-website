@@ -32,6 +32,7 @@ export default function Footer() {
             Contact
           </p>
           <ul className="space-y-2 text-sm text-brand-white/90">
+            <li>{siteConfig.homeTown}</li>
             <li>
               <a href={`mailto:${siteConfig.contactEmail}`} className="hover:text-brand-lavender">
                 {siteConfig.contactEmail}

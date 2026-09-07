@@ -39,13 +39,16 @@ export default function OrganizationJsonLd() {
         taxID: siteConfig.ein,
         address: {
           "@type": "PostalAddress",
+          addressLocality: "Joliet",
           addressRegion: "MT",
           addressCountry: "US",
         },
-        areaServed: {
-          "@type": "State",
-          name: "Montana",
-        },
+        areaServed: [
+          { "@type": "City", name: "Joliet, Montana" },
+          { "@type": "City", name: "Billings, Montana" },
+          { "@type": "AdministrativeArea", name: "Stillwater County, Montana" },
+          { "@type": "State", name: "Montana" },
+        ],
         knowsAbout: [
           "Dog rescue",
           "Dog adoption",
