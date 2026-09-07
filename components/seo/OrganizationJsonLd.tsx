@@ -15,7 +15,16 @@ export default function OrganizationJsonLd() {
         "@type": ["NGO", "AnimalShelter"],
         "@id": orgId,
         name: siteConfig.orgName,
-        alternateName: "Sky's Path to Home Montana",
+        // Spellings people actually type into search (and the domain name
+        // itself) so brand queries like "skyspath" or "skys path" resolve to
+        // this organization rather than only to the social profiles.
+        alternateName: [
+          "Sky's Path to Home Montana",
+          "Skys Path to Home",
+          "Sky's Path",
+          "Skys Path",
+          "SkysPath",
+        ],
         url: `${siteUrl}/`,
         logo: {
           "@type": "ImageObject",
