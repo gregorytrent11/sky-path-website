@@ -176,8 +176,8 @@ export default async function HomePage() {
             Nonprofit status
           </h2>
           <p className="text-sm text-brand-charcoal/80">{siteConfig.nonprofitStatus}</p>
-          <p className="mt-2 text-sm text-brand-charcoal/80">
-            Serving {siteConfig.serviceArea}.{" "}
+          <p className="mt-2 text-sm text-brand-charcoal/80">Serving {siteConfig.serviceArea}.</p>
+          <p className="mt-2 text-sm">
             <Link href="/contact" className="font-semibold text-brand-purple hover:underline">
               Contact us
             </Link>
