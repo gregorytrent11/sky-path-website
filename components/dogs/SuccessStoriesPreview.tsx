@@ -42,7 +42,7 @@ export default function SuccessStoriesPreview() {
       {dogs.map((dog) => (
         <Link
           key={dog.id}
-          href={`/dogs/${dog.slug}/`}
+          href={`/success-stories/#${dog.slug}`}
           className="overflow-hidden rounded-xl border border-brand-soft-blue/60 bg-brand-white text-left shadow-sm transition-shadow hover:shadow-md"
         >
           <div className="relative aspect-[4/3] w-full overflow-hidden bg-brand-gray">

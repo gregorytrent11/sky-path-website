@@ -32,6 +32,17 @@ export default function SuccessStoriesListClient() {
     };
   }, []);
 
+  // The homepage preview links to /success-stories/#<slug>. The cards render
+  // after a client-side fetch, so the browser's native hash jump fires before
+  // the target exists; scroll to it ourselves once the list is on the page.
+  useEffect(() => {
+    if (!dogs || dogs.length === 0) return;
+    const hash = window.location.hash.slice(1);
+    if (!hash) return;
+    const target = document.getElementById(decodeURIComponent(hash));
+    if (target) target.scrollIntoView({ block: "start" });
+  }, [dogs]);
+
   if (error) {
     return (
       <p className="rounded-xl border border-dashed border-brand-soft-blue bg-brand-gray/50 p-8 text-center text-brand-charcoal/70">
@@ -64,7 +75,8 @@ export default function SuccessStoriesListClient() {
       {dogs.map((dog) => (
         <div
           key={dog.id}
-          className="overflow-hidden rounded-xl border border-brand-soft-blue/60 bg-brand-white shadow-sm"
+          id={dog.slug}
+          className="scroll-mt-24 overflow-hidden rounded-xl border border-brand-soft-blue/60 bg-brand-white shadow-sm"
         >
           <div className="relative aspect-[4/3] w-full overflow-hidden bg-brand-gray">
             {dog.primary_photo_url ? (
