@@ -204,7 +204,7 @@ export default function DogDetailClient({
             )}
             {dog.status === "pending" && (
               <span className="rounded-full bg-brand-purple px-3 py-1 text-xs font-semibold text-brand-white">
-                Adoption Pending
+                Pending Adoption
               </span>
             )}
           </div>
@@ -266,6 +266,17 @@ export default function DogDetailClient({
 
           {dog.description && (
             <RichText text={dog.description} className="mt-6 leading-relaxed text-brand-charcoal" />
+          )}
+
+          {dog.status === "pending" && (
+            <p className="mt-6 rounded-lg bg-brand-lavender/20 p-4 text-sm text-brand-charcoal/80">
+              {dog.name} has an adoption pending, but it isn&rsquo;t final yet. You&rsquo;re welcome to apply
+              as a backup in case it falls through, or{" "}
+              <Link href="/dogs/" className="font-medium text-brand-purple hover:underline">
+                see who else is available
+              </Link>
+              .
+            </p>
           )}
 
           {dog.status !== "adopted" && (

@@ -262,7 +262,7 @@ function EditDogForm() {
           >
             <option value="draft">Draft (hidden)</option>
             <option value="published">Published</option>
-            <option value="pending">Adoption Pending</option>
+            <option value="pending">Pending Adoption</option>
             <option value="adopted">Adopted</option>
             <option value="archived">Archived</option>
           </select>

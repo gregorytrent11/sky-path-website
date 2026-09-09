@@ -64,7 +64,9 @@ export async function generateMetadata({
   const bio = dog.description ? toPlainText(dog.description) : "";
   const lead = adopted
     ? `${dog.name}${traits ? ` (${traits})` : ""} found a home through ${siteConfig.orgName}, a Montana nonprofit dog rescue.`
-    : `Meet ${dog.name}${traits ? `, ${traits}` : ""}, available for adoption from ${siteConfig.orgName}, a Montana nonprofit dog rescue.`;
+    : dog.status === "pending"
+      ? `Meet ${dog.name}${traits ? `, ${traits}` : ""}, with an adoption pending at ${siteConfig.orgName}, a Montana nonprofit dog rescue.`
+      : `Meet ${dog.name}${traits ? `, ${traits}` : ""}, available for adoption from ${siteConfig.orgName}, a Montana nonprofit dog rescue.`;
   const description = truncateAtWord(bio ? `${lead} ${bio}` : lead, 160);
   const image = dog.primary_photo_url
     ? [{ url: dog.primary_photo_url, alt: dog.name }]

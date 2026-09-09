@@ -30,7 +30,7 @@ export default function DogCard({ dog }: { dog: Dog }) {
         )}
         {dog.status === "pending" && (
           <span className="absolute left-3 top-3 rounded-full bg-brand-purple px-3 py-1 text-xs font-semibold text-brand-white">
-            Adoption Pending
+            Pending Adoption
           </span>
         )}
       </div>

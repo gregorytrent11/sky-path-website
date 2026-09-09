@@ -16,6 +16,14 @@ const statusStyles: Record<DogStatus, string> = {
   archived: "bg-brand-charcoal/10 text-brand-charcoal/80",
 };
 
+const statusLabels: Record<DogStatus, string> = {
+  draft: "Draft",
+  published: "Published",
+  pending: "Pending Adoption",
+  adopted: "Adopted",
+  archived: "Archived",
+};
+
 export default function AdminDogsPage() {
   const router = useRouter();
   const [dogs, setDogs] = useState<Dog[] | null>(null);
@@ -119,7 +127,7 @@ export default function AdminDogsPage() {
                   <td className="px-4 py-3 font-medium text-brand-charcoal">{dog.name}</td>
                   <td className="px-4 py-3">
                     <span className={`rounded-full px-2 py-1 text-xs font-medium ${statusStyles[dog.status]}`}>
-                      {dog.status}
+                      {statusLabels[dog.status]}
                     </span>
                     {!dog.is_visible && (
                       <span className="ml-1 rounded-full bg-red-100 px-2 py-1 text-xs font-medium text-red-800">
@@ -170,6 +178,26 @@ export default function AdminDogsPage() {
                             Archive
                           </button>
                         </>
+                      )}
+                      {dog.status === "published" && (
+                        <button
+                          type="button"
+                          disabled={busyId === dog.id}
+                          onClick={() => setStatus(dog.id, "pending")}
+                          className="text-brand-charcoal/70 hover:underline"
+                        >
+                          Mark Pending
+                        </button>
+                      )}
+                      {dog.status === "pending" && (
+                        <button
+                          type="button"
+                          disabled={busyId === dog.id}
+                          onClick={() => setStatus(dog.id, "published")}
+                          className="text-brand-charcoal/70 hover:underline"
+                        >
+                          Unmark Pending
+                        </button>
                       )}
                       {dog.status !== "adopted" ? (
                         <button
