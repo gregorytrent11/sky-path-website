@@ -5,6 +5,7 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import OrganizationJsonLd from "@/components/seo/OrganizationJsonLd";
 import { siteConfig } from "@/lib/site-config";
+import { searchSafe } from "@/lib/metadata";
 
 const bodyFont = Inter({
   variable: "--font-body",
@@ -25,10 +26,10 @@ const googleSiteVerification = process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION;
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.siteUrl),
   title: {
-    default: siteConfig.seoTitle,
-    template: `%s | ${siteConfig.orgName}`,
+    default: searchSafe(siteConfig.seoTitle),
+    template: searchSafe(`%s | ${siteConfig.orgName}`),
   },
-  description: siteConfig.seoDescription,
+  description: searchSafe(siteConfig.seoDescription),
   applicationName: siteConfig.orgName,
   keywords: [
     "Sky's Path to Home",
@@ -57,15 +58,15 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     siteName: siteConfig.orgName,
-    title: siteConfig.seoTitle,
-    description: siteConfig.seoDescription,
+    title: searchSafe(siteConfig.seoTitle),
+    description: searchSafe(siteConfig.seoDescription),
     url: siteConfig.siteUrl,
     images: [{ url: "/brand/og-image.jpg", width: 1200, height: 630, alt: siteConfig.orgName }],
   },
   twitter: {
     card: "summary_large_image",
-    title: siteConfig.seoTitle,
-    description: siteConfig.seoDescription,
+    title: searchSafe(siteConfig.seoTitle),
+    description: searchSafe(siteConfig.seoDescription),
     images: ["/brand/og-image.jpg"],
   },
   ...(googleSiteVerification ? { verification: { google: googleSiteVerification } } : {}),

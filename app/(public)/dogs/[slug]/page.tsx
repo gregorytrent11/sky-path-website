@@ -4,6 +4,7 @@ import { dogSummaryLine } from "@/components/dogs/dog-display";
 import { toPlainText } from "@/components/RichText";
 import { fetchDogProfileForBuild, fetchDogsForBuild } from "@/lib/build-time-dogs";
 import { siteConfig } from "@/lib/site-config";
+import { searchSafe } from "@/lib/metadata";
 
 // A slug that can never collide with a real dog (see dogs table: slug is a
 // non-empty, unique, human-derived string). Used purely to guarantee
@@ -71,19 +72,20 @@ export async function generateMetadata({
   const image = dog.primary_photo_url
     ? [{ url: dog.primary_photo_url, alt: dog.name }]
     : undefined;
+  const socialTitle = searchSafe(`${title} | ${siteConfig.orgName}`);
   return {
-    title,
-    description,
+    title: searchSafe(title),
+    description: searchSafe(description),
     alternates: { canonical: path },
     openGraph: {
-      title: `${title} | ${siteConfig.orgName}`,
-      description,
+      title: socialTitle,
+      description: searchSafe(description),
       url: path,
       ...(image ? { images: image } : {}),
     },
     twitter: {
-      title: `${title} | ${siteConfig.orgName}`,
-      description,
+      title: socialTitle,
+      description: searchSafe(description),
       ...(image ? { images: [dog.primary_photo_url as string] } : {}),
     },
   };

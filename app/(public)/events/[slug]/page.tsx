@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import EventDetailClient from "@/components/events/EventDetailClient";
 import { toPlainText } from "@/components/RichText";
 import { fetchEventsForBuild } from "@/lib/build-time-events";
+import { searchSafe } from "@/lib/metadata";
 
 // A slug that can never collide with a real event (see events table: slug is
 // a non-empty, unique, human-derived string). Used purely to guarantee
@@ -31,22 +32,24 @@ export async function generateMetadata({
   }
   // Summaries can carry list markers and **bold**, which would read as noise
   // in a search result or social card, so flatten them back to prose first.
+  const eventTitle = event.title ?? "Event";
   const blurb =
     (event.summary ? toPlainText(event.summary).slice(0, 160) : "") ||
-    `${event.title}, an event from Sky's Path to Home, a Montana nonprofit dog rescue.`;
+    `${eventTitle}, an event from Sky's Path to Home, a Montana nonprofit dog rescue.`;
   const path = `/events/${event.slug}/`;
+  const socialTitle = searchSafe(`${eventTitle} | Sky's Path to Home`);
   return {
-    title: event.title,
-    description: blurb,
+    title: searchSafe(eventTitle),
+    description: searchSafe(blurb),
     alternates: { canonical: path },
     openGraph: {
-      title: `${event.title} | Sky's Path to Home`,
-      description: blurb,
+      title: socialTitle,
+      description: searchSafe(blurb),
       url: path,
     },
     twitter: {
-      title: `${event.title} | Sky's Path to Home`,
-      description: blurb,
+      title: socialTitle,
+      description: searchSafe(blurb),
     },
   };
 }
