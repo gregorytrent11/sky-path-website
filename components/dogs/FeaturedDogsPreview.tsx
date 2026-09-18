@@ -20,7 +20,7 @@ export default function FeaturedDogsPreview({ initialDogs }: { initialDogs?: Dog
       .select("*")
       .eq("featured", true)
       .eq("is_visible", true)
-      .in("status", ["published", "pending"])
+      .in("status", ["incoming", "published", "pending"])
       .order("sort_order", { ascending: true })
       .order("created_at", { ascending: false })
       .limit(3)

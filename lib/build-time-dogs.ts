@@ -68,8 +68,8 @@ export async function restGet<T>(table: string, query: string): Promise<T[]> {
 
 export async function fetchDogsForBuild(slug?: string): Promise<BuildTimeDog[]> {
   const query = slug
-    ? `slug=eq.${encodeURIComponent(slug)}&status=in.(published,pending,adopted)&select=name,slug,description,updated_at`
-    : `status=in.(published,pending,adopted)&select=slug,updated_at`;
+    ? `slug=eq.${encodeURIComponent(slug)}&status=in.(incoming,published,pending,adopted)&select=name,slug,description,updated_at`
+    : `status=in.(incoming,published,pending,adopted)&select=slug,updated_at`;
   return restGet<BuildTimeDog>("dogs", query);
 }
 
@@ -77,7 +77,7 @@ export async function fetchDogsForBuild(slug?: string): Promise<BuildTimeDog[]> 
 export async function fetchAvailableDogsForBuild(): Promise<Dog[]> {
   return restGet<Dog>(
     "dogs",
-    "status=in.(published,pending)&select=*&order=sort_order.asc,created_at.desc"
+    "status=in.(incoming,published,pending)&select=*&order=sort_order.asc,created_at.desc"
   );
 }
 
@@ -85,7 +85,7 @@ export async function fetchAvailableDogsForBuild(): Promise<Dog[]> {
 export async function fetchFeaturedDogsForBuild(): Promise<Dog[]> {
   return restGet<Dog>(
     "dogs",
-    "featured=eq.true&is_visible=eq.true&status=in.(published,pending)&select=*&order=sort_order.asc,created_at.desc&limit=3"
+    "featured=eq.true&is_visible=eq.true&status=in.(incoming,published,pending)&select=*&order=sort_order.asc,created_at.desc&limit=3"
   );
 }
 
@@ -95,7 +95,7 @@ export async function fetchDogProfileForBuild(
 ): Promise<{ dog: Dog; media: DogMedia[] } | null> {
   const [dog] = await restGet<Dog>(
     "dogs",
-    `slug=eq.${encodeURIComponent(slug)}&status=in.(published,pending,adopted)&select=*&limit=1`
+    `slug=eq.${encodeURIComponent(slug)}&status=in.(incoming,published,pending,adopted)&select=*&limit=1`
   );
   if (!dog) return null;
   const media = await restGet<DogMedia>(

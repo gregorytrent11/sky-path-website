@@ -202,6 +202,11 @@ export default function DogDetailClient({
                 Adopted
               </span>
             )}
+            {dog.status === "incoming" && (
+              <span className="rounded-full bg-amber-500 px-3 py-1 text-xs font-semibold text-brand-charcoal">
+                Incoming
+              </span>
+            )}
             {dog.status === "pending" && (
               <span className="rounded-full bg-brand-purple px-3 py-1 text-xs font-semibold text-brand-white">
                 Pending Adoption
@@ -266,6 +271,13 @@ export default function DogDetailClient({
 
           {dog.description && (
             <RichText text={dog.description} className="mt-6 leading-relaxed text-brand-charcoal" />
+          )}
+
+          {dog.status === "incoming" && (
+            <p className="mt-6 rounded-lg bg-brand-lavender/20 p-4 text-sm text-brand-charcoal/80">
+              {dog.name} is on the way to {siteConfig.orgName} and hasn&rsquo;t arrived yet. You&rsquo;re
+              welcome to apply now, and we&rsquo;ll be in touch once {dog.name} is here and settled.
+            </p>
           )}
 
           {dog.status === "pending" && (

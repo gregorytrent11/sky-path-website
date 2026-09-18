@@ -20,7 +20,7 @@ export default function AdminDashboardPage() {
         supabase
           .from("dogs")
           .select("id", { count: "exact", head: true })
-          .in("status", ["published", "pending"]),
+          .in("status", ["incoming", "published", "pending"]),
         supabase.from("dogs").select("id", { count: "exact", head: true }).eq("status", "draft"),
         supabase.from("submissions").select("id", { count: "exact", head: true }).eq("status", "new"),
       ]);

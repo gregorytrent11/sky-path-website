@@ -10,6 +10,7 @@ import type { Dog, DogStatus } from "@/types/database";
 
 const statusStyles: Record<DogStatus, string> = {
   draft: "bg-brand-gray text-brand-charcoal",
+  incoming: "bg-amber-100 text-amber-800",
   published: "bg-green-100 text-green-800",
   pending: "bg-brand-purple text-brand-white",
   adopted: "bg-brand-deep-blue text-brand-white",
@@ -18,6 +19,7 @@ const statusStyles: Record<DogStatus, string> = {
 
 const statusLabels: Record<DogStatus, string> = {
   draft: "Draft",
+  incoming: "Incoming",
   published: "Published",
   pending: "Pending Adoption",
   adopted: "Adopted",
@@ -157,6 +159,16 @@ export default function AdminDogsPage() {
                           className="text-brand-purple hover:underline"
                         >
                           Publish
+                        </button>
+                      )}
+                      {dog.status === "draft" && (
+                        <button
+                          type="button"
+                          disabled={busyId === dog.id}
+                          onClick={() => setStatus(dog.id, "incoming")}
+                          className="text-brand-charcoal/70 hover:underline"
+                        >
+                          Mark Incoming
                         </button>
                       )}
                       {dog.status === "published" && (

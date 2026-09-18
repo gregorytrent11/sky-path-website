@@ -261,6 +261,7 @@ function EditDogForm() {
             className={selectClasses()}
           >
             <option value="draft">Draft (hidden)</option>
+            <option value="incoming">Incoming (shown, not here yet)</option>
             <option value="published">Published</option>
             <option value="pending">Pending Adoption</option>
             <option value="adopted">Adopted</option>

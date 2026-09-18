@@ -21,7 +21,7 @@ export default function DogsListClient({ initialDogs }: { initialDogs?: Dog[] })
     supabase
       .from("dogs")
       .select("*")
-      .in("status", ["published", "pending"])
+      .in("status", ["incoming", "published", "pending"])
       .order("sort_order", { ascending: true })
       .order("created_at", { ascending: false })
       .then(({ data, error: fetchError }) => {

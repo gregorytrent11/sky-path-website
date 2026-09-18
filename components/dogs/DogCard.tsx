@@ -28,6 +28,11 @@ export default function DogCard({ dog }: { dog: Dog }) {
             Adopted
           </span>
         )}
+        {dog.status === "incoming" && (
+          <span className="absolute left-3 top-3 rounded-full bg-amber-500 px-3 py-1 text-xs font-semibold text-brand-charcoal">
+            Incoming
+          </span>
+        )}
         {dog.status === "pending" && (
           <span className="absolute left-3 top-3 rounded-full bg-brand-purple px-3 py-1 text-xs font-semibold text-brand-white">
             Pending Adoption
