@@ -118,7 +118,7 @@ export default function FaqPage() {
             </p>
             <BulletList
               items={[
-                "Spayed or neutered",
+                "Spayed or neutered according to their age",
                 "Microchipped",
                 "Vaccinated according to their age",
                 "Tested for heartworm according to their age",
@@ -166,9 +166,19 @@ export default function FaqPage() {
               ]}
             />
 
-            <p className="font-semibold text-brand-charcoal">
-              Sky&rsquo;s Path to Home reserves the right to deny an adoption when we believe the
-              placement is not in the best interest of the dog.
+            <p>
+              Meeting the minimum adoption requirements, having an approved application, and
+              successfully completing reference checks do not guarantee an adoption. The meet and
+              greet is an important part of our adoption process and helps us determine whether the
+              dog and prospective adopter are a good match.
+            </p>
+            <p>
+              Sky&rsquo;s Path to Home reserves the right to deny an adoption at any point in the
+              adoption process if we believe the placement is not in the best interest of the dog.
+              This may include concerns about the dog&rsquo;s interaction with the prospective
+              adopter, household members, resident dogs, or other animals, including significant
+              fear, stress, aggression, discomfort, or other behavior that causes us to believe the
+              placement may not be safe or appropriate.
             </p>
           </FaqItem>
 
