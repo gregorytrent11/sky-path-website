@@ -14,7 +14,6 @@ import {
 } from "@/components/forms/FormPrimitives";
 
 type FormState = {
-  dogName: string;
   whyInterested: string;
   firstName: string;
   lastName: string;
@@ -90,9 +89,8 @@ type ReferenceValues = {
   observedAnimalCare: string;
 };
 
-function emptyForm(dogName: string): FormState {
+function emptyForm(): FormState {
   return {
-    dogName,
     whyInterested: "",
     firstName: "",
     lastName: "",
@@ -255,7 +253,9 @@ function ReferenceFieldset({
 
 function AdoptApplicationFormInner() {
   const searchParams = useSearchParams();
-  const [form, setForm] = useState<FormState>(() => emptyForm(searchParams.get("dog") || ""));
+  const [form, setForm] = useState<FormState>(emptyForm);
+  // One box per dog; the first is always there and is the required one.
+  const [dogNames, setDogNames] = useState<string[]>(() => [searchParams.get("dog") || ""]);
   const [certified, setCertified] = useState(false);
   const [referenceAuthorized, setReferenceAuthorized] = useState(false);
   const [status, setStatus] = useState<"idle" | "submitting" | "submitted">("idle");
@@ -264,6 +264,10 @@ function AdoptApplicationFormInner() {
 
   function update<K extends keyof FormState>(key: K, value: FormState[K]) {
     setForm((prev) => ({ ...prev, [key]: value }));
+  }
+
+  function updateDogName(index: number, value: string) {
+    setDogNames((prev) => prev.map((name, i) => (i === index ? value : name)));
   }
 
   const renting = form.homeOwnership === "Rent";
@@ -304,6 +308,9 @@ function AdoptApplicationFormInner() {
         message: form.whyInterested || undefined,
         payload: {
           ...form,
+          // Stays one "Dog Name" answer in the admin list and the PDF, the
+          // same as applications sent in before more than one dog was allowed.
+          dogName: dogNames.map((name) => name.trim()).filter(Boolean).join(", "),
           // The question is hidden once the yard is marked fully fenced, so
           // don't send an answer typed before they changed their mind.
           unfencedYardPlan: yardNotFullyFenced ? form.unfencedYardPlan : "",
@@ -340,12 +347,38 @@ function AdoptApplicationFormInner() {
         <SectionHeading>Dog Information</SectionHeading>
         <TextField
           id="adopt-dog-name"
-          label="Which dog are you interested in?"
-          value={form.dogName}
-          onChange={(v) => update("dogName", v)}
+          label="Which dog(s) are you interested in?"
+          value={dogNames[0]}
+          onChange={(v) => updateDogName(0, v)}
           required
         />
-        <TextAreaField id="adopt-why" label="Why are you interested in this dog?" value={form.whyInterested} onChange={(v) => update("whyInterested", v)} required />
+        {dogNames.slice(1).map((name, i) => (
+          <div key={i + 1} className="flex items-end gap-3">
+            <div className="flex-1">
+              <TextField
+                id={`adopt-dog-name-${i + 2}`}
+                label={`Dog #${i + 2}`}
+                value={name}
+                onChange={(v) => updateDogName(i + 1, v)}
+              />
+            </div>
+            <button
+              type="button"
+              onClick={() => setDogNames((prev) => prev.filter((_, idx) => idx !== i + 1))}
+              className="pb-2 text-sm font-medium text-brand-purple hover:underline"
+            >
+              Remove
+            </button>
+          </div>
+        ))}
+        <button
+          type="button"
+          onClick={() => setDogNames((prev) => [...prev, ""])}
+          className="text-sm font-medium text-brand-purple hover:underline"
+        >
+          + Add another dog
+        </button>
+        <TextAreaField id="adopt-why" label={dogNames.length > 1 ? "Why are you interested in these dogs?" : "Why are you interested in this dog?"} value={form.whyInterested} onChange={(v) => update("whyInterested", v)} required />
       </div>
 
       <div className="space-y-4">
