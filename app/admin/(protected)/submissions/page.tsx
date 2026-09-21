@@ -253,7 +253,20 @@ export default function AdminSubmissionsPage() {
                   {/* Applications read like the form the applicant filled in;
                       the short forms keep the plain field list. */}
                   {sections ? (
-                    <ApplicationAnswers sections={sections} />
+                    <>
+                      {/* Also offered at the bottom, but an application is
+                          long enough that nobody should have to scroll for it. */}
+                      <div className="flex justify-end">
+                        <button
+                          type="button"
+                          onClick={() => downloadSubmissionPdf(submission)}
+                          className="rounded-full border border-brand-purple px-3 py-1 text-xs font-medium text-brand-purple hover:bg-brand-purple hover:text-brand-white"
+                        >
+                          Download PDF
+                        </button>
+                      </div>
+                      <ApplicationAnswers sections={sections} />
+                    </>
                   ) : (
                     <>
                       <p>
