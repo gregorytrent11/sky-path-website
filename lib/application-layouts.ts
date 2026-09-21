@@ -29,9 +29,16 @@ export type LayoutField = {
   agreement?: boolean;
   // A yyyy-mm-dd answer from a date input.
   date?: boolean;
+  // A textarea on the form: the blank paper copy leaves room to write.
+  long?: boolean;
+  // Wording for the blank paper copy, where a follow-up question can't
+  // appear only after a "Yes" the way it does on screen.
+  paperLabel?: string;
 };
 
-export type LayoutItem = LayoutField | { subheading: string };
+// A `note` is the form's guidance to the applicant; it's printed on the
+// blank paper copy only, not alongside a submitted application's answers.
+export type LayoutItem = LayoutField | { subheading: string } | { note: string };
 
 export type LayoutSection = { title: string; items: readonly LayoutItem[] };
 
@@ -67,7 +74,7 @@ export const ADOPT_LAYOUT = [
     title: "Dog Information",
     items: [
       { key: "dogName", label: "Which dog(s) are you interested in?" },
-      { key: "whyInterested", label: "Why are you interested in this dog?" },
+      { key: "whyInterested", long: true, label: "Why are you interested in this dog?" },
     ],
   },
   {
@@ -91,13 +98,13 @@ export const ADOPT_LAYOUT = [
         options: ["Own", "Rent", "Live with family or another arrangement"],
       },
       {
-        key: "landlordInfo",
+        key: "landlordInfo", long: true,
         label: "Landlord or property manager name and phone number or email address (N/A if none)",
       },
       { key: "timeInCurrentHome", label: "How long have you lived in your current home?" },
       { key: "yardFenced", label: "Is the yard fenced?", options: ["Yes", "No", "Partially"] },
       {
-        key: "unfencedYardPlan",
+        key: "unfencedYardPlan", long: true,
         label: "If no or partially fenced, how will you safely secure and supervise the dog while outside?",
         hideWhenEmpty: true,
       },
@@ -108,7 +115,7 @@ export const ADOPT_LAYOUT = [
         options: YES_NO,
       },
       {
-        key: "household",
+        key: "household", long: true,
         label: "Who lives in the household? (Include number of adults and children, and ages of children.)",
       },
       {
@@ -122,11 +129,11 @@ export const ADOPT_LAYOUT = [
     title: "Dog Care Plan",
     items: [
       { key: "hoursAlone", label: "How many hours will the dog usually be alone each day?" },
-      { key: "whereStay", label: "Where will the dog stay when no one is home?" },
-      { key: "whereDogSleeps", label: "Where will your new dog sleep?" },
-      { key: "exercisePlan", label: "How will you provide exercise, training, and enrichment?" },
+      { key: "whereStay", long: true, label: "Where will the dog stay when no one is home?" },
+      { key: "whereDogSleeps", long: true, label: "Where will your new dog sleep?" },
+      { key: "exercisePlan", long: true, label: "How will you provide exercise, training, and enrichment?" },
       {
-        key: "adjustmentTime",
+        key: "adjustmentTime", long: true,
         label: "How much time do you plan to give your new dog to adjust to their new home?",
       },
     ],
@@ -142,7 +149,7 @@ export const ADOPT_LAYOUT = [
       },
       { key: "annualVetBudget", label: "How much do you plan to spend on vet bills in a typical year?" },
       {
-        key: "emergencyVetPlan",
+        key: "emergencyVetPlan", long: true,
         label: "How do you plan to handle unexpected or emergency veterinary expenses?",
       },
       {
@@ -152,34 +159,35 @@ export const ADOPT_LAYOUT = [
         options: YES_NO,
       },
       {
-        key: "majorLifeChangePlan",
+        key: "majorLifeChangePlan", long: true,
         label:
           "What would you do with the dog if you moved, changed jobs, had a baby, or experienced another major life change?",
       },
-      { key: "currentPets", label: "Current Pets" },
+      { key: "currentPets", long: true, label: "Current Pets" },
       {
-        key: "incompatiblePetsPlan",
+        key: "incompatiblePetsPlan", long: true,
         label: "What will you do if your new dog is not compatible with your current pets?",
       },
       { key: "vetName", label: "Veterinarian or clinic name", width: "half" },
       { key: "vetPhone", label: "Veterinarian phone number", width: "half" },
-      { key: "currentPetVetStatus", label: "Current pet vaccination and veterinary care status" },
-      { key: "behavioralPlan", label: "Plan for handling behavioral or adjustment challenges" },
+      { note: "Put N/A if this is your first animal or you have no other animals at this time." },
+      { key: "currentPetVetStatus", long: true, label: "Current pet vaccination and veterinary care status" },
+      { key: "behavioralPlan", long: true, label: "Plan for handling behavioral or adjustment challenges" },
       {
         key: "surrenderedPetBefore",
         label: "Have you ever surrendered, rehomed, given away, or returned a pet?",
         options: YES_NO,
       },
-      { key: "surrenderedPetExplanation", label: "If yes, please explain why. If no, please type N/A." },
-      { key: "houseTrainingPlan", label: "How will you deal with house training accidents?" },
+      { key: "surrenderedPetExplanation", long: true, label: "If yes, please explain why. If no, please type N/A." },
+      { key: "houseTrainingPlan", long: true, label: "How will you deal with house training accidents?" },
       {
-        key: "rescueDogExperience",
+        key: "rescueDogExperience", long: true,
         label:
           "Have you previously cared for a rescue dog, particularly one with medical needs, special needs, or a history of abuse or neglect? Please describe your experience and the type of care you provided.",
       },
-      { key: "growlingPlan", label: "How will you deal with the dog growling/showing teeth?" },
+      { key: "growlingPlan", long: true, label: "How will you deal with the dog growling/showing teeth?" },
       {
-        key: "rehomingCircumstances",
+        key: "rehomingCircumstances", long: true,
         label: "Under what circumstances, if any, would you consider returning or rehoming the dog?",
       },
       {
@@ -193,6 +201,10 @@ export const ADOPT_LAYOUT = [
   {
     title: "References",
     items: [
+      {
+        note: "References must be at least 18 years old, and at least 1 reference should not be an immediate family member. Sky's Path to Home will contact references and must be able to speak with them before your adoption application can be approved.",
+      },
+      { note: "Please let your references know that we will be reaching out." },
       ...referenceItems("One", "Reference #1"),
       ...referenceItems("Two", "Reference #2"),
       ...referenceItems("Three", "Reference #3"),
@@ -214,7 +226,12 @@ export const ADOPT_LAYOUT = [
         label:
           "I certify that the information in this application is true and complete; that Sky's Path to Home may contact my veterinarian, landlord, property manager, or references when necessary; and that submitting this application does not guarantee adoption.",
       },
-      { key: "signatureName", label: "Electronic signature (type your full legal name)", width: "half" },
+      {
+        key: "signatureName",
+        label: "Electronic signature (type your full legal name)",
+        paperLabel: "Signature (sign your full legal name)",
+        width: "half",
+      },
       { key: "signatureDate", label: "Date", width: "half", date: true },
     ],
   },
@@ -228,7 +245,7 @@ export const FOSTER_LAYOUT = [
   {
     title: "Foster Interest",
     items: [
-      { key: "whyFoster", label: "Why are you interested in fostering for Sky's Path to Home?" },
+      { key: "whyFoster", long: true, label: "Why are you interested in fostering for Sky's Path to Home?" },
       {
         key: "placementTypes",
         label: "What type of foster placement are you interested in?",
@@ -269,18 +286,18 @@ export const FOSTER_LAYOUT = [
         options: ["Own", "Rent", "Live with family or another arrangement"],
       },
       {
-        key: "landlordAllowsFoster",
+        key: "landlordAllowsFoster", paperLabel: "If you rent: does your landlord or property manager allow foster dogs?",
         label: "Does your landlord or property manager allow foster dogs?",
         options: YES_NO_NA,
         hideWhenEmpty: true,
       },
       {
-        key: "landlordInfo",
+        key: "landlordInfo", long: true, paperLabel: "If you rent: landlord or property manager name and contact information",
         label: "Landlord or property manager name and contact information",
         hideWhenEmpty: true,
       },
       {
-        key: "household",
+        key: "household", long: true,
         label: "Who lives in your household? (Include all adults and children, and ages of children.)",
       },
       {
@@ -289,10 +306,10 @@ export const FOSTER_LAYOUT = [
         options: YES_NO,
       },
       { key: "hasAllergies", label: "Does anyone in the household have pet allergies?", options: YES_NO },
-      { key: "allergyExplain", label: "Please explain", hideWhenEmpty: true },
+      { key: "allergyExplain", long: true, paperLabel: "If yes, please explain", label: "Please explain", hideWhenEmpty: true },
       { key: "yardFenced", label: "Is your yard fenced?", options: ["Yes", "No", "Partially"] },
       {
-        key: "fenceDescription",
+        key: "fenceDescription", long: true, paperLabel: "If fenced or partially fenced: describe the fence (height, material, and whether gates lock securely)",
         label: "Describe the fence (height, material, and whether gates lock securely)",
         hideWhenEmpty: true,
       },
@@ -302,7 +319,7 @@ export const FOSTER_LAYOUT = [
           "Are there any homeowners association, lease, zoning, or local restrictions that could affect fostering?",
         options: YES_NO,
       },
-      { key: "restrictionsExplain", label: "Please explain", hideWhenEmpty: true },
+      { key: "restrictionsExplain", long: true, paperLabel: "If yes, please explain", label: "Please explain", hideWhenEmpty: true },
     ],
   },
   {
@@ -310,26 +327,26 @@ export const FOSTER_LAYOUT = [
     items: [
       { key: "hasCurrentPets", label: "Do you currently have pets?", options: YES_NO },
       {
-        key: "currentPetsList",
+        key: "currentPetsList", long: true, paperLabel: "If yes: list all current pets (species, breed, age, sex, spayed/neutered status, vaccination status, and temperament around other animals)",
         label:
           "List all current pets (species, breed, age, sex, spayed/neutered status, vaccination status, and temperament around other animals)",
         hideWhenEmpty: true,
       },
       {
-        key: "currentPetsVaccinated",
+        key: "currentPetsVaccinated", paperLabel: "If yes: are all current pets up to date on vaccinations and routine veterinary care?",
         label: "Are all current pets up to date on vaccinations and routine veterinary care?",
         options: YES_NO_NA,
         hideWhenEmpty: true,
       },
       {
-        key: "currentPetsHeartworm",
+        key: "currentPetsHeartworm", paperLabel: "If yes: have your current dogs been tested for heartworm, when appropriate?",
         label: "Have your current dogs been tested for heartworm, when appropriate?",
         options: YES_NO_NA,
         hideWhenEmpty: true,
       },
       { key: "hasPreviousPets", label: "Have you owned pets previously?", options: YES_NO },
       {
-        key: "previousPetsOutcome",
+        key: "previousPetsOutcome", paperLabel: "If yes: what happened to your previous pets?",
         label: "What happened to your previous pets?",
         options: [
           "Still living with applicant",
@@ -340,7 +357,7 @@ export const FOSTER_LAYOUT = [
         ],
         hideWhenEmpty: true,
       },
-      { key: "vetName", label: "Veterinarian or clinic name", width: "half", hideWhenEmpty: true },
+      { key: "vetName", paperLabel: "Veterinarian or clinic name (if you have or had pets)", label: "Veterinarian or clinic name", width: "half", hideWhenEmpty: true },
       { key: "vetPhone", label: "Veterinarian phone number", width: "half", hideWhenEmpty: true },
       {
         key: "vetRecordsName",
@@ -358,7 +375,7 @@ export const FOSTER_LAYOUT = [
         label: "Have you previously volunteered with a rescue, shelter, or animal-welfare organization?",
         options: YES_NO,
       },
-      { key: "experienceDescription", label: "Describe your experience caring for dogs" },
+      { key: "experienceDescription", long: true, label: "Describe your experience caring for dogs" },
       {
         key: "comfortableWith",
         label: "Are you comfortable caring for dogs with any of the following needs?",
@@ -379,7 +396,7 @@ export const FOSTER_LAYOUT = [
         ],
       },
       {
-        key: "cannotManage",
+        key: "cannotManage", long: true,
         label:
           "Are there any behaviors or medical needs you are not able to manage? (Enter 'None' if not applicable.)",
       },
@@ -396,11 +413,11 @@ export const FOSTER_LAYOUT = [
       },
       { key: "whereSleep", label: "Where will the foster dog sleep?" },
       {
-        key: "separationPlan",
+        key: "separationPlan", long: true,
         label:
           "How will you keep the foster dog separated from resident animals during the initial adjustment period?",
       },
-      { key: "exercisePlan", label: "How will you provide exercise, enrichment, and basic training?" },
+      { key: "exercisePlan", long: true, label: "How will you provide exercise, enrichment, and basic training?" },
       {
         key: "followInstructions",
         label:
@@ -423,7 +440,7 @@ export const FOSTER_LAYOUT = [
         label: "Will the foster dog ever be left outside unattended?",
         options: YES_NO,
       },
-      { key: "leftOutsideExplain", label: "Please explain", hideWhenEmpty: true },
+      { key: "leftOutsideExplain", long: true, paperLabel: "If yes, please explain", label: "Please explain", hideWhenEmpty: true },
     ],
   },
   {
@@ -514,7 +531,7 @@ export const FOSTER_LAYOUT = [
     title: "Emergencies and Travel",
     items: [
       {
-        key: "emergencyBackupCare",
+        key: "emergencyBackupCare", long: true,
         label: "Who will care for the foster dog if you become unavailable or have an emergency?",
       },
       {
@@ -523,7 +540,7 @@ export const FOSTER_LAYOUT = [
           "Do you have any upcoming travel, moves, major schedule changes, or other commitments that could affect your ability to foster?",
         options: YES_NO,
       },
-      { key: "upcomingChangesExplain", label: "Please explain", hideWhenEmpty: true },
+      { key: "upcomingChangesExplain", long: true, paperLabel: "If yes, please explain", label: "Please explain", hideWhenEmpty: true },
       { key: "noticeNeeded", label: "How much notice would you normally need before accepting a foster dog?" },
       {
         key: "agreeContactIfCannotFoster",
@@ -567,7 +584,12 @@ export const FOSTER_LAYOUT = [
         label:
           "I certify that the information in this application is true and complete; that submitting this application does not guarantee approval as a foster; that all foster dogs remain the property of Sky's Path to Home unless an adoption is completed through an approved written agreement; that I agree to follow all care, safety, medical, transport, and communication instructions provided by Sky's Path to Home; that I will not make independent medical, adoption, surrender, transfer, or euthanasia decisions for a foster dog; that I will immediately report escapes, bites, injuries, illnesses, behavioral concerns, or other significant incidents; and that I understand I may be required to sign a separate foster agreement before receiving a dog.",
       },
-      { key: "signatureName", label: "Electronic signature (type your full legal name)", width: "half" },
+      {
+        key: "signatureName",
+        label: "Electronic signature (type your full legal name)",
+        paperLabel: "Signature (sign your full legal name)",
+        width: "half",
+      },
       { key: "signatureDate", label: "Date", width: "half", date: true },
     ],
   },
@@ -591,11 +613,13 @@ export type ResolvedField = {
   selected: string[];
   agreement?: boolean;
   checked?: boolean;
+  long?: boolean;
 };
 
 export type ResolvedRow =
   | { kind: "fields"; columns: 1 | 2 | 3; fields: ResolvedField[] }
-  | { kind: "subheading"; text: string };
+  | { kind: "subheading"; text: string }
+  | { kind: "note"; text: string };
 
 export type ResolvedSection = { title: string; rows: ResolvedRow[] };
 
@@ -664,6 +688,62 @@ function dropBlankGroups(rows: ResolvedRow[]): ResolvedRow[] {
 
 const COLUMNS = { half: 2, third: 3 } as const;
 
+// Groups a section's fields into rows the way the form does. `resolve`
+// returns null for a field that should be left out.
+function buildRows(
+  items: readonly LayoutItem[],
+  resolve: (item: LayoutField) => ResolvedField | null,
+  withNotes = false
+): ResolvedRow[] {
+  const rows: ResolvedRow[] = [];
+  for (const item of items) {
+    if ("subheading" in item) {
+      rows.push({ kind: "subheading", text: item.subheading });
+      continue;
+    }
+    if ("note" in item) {
+      if (withNotes) rows.push({ kind: "note", text: item.note });
+      continue;
+    }
+    const field = resolve(item);
+    if (!field) continue;
+    const columns = item.width ? COLUMNS[item.width] : 1;
+    const last = rows[rows.length - 1];
+    if (columns > 1 && last?.kind === "fields" && last.columns === columns && last.fields.length < columns) {
+      last.fields.push(field);
+    } else {
+      rows.push({ kind: "fields", columns, fields: [field] });
+    }
+  }
+  return rows;
+}
+
+export type ApplicationFormType = "adopt_application" | "foster_application";
+
+// The form with nothing filled in, for printing and handing out at events:
+// every question (including the follow-ups the online form only reveals
+// after a "Yes"), every option unmarked, and the form's notes to applicants.
+export function blankApplication(formType: ApplicationFormType): ResolvedSection[] {
+  return (LAYOUTS[formType] ?? []).map((section) => ({
+    title: section.title,
+    rows: buildRows(
+      section.items,
+      (item) => ({
+        key: item.key,
+        label: item.paperLabel ?? item.label,
+        value: null,
+        options: item.options,
+        multiple: item.multiple,
+        selected: [],
+        agreement: item.agreement,
+        checked: item.agreement ? false : undefined,
+        long: item.long,
+      }),
+      true
+    ),
+  }));
+}
+
 // Returns null for the form types that aren't applications (contact,
 // volunteer, request help) -- those keep the short generic view.
 export function layoutApplication(submission: Submission): ResolvedSection[] | null {
@@ -671,26 +751,16 @@ export function layoutApplication(submission: Submission): ResolvedSection[] | n
   if (!layout) return null;
 
   const placed = new Set<string>();
-  const sections: ResolvedSection[] = layout.map((section) => {
-    const rows: ResolvedRow[] = [];
-    for (const item of section.items) {
-      if ("subheading" in item) {
-        rows.push({ kind: "subheading", text: item.subheading });
-        continue;
-      }
-      placed.add(item.key);
-      const field = resolveField(submission, item);
-      if (item.hideWhenEmpty && field.value === null) continue;
-      const columns = item.width ? COLUMNS[item.width] : 1;
-      const last = rows[rows.length - 1];
-      if (columns > 1 && last?.kind === "fields" && last.columns === columns && last.fields.length < columns) {
-        last.fields.push(field);
-      } else {
-        rows.push({ kind: "fields", columns, fields: [field] });
-      }
-    }
-    return { title: section.title, rows: dropBlankGroups(rows) };
-  });
+  const sections: ResolvedSection[] = layout.map((section) => ({
+    title: section.title,
+    rows: dropBlankGroups(
+      buildRows(section.items, (item) => {
+        placed.add(item.key);
+        const field = resolveField(submission, item);
+        return item.hideWhenEmpty && field.value === null ? null : field;
+      })
+    ),
+  }));
 
   // Questions that have since been dropped from the form (older
   // applications still carry their answers) and anything else unplaced.

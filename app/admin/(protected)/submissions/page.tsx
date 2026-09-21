@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/lib/supabase/client";
 import type { Submission, SubmissionFormType, SubmissionStatus } from "@/types/database";
 import { humanizeKey, humanizeValue } from "@/lib/submission-format";
-import { downloadSubmissionPdf } from "@/lib/submission-pdf";
+import { downloadBlankApplicationPdf, downloadSubmissionPdf } from "@/lib/submission-pdf";
 import { layoutApplication } from "@/lib/application-layouts";
 import ApplicationAnswers from "@/components/admin/ApplicationAnswers";
 
@@ -120,7 +120,29 @@ export default function AdminSubmissionsPage() {
 
   return (
     <div>
-      <h1 className="font-heading text-2xl font-semibold text-brand-deep-blue">Submissions</h1>
+      <div className="flex flex-wrap items-start justify-between gap-x-6 gap-y-3">
+        <h1 className="font-heading text-2xl font-semibold text-brand-deep-blue">Submissions</h1>
+        {/* Paper copies for in-person events: the same questions as the
+            online forms, with room to write the answers by hand. */}
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-xs text-brand-charcoal/80">Blank forms to print:</span>
+          {(
+            [
+              ["adopt_application", "Adoption application"],
+              ["foster_application", "Foster application"],
+            ] as const
+          ).map(([formType, label]) => (
+            <button
+              key={formType}
+              type="button"
+              onClick={() => downloadBlankApplicationPdf(formType)}
+              className="rounded-full border border-brand-purple px-3 py-1 text-xs font-medium text-brand-purple hover:bg-brand-purple hover:text-brand-white"
+            >
+              {label} (PDF)
+            </button>
+          ))}
+        </div>
+      </div>
 
       <div className="mt-4 flex flex-wrap gap-2">
         {(["all", "contact", "volunteer", "request_help", "adopt_application", "foster_application", "archived"] as const).map((type) => (

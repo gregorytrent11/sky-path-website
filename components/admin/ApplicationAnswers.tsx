@@ -106,6 +106,10 @@ export default function ApplicationAnswers({ sections }: { sections: ResolvedSec
                 <h4 key={i} className="pt-1 font-heading text-sm font-semibold text-brand-deep-blue">
                   {row.text}
                 </h4>
+              ) : row.kind === "note" ? (
+                <p key={i} className="text-brand-charcoal/70">
+                  {row.text}
+                </p>
               ) : (
                 <dl key={i} className={`grid gap-x-4 gap-y-3 ${GRID_COLUMNS[row.columns]}`}>
                   {row.fields.map((field) => (

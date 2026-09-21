@@ -2,7 +2,9 @@ import type { jsPDF } from "jspdf";
 import type { Submission } from "@/types/database";
 import { humanizeKey, humanizeValue } from "@/lib/submission-format";
 import {
+  blankApplication,
   layoutApplication,
+  type ApplicationFormType,
   type ResolvedField,
   type ResolvedRow,
   type ResolvedSection,
@@ -23,6 +25,8 @@ const PURPLE: Rgb = [109, 74, 163];
 const GRAY: Rgb = [244, 245, 247];
 const CHARCOAL: Rgb = [39, 39, 42];
 const MUTED: Rgb = [113, 113, 122];
+// Outlines on the blank paper copy: dark enough to survive a photocopier.
+const PRINT_LINE: Rgb = [82, 82, 91];
 
 // jsPDF's built-in Helvetica only covers Latin-1; anything else prints as
 // garbage. Applicants paste curly quotes and dashes from their phones.
@@ -60,12 +64,22 @@ function genericSections(submission: Submission): ResolvedSection[] {
   ];
 }
 
-// Lays a submission out the way the applicant saw the form: section
+type PdfJob = {
+  title: string;
+  subtitle: string;
+  footer: string;
+  sections: ResolvedSection[];
+  // The paper copy for events: empty boxes sized for handwriting instead of
+  // answers, and nothing greyed out.
+  blank?: boolean;
+};
+
+// Lays an application out the way the applicant saw the form: section
 // headings, the original question wording, fields side by side where the
 // form has them side by side, answers in input-style boxes, and radio /
 // checkbox questions drawn with the chosen option marked. Uses jsPDF
 // client-side since this is a static-export site with no API routes.
-export async function buildSubmissionPdf(submission: Submission): Promise<{ doc: jsPDF; filename: string }> {
+async function renderPdf(job: PdfJob): Promise<jsPDF> {
   const { jsPDF } = await import("jspdf");
   const doc = new jsPDF({ unit: "pt", format: "letter" });
 
@@ -84,6 +98,9 @@ export async function buildSubmissionPdf(submission: Submission): Promise<{ doc:
   const boxPad = 6;
   const optionLine = 16;
   const rowGap = 10;
+  // Room to write by hand: one line, or a few for the essay questions.
+  const blankShort = 24;
+  const blankLong = 64;
 
   let y = top;
 
@@ -152,6 +169,10 @@ export async function buildSubmissionPdf(submission: Submission): Promise<{ doc:
       return { ...base, labelLines, options, optionRows, height: labelHeight + optionRows * optionLine };
     }
 
+    if (job.blank) {
+      return { ...base, labelLines, height: labelHeight + (field.long ? blankLong : blankShort) };
+    }
+
     const valueLines = wrap(field.value ?? "Not answered", width - boxPad * 2 - 2, valueSize);
     return { ...base, labelLines, valueLines, height: labelHeight + valueLines.length * valueLine + boxPad * 2 };
   }
@@ -186,6 +207,13 @@ export async function buildSubmissionPdf(submission: Submission): Promise<{ doc:
     return startY + height;
   }
 
+  function drawBlankBox(m: Measured, startY: number) {
+    doc.setFillColor(255, 255, 255);
+    doc.setDrawColor(...PRINT_LINE);
+    doc.setLineWidth(0.75);
+    doc.roundedRect(m.x, startY, m.width, m.field.long ? blankLong : blankShort, 4, 4, "FD");
+  }
+
   function drawCheck(x: number, cy: number) {
     doc.setDrawColor(...PURPLE);
     doc.setLineWidth(1.4);
@@ -197,7 +225,7 @@ export async function buildSubmissionPdf(submission: Submission): Promise<{ doc:
     for (const option of m.options) {
       const ox = m.x + option.x;
       const cy = startY + option.line * optionLine + optionLine / 2;
-      doc.setDrawColor(...(option.on ? PURPLE : MUTED));
+      doc.setDrawColor(...(option.on ? PURPLE : job.blank ? PRINT_LINE : MUTED));
       doc.setLineWidth(0.9);
       doc.setFillColor(255, 255, 255);
       if (m.field.multiple) {
@@ -212,13 +240,13 @@ export async function buildSubmissionPdf(submission: Submission): Promise<{ doc:
       }
       doc.setFontSize(10);
       doc.setFont("helvetica", option.on ? "bold" : "normal");
-      doc.setTextColor(...(option.on ? CHARCOAL : MUTED));
+      doc.setTextColor(...(option.on || job.blank ? CHARCOAL : MUTED));
       doc.text(pdfSafe(option.text), ox + 14, cy + 3.4);
     }
   }
 
   function drawAgreement(m: Measured, startY: number) {
-    doc.setDrawColor(...(m.field.checked ? PURPLE : MUTED));
+    doc.setDrawColor(...(m.field.checked ? PURPLE : job.blank ? PRINT_LINE : MUTED));
     doc.setLineWidth(0.9);
     doc.setFillColor(255, 255, 255);
     doc.rect(m.x, startY + 1, 10, 10, "FD");
@@ -241,7 +269,7 @@ export async function buildSubmissionPdf(submission: Submission): Promise<{ doc:
     // A long essay answer can run past one page: keep the question with its
     // first lines, then carry the rest over in a box per page.
     const only = measured[0];
-    if (row.columns === 1 && !only.field.options && !only.field.agreement && y + rowHeight > bottom) {
+    if (!job.blank && row.columns === 1 && !only.field.options && !only.field.agreement && y + rowHeight > bottom) {
       const labelHeight = only.labelLines.length * labelLine + 3;
       ensureSpace(labelHeight + boxPad * 2 + Math.min(only.valueLines.length, 3) * valueLine);
       y = drawLabel(only, y);
@@ -265,6 +293,7 @@ export async function buildSubmissionPdf(submission: Submission): Promise<{ doc:
       } else {
         const bodyY = drawLabel(m, y);
         if (m.field.options) drawOptions(m, bodyY);
+        else if (job.blank) drawBlankBox(m, bodyY);
         else drawAnswerBox(m, m.valueLines, bodyY);
       }
     }
@@ -285,8 +314,6 @@ export async function buildSubmissionPdf(submission: Submission): Promise<{ doc:
     y += 12;
   }
 
-  const title = formTypeTitles[submission.form_type] || "Form Submission";
-
   doc.setFontSize(9);
   doc.setFont("helvetica", "bold");
   doc.setTextColor(...PURPLE);
@@ -294,20 +321,15 @@ export async function buildSubmissionPdf(submission: Submission): Promise<{ doc:
   y += 24;
   doc.setFontSize(20);
   doc.setTextColor(...DEEP_BLUE);
-  doc.text(title, marginX, y);
+  doc.text(job.title, marginX, y);
   y += 16;
   doc.setFontSize(9.5);
   doc.setFont("helvetica", "normal");
   doc.setTextColor(...MUTED);
-  doc.text(
-    pdfSafe(`${submission.name}  \u00B7  Submitted ${new Date(submission.created_at).toLocaleString()}`),
-    marginX,
-    y
-  );
+  doc.text(pdfSafe(job.subtitle), marginX, y);
   y += 10;
 
-  const sections = layoutApplication(submission) ?? genericSections(submission);
-  for (const section of sections) {
+  for (const section of job.sections) {
     if (section.rows.length === 0) continue;
     drawSectionHeading(section.title, 60);
     for (const row of section.rows) {
@@ -319,6 +341,15 @@ export async function buildSubmissionPdf(submission: Submission): Promise<{ doc:
         doc.setTextColor(...DEEP_BLUE);
         doc.text(pdfSafe(row.text), marginX, y + 9);
         y += 20;
+      } else if (row.kind === "note") {
+        const lines = wrap(row.text, maxWidth, 9.5);
+        ensureSpace(lines.length * 12.5 + 40);
+        doc.setTextColor(...CHARCOAL);
+        for (const line of lines) {
+          doc.text(line, marginX, y + 8);
+          y += 12.5;
+        }
+        y += 8;
       } else {
         drawRow(row);
       }
@@ -331,16 +362,47 @@ export async function buildSubmissionPdf(submission: Submission): Promise<{ doc:
     doc.setFontSize(8);
     doc.setFont("helvetica", "normal");
     doc.setTextColor(...MUTED);
-    doc.text(pdfSafe(`Sky's Path to Home  \u00B7  ${title}  \u00B7  ${submission.name}`), marginX, pageHeight - 30);
+    doc.text(pdfSafe(job.footer), marginX, pageHeight - 30);
     doc.text(`Page ${page} of ${pageCount}`, pageWidth - marginX, pageHeight - 30, { align: "right" });
   }
 
+  return doc;
+}
+
+export async function buildSubmissionPdf(submission: Submission): Promise<{ doc: jsPDF; filename: string }> {
+  const title = formTypeTitles[submission.form_type] || "Form Submission";
+  const doc = await renderPdf({
+    title,
+    subtitle: `${submission.name}  \u00B7  Submitted ${new Date(submission.created_at).toLocaleString()}`,
+    footer: `Sky's Path to Home  \u00B7  ${title}  \u00B7  ${submission.name}`,
+    sections: layoutApplication(submission) ?? genericSections(submission),
+  });
   const datePart = new Date(submission.created_at).toISOString().slice(0, 10);
   const safeName = submission.name.replace(/[^a-z0-9]+/gi, "-").toLowerCase();
   return { doc, filename: `${submission.form_type}-${safeName}-${datePart}.pdf` };
 }
 
+// An empty copy of the application to print for in-person events.
+export async function buildBlankApplicationPdf(
+  formType: ApplicationFormType
+): Promise<{ doc: jsPDF; filename: string }> {
+  const title = formTypeTitles[formType];
+  const doc = await renderPdf({
+    title,
+    subtitle: "Please print clearly and answer every question. Write N/A where a question does not apply to you.",
+    footer: `Sky's Path to Home  \u00B7  ${title}  \u00B7  skyspath.com`,
+    sections: blankApplication(formType),
+    blank: true,
+  });
+  return { doc, filename: `blank-${formType.replace(/_/g, "-")}.pdf` };
+}
+
 export async function downloadSubmissionPdf(submission: Submission) {
   const { doc, filename } = await buildSubmissionPdf(submission);
+  doc.save(filename);
+}
+
+export async function downloadBlankApplicationPdf(formType: ApplicationFormType) {
+  const { doc, filename } = await buildBlankApplicationPdf(formType);
   doc.save(filename);
 }
