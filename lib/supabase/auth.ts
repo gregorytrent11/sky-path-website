@@ -12,8 +12,8 @@ export type SessionState = "loading" | "authenticated" | "mfa-setup-required" | 
 // ("Time-box user sessions"), but it's gated behind the paid Pro plan; this
 // is the client-side stand-in until/unless that's upgraded. It won't stop
 // a stolen access token from being replayed directly against the API, but
-// it does force the admin UI itself to re-authenticate after 12 hours.
-const SESSION_TIMEOUT_MS = 12 * 60 * 60 * 1000;
+// it does force the admin UI itself to re-authenticate after 8 hours.
+const SESSION_TIMEOUT_MS = 8 * 60 * 60 * 1000;
 const SESSION_STARTED_KEY = "admin_session_started_at";
 const RECHECK_INTERVAL_MS = 5 * 60 * 1000;
 
@@ -70,7 +70,7 @@ export function useAdminSession() {
     });
 
     const { data: listener } = supabase.auth.onAuthStateChange((event, newSession) => {
-      // A fresh sign-in always restarts the 12-hour clock, even if a stale
+      // A fresh sign-in always restarts the 8-hour clock, even if a stale
       // timestamp from a previous session is still sitting in storage.
       if (event === "SIGNED_IN") {
         localStorage.setItem(SESSION_STARTED_KEY, String(Date.now()));
@@ -82,7 +82,7 @@ export function useAdminSession() {
       });
     });
 
-    // Catches a tab left open past the 12-hour mark with no other auth
+    // Catches a tab left open past the 8-hour mark with no other auth
     // event to trigger a recheck.
     const interval = setInterval(() => {
       if (isSessionExpired()) {
