@@ -15,6 +15,7 @@ import {
 
 type FormState = {
   dogName: string;
+  whyInterested: string;
   firstName: string;
   lastName: string;
   email: string;
@@ -26,20 +27,36 @@ type FormState = {
   atLeastTwentyOne: string;
   housingType: string;
   homeOwnership: string;
+  landlordInfo: string;
+  timeInCurrentHome: string;
   yardFenced: string;
+  unfencedYardPlan: string;
+  agreesToFencePhotos: string;
   household: string;
   householdAgrees: string;
   hoursAlone: string;
   whereStay: string;
+  whereDogSleeps: string;
   exercisePlan: string;
+  adjustmentTime: string;
   preparedForCosts: string;
-  whyInterested: string;
-  landlordInfo: string;
+  annualVetBudget: string;
+  emergencyVetPlan: string;
+  lifelongCommitment: string;
+  majorLifeChangePlan: string;
   currentPets: string;
+  incompatiblePetsPlan: string;
   vetName: string;
   vetPhone: string;
   currentPetVetStatus: string;
   behavioralPlan: string;
+  surrenderedPetBefore: string;
+  surrenderedPetExplanation: string;
+  houseTrainingPlan: string;
+  rescueDogExperience: string;
+  growlingPlan: string;
+  rehomingCircumstances: string;
+  willContactRescueFirst: string;
   referenceOneFullName: string;
   referenceOneRelationship: string;
   referenceOneYearsKnown: string;
@@ -52,6 +69,12 @@ type FormState = {
   referenceTwoEmail: string;
   referenceTwoPhone: string;
   referenceTwoObservedAnimalCare: string;
+  referenceThreeFullName: string;
+  referenceThreeRelationship: string;
+  referenceThreeYearsKnown: string;
+  referenceThreeEmail: string;
+  referenceThreePhone: string;
+  referenceThreeObservedAnimalCare: string;
   signatureName: string;
   signatureDate: string;
 };
@@ -70,6 +93,7 @@ type ReferenceValues = {
 function emptyForm(dogName: string): FormState {
   return {
     dogName,
+    whyInterested: "",
     firstName: "",
     lastName: "",
     email: "",
@@ -81,20 +105,36 @@ function emptyForm(dogName: string): FormState {
     atLeastTwentyOne: "",
     housingType: "",
     homeOwnership: "",
+    landlordInfo: "",
+    timeInCurrentHome: "",
     yardFenced: "",
+    unfencedYardPlan: "",
+    agreesToFencePhotos: "",
     household: "",
     householdAgrees: "",
     hoursAlone: "",
     whereStay: "",
+    whereDogSleeps: "",
     exercisePlan: "",
+    adjustmentTime: "",
     preparedForCosts: "",
-    whyInterested: "",
-    landlordInfo: "",
+    annualVetBudget: "",
+    emergencyVetPlan: "",
+    lifelongCommitment: "",
+    majorLifeChangePlan: "",
     currentPets: "",
+    incompatiblePetsPlan: "",
     vetName: "",
     vetPhone: "",
     currentPetVetStatus: "",
     behavioralPlan: "",
+    surrenderedPetBefore: "",
+    surrenderedPetExplanation: "",
+    houseTrainingPlan: "",
+    rescueDogExperience: "",
+    growlingPlan: "",
+    rehomingCircumstances: "",
+    willContactRescueFirst: "",
     referenceOneFullName: "",
     referenceOneRelationship: "",
     referenceOneYearsKnown: "",
@@ -107,13 +147,19 @@ function emptyForm(dogName: string): FormState {
     referenceTwoEmail: "",
     referenceTwoPhone: "",
     referenceTwoObservedAnimalCare: "",
+    referenceThreeFullName: "",
+    referenceThreeRelationship: "",
+    referenceThreeYearsKnown: "",
+    referenceThreeEmail: "",
+    referenceThreePhone: "",
+    referenceThreeObservedAnimalCare: "",
     signatureName: "",
     signatureDate: "",
   };
 }
 
 // Maps the fieldset's generic field names onto the flat FormState keys, so
-// both references can share one component without the payload losing which
+// all three references can share one component without the payload losing which
 // reference each answer belongs to.
 const REFERENCE_ONE_KEYS: Record<keyof ReferenceValues, keyof FormState> = {
   fullName: "referenceOneFullName",
@@ -131,6 +177,15 @@ const REFERENCE_TWO_KEYS: Record<keyof ReferenceValues, keyof FormState> = {
   email: "referenceTwoEmail",
   phone: "referenceTwoPhone",
   observedAnimalCare: "referenceTwoObservedAnimalCare",
+};
+
+const REFERENCE_THREE_KEYS: Record<keyof ReferenceValues, keyof FormState> = {
+  fullName: "referenceThreeFullName",
+  relationship: "referenceThreeRelationship",
+  yearsKnown: "referenceThreeYearsKnown",
+  email: "referenceThreeEmail",
+  phone: "referenceThreePhone",
+  observedAnimalCare: "referenceThreeObservedAnimalCare",
 };
 
 function ReferenceFieldset({
@@ -212,6 +267,7 @@ function AdoptApplicationFormInner() {
   }
 
   const renting = form.homeOwnership === "Rent";
+  const yardNotFullyFenced = form.yardFenced === "No" || form.yardFenced === "Partially";
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -246,7 +302,14 @@ function AdoptApplicationFormInner() {
         email: form.email,
         phone: form.phone,
         message: form.whyInterested || undefined,
-        payload: { ...form, referenceAuthorization: referenceAuthorized, certified },
+        payload: {
+          ...form,
+          // The question is hidden once the yard is marked fully fenced, so
+          // don't send an answer typed before they changed their mind.
+          unfencedYardPlan: yardNotFullyFenced ? form.unfencedYardPlan : "",
+          referenceAuthorization: referenceAuthorized,
+          certified,
+        },
         turnstileToken,
       });
       setStatus("submitted");
@@ -282,6 +345,7 @@ function AdoptApplicationFormInner() {
           onChange={(v) => update("dogName", v)}
           required
         />
+        <TextAreaField id="adopt-why" label="Why are you interested in this dog?" value={form.whyInterested} onChange={(v) => update("whyInterested", v)} required />
       </div>
 
       <div className="space-y-4">
@@ -327,21 +391,46 @@ function AdoptApplicationFormInner() {
           options={["Own", "Rent", "Live with family or another arrangement"]}
           required
         />
-        {renting && (
-          <TextAreaField
-            id="adopt-landlord"
-            label="Landlord or property manager name and phone number or email address"
-            value={form.landlordInfo}
-            onChange={(v) => update("landlordInfo", v)}
-            required
-          />
-        )}
+        <TextAreaField
+          id="adopt-landlord"
+          label={
+            renting
+              ? "Landlord or property manager name and phone number or email address"
+              : "Landlord or property manager information (put N/A if you do not have one)"
+          }
+          value={form.landlordInfo}
+          onChange={(v) => update("landlordInfo", v)}
+          required
+        />
+        <TextField
+          id="adopt-time-in-home"
+          label="How long have you lived in your current home?"
+          value={form.timeInCurrentHome}
+          onChange={(v) => update("timeInCurrentHome", v)}
+          required
+        />
         <RadioGroupField
           name="yardFenced"
           label="Is the yard fenced?"
           value={form.yardFenced}
           onChange={(v) => update("yardFenced", v)}
           options={["Yes", "No", "Partially"]}
+          required
+        />
+        {yardNotFullyFenced && (
+          <TextAreaField
+            id="adopt-unfenced-plan"
+            label="If no or partially fenced, how will you safely secure and supervise the dog while outside?"
+            value={form.unfencedYardPlan}
+            onChange={(v) => update("unfencedYardPlan", v)}
+            required
+          />
+        )}
+        <YesNoField
+          name="agreesToFencePhotos"
+          label="Do you agree to provide photos of your fenced or secured outdoor area if requested by Sky’s Path to Home?"
+          value={form.agreesToFencePhotos}
+          onChange={(v) => update("agreesToFencePhotos", v)}
           required
         />
         <TextAreaField
@@ -380,10 +469,24 @@ function AdoptApplicationFormInner() {
           required
         />
         <TextAreaField
+          id="adopt-where-sleep"
+          label="Where will your new dog sleep?"
+          value={form.whereDogSleeps}
+          onChange={(v) => update("whereDogSleeps", v)}
+          required
+        />
+        <TextAreaField
           id="adopt-exercise"
           label="How will you provide exercise, training, and enrichment?"
           value={form.exercisePlan}
           onChange={(v) => update("exercisePlan", v)}
+          required
+        />
+        <TextAreaField
+          id="adopt-adjustment-time"
+          label="How much time do you plan to give your new dog to adjust to their new home?"
+          value={form.adjustmentTime}
+          onChange={(v) => update("adjustmentTime", v)}
           required
         />
       </div>
@@ -397,11 +500,18 @@ function AdoptApplicationFormInner() {
           onChange={(v) => update("preparedForCosts", v)}
           required
         />
-        <TextAreaField id="adopt-why" label="Why are you interested in this dog?" value={form.whyInterested} onChange={(v) => update("whyInterested", v)} required />
-        {!renting && (
-          <TextAreaField id="adopt-landlord-optional" label="Landlord or property manager information" value={form.landlordInfo} onChange={(v) => update("landlordInfo", v)} required />
-        )}
+        <TextField id="adopt-vet-budget" label="How much do you plan to spend on vet bills in a typical year?" value={form.annualVetBudget} onChange={(v) => update("annualVetBudget", v)} required />
+        <TextAreaField id="adopt-emergency-vet" label="How do you plan to handle unexpected or emergency veterinary expenses?" value={form.emergencyVetPlan} onChange={(v) => update("emergencyVetPlan", v)} required />
+        <YesNoField
+          name="lifelongCommitment"
+          label="Are you prepared to provide this dog with a permanent, lifelong home, regardless of their age or how many years that commitment may be?"
+          value={form.lifelongCommitment}
+          onChange={(v) => update("lifelongCommitment", v)}
+          required
+        />
+        <TextAreaField id="adopt-life-change" label="What would you do with the dog if you moved, changed jobs, had a baby, or experienced another major life change?" value={form.majorLifeChangePlan} onChange={(v) => update("majorLifeChangePlan", v)} required />
         <TextAreaField id="adopt-current-pets" label="Current Pets" value={form.currentPets} onChange={(v) => update("currentPets", v)} required />
+        <TextAreaField id="adopt-incompatible-pets" label="What will you do if your new dog is not compatible with your current pets?" value={form.incompatiblePetsPlan} onChange={(v) => update("incompatiblePetsPlan", v)} required />
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <TextField id="adopt-vet-name" label="Veterinarian or clinic name" value={form.vetName} onChange={(v) => update("vetName", v)} describedBy="adopt-vet-na-note" required />
           <PhoneField id="adopt-vet-phone" label="Veterinarian phone number" value={form.vetPhone} onChange={(v) => update("vetPhone", v)} describedBy="adopt-vet-na-note" allowNA required />
@@ -411,14 +521,39 @@ function AdoptApplicationFormInner() {
         </p>
         <TextAreaField id="adopt-vet-status" label="Current pet vaccination and veterinary care status" value={form.currentPetVetStatus} onChange={(v) => update("currentPetVetStatus", v)} required />
         <TextAreaField id="adopt-behavior-plan" label="Plan for handling behavioral or adjustment challenges" value={form.behavioralPlan} onChange={(v) => update("behavioralPlan", v)} required />
+        <YesNoField
+          name="surrenderedPetBefore"
+          label="Have you ever surrendered, rehomed, given away, or returned a pet?"
+          value={form.surrenderedPetBefore}
+          onChange={(v) => update("surrenderedPetBefore", v)}
+          required
+        />
+        <TextAreaField id="adopt-surrender-explanation" label="If yes, please explain why. If no, please type N/A." value={form.surrenderedPetExplanation} onChange={(v) => update("surrenderedPetExplanation", v)} required />
+        <TextAreaField id="adopt-house-training" label="How will you deal with house training accidents?" value={form.houseTrainingPlan} onChange={(v) => update("houseTrainingPlan", v)} required />
+        <TextAreaField
+          id="adopt-rescue-experience"
+          label="Have you previously cared for a rescue dog, particularly one with medical needs, special needs, or a history of abuse or neglect? Please describe your experience and the type of care you provided."
+          value={form.rescueDogExperience}
+          onChange={(v) => update("rescueDogExperience", v)}
+          required
+        />
+        <TextAreaField id="adopt-growling" label="How will you deal with the dog growling/showing teeth?" value={form.growlingPlan} onChange={(v) => update("growlingPlan", v)} required />
+        <TextAreaField id="adopt-rehoming-circumstances" label="Under what circumstances, if any, would you consider returning or rehoming the dog?" value={form.rehomingCircumstances} onChange={(v) => update("rehomingCircumstances", v)} required />
+        <YesNoField
+          name="willContactRescueFirst"
+          label="If you can no longer care for the dog, do you agree to contact Sky’s Path to Home rather than giving the dog away, surrendering them to a shelter, or rehoming them yourself?"
+          value={form.willContactRescueFirst}
+          onChange={(v) => update("willContactRescueFirst", v)}
+          required
+        />
       </div>
 
       <div className="space-y-4">
         <SectionHeading>References</SectionHeading>
         <p className="text-sm leading-relaxed text-brand-charcoal/80">
           References must be at least 18 years old, and at least 1 reference should not be an
-          immediate family member. Sky&rsquo;s Path to Home will contact both references and must
-          be able to speak with them before your adoption application can be approved.
+          immediate family member. Sky&rsquo;s Path to Home will contact references and must be
+          able to speak with them before your adoption application can be approved.
         </p>
         <p className="text-sm leading-relaxed text-brand-charcoal/80">
           Please let your references know that we will be reaching out.
@@ -449,6 +584,19 @@ function AdoptApplicationFormInner() {
             observedAnimalCare: form.referenceTwoObservedAnimalCare,
           }}
           onChange={(field, value) => update(REFERENCE_TWO_KEYS[field], value)}
+        />
+        <ReferenceFieldset
+          idPrefix="adopt-reference-three"
+          title="Reference #3"
+          values={{
+            fullName: form.referenceThreeFullName,
+            relationship: form.referenceThreeRelationship,
+            yearsKnown: form.referenceThreeYearsKnown,
+            email: form.referenceThreeEmail,
+            phone: form.referenceThreePhone,
+            observedAnimalCare: form.referenceThreeObservedAnimalCare,
+          }}
+          onChange={(field, value) => update(REFERENCE_THREE_KEYS[field], value)}
         />
 
         <div className="space-y-2">
