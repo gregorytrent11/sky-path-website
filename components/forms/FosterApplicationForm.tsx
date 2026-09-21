@@ -13,7 +13,10 @@ import {
   YesNoField,
 } from "@/components/forms/FormPrimitives";
 
-type FormState = {
+// The admin submissions list and the PDF export lay answers out from
+// lib/application-layouts.ts -- add every new question there too (the build
+// fails if a key here is missing from that layout).
+export type FosterFormState = {
   // Applicant Information
   firstName: string;
   lastName: string;
@@ -108,7 +111,7 @@ type FormState = {
   signatureDate: string;
 };
 
-const emptyForm: FormState = {
+const emptyForm: FosterFormState = {
   firstName: "",
   lastName: "",
   email: "",
@@ -192,13 +195,13 @@ const emptyForm: FormState = {
 };
 
 export default function FosterApplicationForm() {
-  const [form, setForm] = useState<FormState>(emptyForm);
+  const [form, setForm] = useState<FosterFormState>(emptyForm);
   const [certified, setCertified] = useState(false);
   const [status, setStatus] = useState<"idle" | "submitting" | "submitted">("idle");
   const [error, setError] = useState<string | null>(null);
   const [turnstileToken, setTurnstileToken] = useState("");
 
-  function update<K extends keyof FormState>(key: K, value: FormState[K]) {
+  function update<K extends keyof FosterFormState>(key: K, value: FosterFormState[K]) {
     setForm((prev) => ({ ...prev, [key]: value }));
   }
 

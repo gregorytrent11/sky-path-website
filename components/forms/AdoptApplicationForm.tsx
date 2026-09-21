@@ -13,7 +13,10 @@ import {
   YesNoField,
 } from "@/components/forms/FormPrimitives";
 
-type FormState = {
+// The admin submissions list and the PDF export lay answers out from
+// lib/application-layouts.ts -- add every new question there too (the build
+// fails if a key here is missing from that layout).
+export type AdoptFormState = {
   whyInterested: string;
   firstName: string;
   lastName: string;
@@ -78,8 +81,6 @@ type FormState = {
   signatureDate: string;
 };
 
-// Keyed so lib/submission-format.ts humanizes them into readable labels in
-// the admin submissions list and the PDF export ("Reference One Full Name").
 type ReferenceValues = {
   fullName: string;
   relationship: string;
@@ -89,7 +90,7 @@ type ReferenceValues = {
   observedAnimalCare: string;
 };
 
-function emptyForm(): FormState {
+function emptyForm(): AdoptFormState {
   return {
     whyInterested: "",
     firstName: "",
@@ -156,10 +157,10 @@ function emptyForm(): FormState {
   };
 }
 
-// Maps the fieldset's generic field names onto the flat FormState keys, so
+// Maps the fieldset's generic field names onto the flat AdoptFormState keys, so
 // all three references can share one component without the payload losing which
 // reference each answer belongs to.
-const REFERENCE_ONE_KEYS: Record<keyof ReferenceValues, keyof FormState> = {
+const REFERENCE_ONE_KEYS: Record<keyof ReferenceValues, keyof AdoptFormState> = {
   fullName: "referenceOneFullName",
   relationship: "referenceOneRelationship",
   yearsKnown: "referenceOneYearsKnown",
@@ -168,7 +169,7 @@ const REFERENCE_ONE_KEYS: Record<keyof ReferenceValues, keyof FormState> = {
   observedAnimalCare: "referenceOneObservedAnimalCare",
 };
 
-const REFERENCE_TWO_KEYS: Record<keyof ReferenceValues, keyof FormState> = {
+const REFERENCE_TWO_KEYS: Record<keyof ReferenceValues, keyof AdoptFormState> = {
   fullName: "referenceTwoFullName",
   relationship: "referenceTwoRelationship",
   yearsKnown: "referenceTwoYearsKnown",
@@ -177,7 +178,7 @@ const REFERENCE_TWO_KEYS: Record<keyof ReferenceValues, keyof FormState> = {
   observedAnimalCare: "referenceTwoObservedAnimalCare",
 };
 
-const REFERENCE_THREE_KEYS: Record<keyof ReferenceValues, keyof FormState> = {
+const REFERENCE_THREE_KEYS: Record<keyof ReferenceValues, keyof AdoptFormState> = {
   fullName: "referenceThreeFullName",
   relationship: "referenceThreeRelationship",
   yearsKnown: "referenceThreeYearsKnown",
@@ -253,7 +254,7 @@ function ReferenceFieldset({
 
 function AdoptApplicationFormInner() {
   const searchParams = useSearchParams();
-  const [form, setForm] = useState<FormState>(emptyForm);
+  const [form, setForm] = useState<AdoptFormState>(emptyForm);
   // One box per dog; the first is always there and is the required one.
   const [dogNames, setDogNames] = useState<string[]>(() => [searchParams.get("dog") || ""]);
   const [certified, setCertified] = useState(false);
@@ -262,7 +263,7 @@ function AdoptApplicationFormInner() {
   const [error, setError] = useState<string | null>(null);
   const [turnstileToken, setTurnstileToken] = useState("");
 
-  function update<K extends keyof FormState>(key: K, value: FormState[K]) {
+  function update<K extends keyof AdoptFormState>(key: K, value: AdoptFormState[K]) {
     setForm((prev) => ({ ...prev, [key]: value }));
   }
 

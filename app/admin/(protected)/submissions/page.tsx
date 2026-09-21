@@ -5,6 +5,8 @@ import { supabase } from "@/lib/supabase/client";
 import type { Submission, SubmissionFormType, SubmissionStatus } from "@/types/database";
 import { humanizeKey, humanizeValue } from "@/lib/submission-format";
 import { downloadSubmissionPdf } from "@/lib/submission-pdf";
+import { layoutApplication } from "@/lib/application-layouts";
+import ApplicationAnswers from "@/components/admin/ApplicationAnswers";
 
 const formTypeLabels: Record<SubmissionFormType, string> = {
   contact: "Contact",
@@ -204,7 +206,10 @@ export default function AdminSubmissionsPage() {
         </div>
 
         <ul className="mt-3 space-y-3">
-          {visible.map((submission) => (
+          {visible.map((submission) => {
+            // Only worked out for the row that's open.
+            const sections = expanded === submission.id ? layoutApplication(submission) : null;
+            return (
             <li
               key={submission.id}
               className="rounded-xl border border-brand-soft-blue/60 bg-brand-white p-4"
@@ -245,44 +250,52 @@ export default function AdminSubmissionsPage() {
                   id={`submission-${submission.id}-details`}
                   className="mt-3 space-y-2 border-t border-brand-soft-blue/40 pt-3 text-sm"
                 >
-                  <p>
-                    <span className="text-brand-charcoal/80">Email:</span>{" "}
-                    <a href={`mailto:${submission.email}`} className="text-brand-purple hover:underline">
-                      {submission.email}
-                    </a>
-                  </p>
-                  {submission.phone && (
-                    <p>
-                      <span className="text-brand-charcoal/80">Phone:</span> {submission.phone}
-                    </p>
-                  )}
-                  {humanizeValue(submission.payload?.subject) && (
-                    <p>
-                      <span className="text-brand-charcoal/80">Subject:</span>{" "}
-                      {humanizeValue(submission.payload?.subject)}
-                    </p>
-                  )}
-                  {submission.message && (
-                    <p className="whitespace-pre-line">
-                      <span className="text-brand-charcoal/80">Message:</span> {submission.message}
-                    </p>
-                  )}
-                  {Object.entries(submission.payload || {}).some(
-                    ([key, value]) => key !== "subject" && humanizeValue(value) !== null
-                  ) && (
-                    <dl className="grid grid-cols-1 gap-x-4 gap-y-1 sm:grid-cols-2">
-                      {Object.entries(submission.payload || {}).map(([key, value]) => {
-                        if (key === "subject") return null;
-                        const display = humanizeValue(value);
-                        if (display === null) return null;
-                        return (
-                          <div key={key}>
-                            <dt className="text-brand-charcoal/80">{humanizeKey(key)}</dt>
-                            <dd className="font-medium text-brand-charcoal">{display}</dd>
-                          </div>
-                        );
-                      })}
-                    </dl>
+                  {/* Applications read like the form the applicant filled in;
+                      the short forms keep the plain field list. */}
+                  {sections ? (
+                    <ApplicationAnswers sections={sections} />
+                  ) : (
+                    <>
+                      <p>
+                        <span className="text-brand-charcoal/80">Email:</span>{" "}
+                        <a href={`mailto:${submission.email}`} className="text-brand-purple hover:underline">
+                          {submission.email}
+                        </a>
+                      </p>
+                      {submission.phone && (
+                        <p>
+                          <span className="text-brand-charcoal/80">Phone:</span> {submission.phone}
+                        </p>
+                      )}
+                      {humanizeValue(submission.payload?.subject) && (
+                        <p>
+                          <span className="text-brand-charcoal/80">Subject:</span>{" "}
+                          {humanizeValue(submission.payload?.subject)}
+                        </p>
+                      )}
+                      {submission.message && (
+                        <p className="whitespace-pre-line">
+                          <span className="text-brand-charcoal/80">Message:</span> {submission.message}
+                        </p>
+                      )}
+                      {Object.entries(submission.payload || {}).some(
+                        ([key, value]) => key !== "subject" && humanizeValue(value) !== null
+                      ) && (
+                        <dl className="grid grid-cols-1 gap-x-4 gap-y-1 sm:grid-cols-2">
+                          {Object.entries(submission.payload || {}).map(([key, value]) => {
+                            if (key === "subject") return null;
+                            const display = humanizeValue(value);
+                            if (display === null) return null;
+                            return (
+                              <div key={key}>
+                                <dt className="text-brand-charcoal/80">{humanizeKey(key)}</dt>
+                                <dd className="font-medium text-brand-charcoal">{display}</dd>
+                              </div>
+                            );
+                          })}
+                        </dl>
+                      )}
+                    </>
                   )}
                   <div className="flex flex-wrap items-center gap-3 pt-2">
                     {(submission.form_type === "adopt_application" ||
@@ -319,7 +332,8 @@ export default function AdminSubmissionsPage() {
                 </div>
               )}
             </li>
-          ))}
+            );
+          })}
         </ul>
         </>
       )}
