@@ -77,6 +77,72 @@ async function notifyByEmail(details: {
   }
 }
 
+// Applicants get a "we got it" note so they aren't left wondering
+// whether the form went through. Only adoption and foster applications get
+// one -- contact/volunteer/help requests are answered by a person anyway.
+// Replies go to the contact_us@ inbox, not the no-reply sender.
+const APPLICANT_CONFIRMATIONS: Record<string, { subject: string; body: (dogName: string) => string[] }> = {
+  adopt_application: {
+    subject: "We received your adoption application",
+    body: (dogName) => [
+      dogName
+        ? `Thank you for applying to adopt ${dogName} from Sky's Path to Home. This email confirms we received your application.`
+        : "Thank you for applying to adopt from Sky's Path to Home. This email confirms we received your application.",
+      "",
+      "We review every application carefully and will follow up as soon as possible. Submitting an application does not guarantee adoption.",
+    ],
+  },
+  foster_application: {
+    subject: "We received your foster application",
+    body: () => [
+      "Thank you for applying to foster with Sky's Path to Home. This email confirms we received your application.",
+      "",
+      "We review every application carefully and will follow up as soon as possible.",
+    ],
+  },
+};
+
+async function confirmToApplicant(details: {
+  formType: string;
+  name: string;
+  email: string;
+  dogName: string;
+}) {
+  const template = APPLICANT_CONFIRMATIONS[details.formType];
+  const apiKey = Deno.env.get("RESEND_API_KEY");
+  if (!template || !apiKey) return;
+
+  const lines = [
+    `Hi ${details.name},`,
+    "",
+    ...template.body(details.dogName),
+    "",
+    `Questions in the meantime? Just reply to this email or write to ${NOTIFY_EMAIL}.`,
+    "",
+    "Sky's Path to Home",
+    "https://skyspath.com",
+  ];
+
+  try {
+    await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        from: "Sky's Path to Home <notifications@skyspath.com>",
+        to: details.email,
+        reply_to: NOTIFY_EMAIL,
+        subject: template.subject,
+        text: lines.join("\n"),
+      }),
+    });
+  } catch {
+    // Best-effort, same as the staff alert.
+  }
+}
+
 const ALLOWED_ORIGINS = new Set([
   "https://skyspath.com",
   "https://www.skyspath.com",
@@ -186,7 +252,18 @@ Deno.serve(async (req) => {
     });
   }
 
-  await notifyByEmail({ formType, name, email, phone, message });
+  const payload = typeof body.payload === "object" && body.payload !== null
+    ? (body.payload as Record<string, unknown>)
+    : {};
+  await Promise.all([
+    notifyByEmail({ formType, name, email, phone, message }),
+    confirmToApplicant({
+      formType,
+      name,
+      email,
+      dogName: typeof payload.dogName === "string" ? payload.dogName.trim() : "",
+    }),
+  ]);
 
   return new Response(JSON.stringify({ ok: true }), { status: 200, headers });
 });

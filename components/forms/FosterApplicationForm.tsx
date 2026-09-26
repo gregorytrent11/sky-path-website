@@ -283,7 +283,7 @@ export default function FosterApplicationForm() {
         </p>
         <p className="mt-2 text-sm text-brand-charcoal/80">
           Thank you for applying to foster with Sky&rsquo;s Path to Home. We review every
-          application carefully and will follow up as soon as possible.
+          application carefully and will follow up as soon as possible. A confirmation is on its way to your email.
         </p>
       </div>
     );

@@ -335,7 +335,7 @@ function AdoptApplicationFormInner() {
         </p>
         <p className="mt-2 text-sm text-brand-charcoal/80">
           Thank you for applying to adopt from Sky&rsquo;s Path to Home. We review every
-          application carefully and will follow up as soon as possible. Submitting an
+          application carefully and will follow up as soon as possible. A confirmation is on its way to your email. Submitting an
           application does not guarantee adoption.
         </p>
       </div>
