@@ -163,6 +163,9 @@ export default function FaqPage() {
                 "The dog may not be left outdoors alone overnight.",
                 "The dog may not be left outdoors unsupervised for extended periods of time.",
                 "The adopter must provide appropriate veterinary care and follow any known medical or medication requirements disclosed at the time of adoption.",
+                "If you live in a rental, you must provide written permission from the landlord or owner of the residence that you can have a dog and whether there are weight/size restrictions on the pet.",
+                "If you have a history of violating the law or losing, giving away, or selling animals, or have had your animals injured or killed by vehicles, we will review the circumstances and reserve the right to not give you an animal.",
+                "If we learn that you have put false information on your adoption application, we will nullify the adoption application and we reserve the right to take back an animal that has already been adopted to you.",
               ]}
             />
 
