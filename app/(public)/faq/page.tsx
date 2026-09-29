@@ -118,7 +118,7 @@ export default function FaqPage() {
             </p>
             <BulletList
               items={[
-                "Spayed or neutered according to their age",
+                "Spayed or Neutered",
                 "Microchipped",
                 "Vaccinated according to their age",
                 "Tested for heartworm according to their age",
