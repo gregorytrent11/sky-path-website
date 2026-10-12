@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
+import CroppedPhoto from "@/components/dogs/CroppedPhoto";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase/client";
 import type { Dog } from "@/types/database";
@@ -47,12 +47,12 @@ export default function SuccessStoriesPreview() {
         >
           <div className="relative aspect-[4/3] w-full overflow-hidden bg-brand-gray">
             {dog.primary_photo_url ? (
-              <Image
+              <CroppedPhoto
                 src={dog.primary_photo_url}
                 alt={dog.name}
-                fill
-                className="object-cover"
-                style={{ objectPosition: `${dog.primary_photo_focal_x}% ${dog.primary_photo_focal_y}%` }}
+                crop={dog.primary_photo_crop}
+                focalX={dog.primary_photo_focal_x}
+                focalY={dog.primary_photo_focal_y}
               />
             ) : (
               <div className="flex h-full items-center justify-center text-sm text-brand-charcoal/70">

@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Image from "next/image";
 import { supabase } from "@/lib/supabase/client";
-import type { DogMedia } from "@/types/database";
-import FocalPointPicker from "@/components/admin/FocalPointPicker";
+import type { DogMedia, DogUpdate, PhotoCrop } from "@/types/database";
+import PhotoCropEditor from "@/components/admin/PhotoCropEditor";
+import CroppedPhoto from "@/components/dogs/CroppedPhoto";
+import { focalFromCrop } from "@/lib/photo-crop";
 
 const MAX_DOG_PHOTOS = 5;
 const MAX_DOG_VIDEOS = 1;
@@ -77,16 +78,27 @@ export default function DogMediaManager({ dogId, dogName }: { dogId: string; dog
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dogId]);
 
+  // Until migration 20261012000000_dog_media_crop.sql has been applied the
+  // dogs table has no primary_photo_crop column and PostgREST rejects the
+  // whole update (PGRST204). Retry without it so uploads and "Set primary"
+  // keep working in the meantime; the crop itself just can't be saved yet.
+  async function updateDog(payload: DogUpdate) {
+    const { error: updateError } = await supabase.from("dogs").update(payload).eq("id", dogId);
+    if (updateError?.code === "PGRST204" && "primary_photo_crop" in payload) {
+      const rest = { ...payload };
+      delete rest.primary_photo_crop;
+      await supabase.from("dogs").update(rest).eq("id", dogId);
+    }
+  }
+
   async function syncPrimaryPhoto(rows: DogMedia[]) {
     const primary = rows.find((m) => m.is_primary) ?? rows.find((m) => m.media_type === "image");
-    await supabase
-      .from("dogs")
-      .update({
-        primary_photo_url: primary?.url ?? null,
-        primary_photo_focal_x: primary?.focal_x ?? 50,
-        primary_photo_focal_y: primary?.focal_y ?? 50,
-      })
-      .eq("id", dogId);
+    await updateDog({
+      primary_photo_url: primary?.url ?? null,
+      primary_photo_focal_x: primary?.focal_x ?? 50,
+      primary_photo_focal_y: primary?.focal_y ?? 50,
+      primary_photo_crop: primary?.crop ?? null,
+    });
   }
 
   async function handleFiles(files: FileList | null) {
@@ -200,27 +212,44 @@ export default function DogMediaManager({ dogId, dogName }: { dogId: string; dog
   async function makePrimary(item: DogMedia) {
     await supabase.from("dog_media").update({ is_primary: false }).eq("dog_id", dogId);
     await supabase.from("dog_media").update({ is_primary: true }).eq("id", item.id);
-    await supabase
-      .from("dogs")
-      .update({
-        primary_photo_url: item.url,
-        primary_photo_focal_x: item.focal_x,
-        primary_photo_focal_y: item.focal_y,
-      })
-      .eq("id", dogId);
+    await updateDog({
+      primary_photo_url: item.url,
+      primary_photo_focal_x: item.focal_x,
+      primary_photo_focal_y: item.focal_y,
+      primary_photo_crop: item.crop ?? null,
+    });
     await reload();
   }
 
-  async function updateFocal(item: DogMedia, x: number, y: number) {
-    setMedia((prev) => prev.map((m) => (m.id === item.id ? { ...m, focal_x: x, focal_y: y } : m)));
-    await supabase.from("dog_media").update({ focal_x: x, focal_y: y }).eq("id", item.id);
+  // Saves the crop and keeps the legacy focal point at the crop's centre so
+  // anything still reading focal_x/focal_y stays sensible.
+  async function updateCrop(item: DogMedia, crop: PhotoCrop) {
+    const focal = focalFromCrop(crop);
+    setMedia((prev) =>
+      prev.map((m) => (m.id === item.id ? { ...m, crop, focal_x: focal.x, focal_y: focal.y } : m))
+    );
+    const { error: cropError } = await supabase
+      .from("dog_media")
+      .update({ crop, focal_x: focal.x, focal_y: focal.y })
+      .eq("id", item.id);
+    if (cropError) {
+      setError(
+        cropError.code === "PGRST204"
+          ? "Cropping isn't switched on in the database yet (the dog_media_crop migration still needs to be applied)."
+          : `Could not save the crop (${cropError.message}).`
+      );
+      return;
+    }
     if (item.is_primary) {
-      await supabase
-        .from("dogs")
-        .update({ primary_photo_focal_x: x, primary_photo_focal_y: y })
-        .eq("id", dogId);
+      await updateDog({
+        primary_photo_crop: crop,
+        primary_photo_focal_x: focal.x,
+        primary_photo_focal_y: focal.y,
+      });
     }
   }
+
+  const adjusting = adjustingId ? media.find((m) => m.id === adjustingId) ?? null : null;
 
   return (
     <div>
@@ -253,12 +282,13 @@ export default function DogMediaManager({ dogId, dogName }: { dogId: string; dog
             <li key={item.id} className="relative overflow-hidden rounded-lg border border-brand-soft-blue/60">
               <div className="relative aspect-square bg-brand-gray">
                 {item.media_type === "image" ? (
-                  <Image
+                  <CroppedPhoto
                     src={item.url}
                     alt={item.alt_text || `Photo of ${dogName}`}
-                    fill
-                    className="object-cover"
-                    style={{ objectPosition: `${item.focal_x}% ${item.focal_y}%` }}
+                    crop={item.crop}
+                    focalX={item.focal_x}
+                    focalY={item.focal_y}
+                    frameAspect={1}
                   />
                 ) : (
                   <>
@@ -286,7 +316,7 @@ export default function DogMediaManager({ dogId, dogName }: { dogId: string; dog
                     onClick={() => setAdjustingId(adjustingId === item.id ? null : item.id)}
                     className="text-brand-purple hover:underline"
                   >
-                    {adjustingId === item.id ? "Done" : "Crop"}
+                    {adjustingId === item.id ? "Done" : "Crop & adjust"}
                   </button>
                 )}
                 {item.media_type === "image" && !item.is_primary && (
@@ -306,19 +336,34 @@ export default function DogMediaManager({ dogId, dogName }: { dogId: string; dog
                   Remove
                 </button>
               </div>
-              {adjustingId === item.id && (
-                <div className="border-t border-brand-soft-blue/60 bg-brand-white p-2">
-                  <FocalPointPicker
-                    src={item.url}
-                    x={item.focal_x}
-                    y={item.focal_y}
-                    onChange={(x, y) => updateFocal(item, x, y)}
-                  />
-                </div>
-              )}
             </li>
           ))}
         </ul>
+      )}
+
+      {adjusting && adjusting.media_type === "image" && (
+        <div className="mt-4 rounded-lg border border-brand-soft-blue/60 bg-brand-white p-4">
+          <div className="mb-3 flex items-center justify-between">
+            <h3 className="text-sm font-semibold text-brand-deep-blue">
+              Crop &amp; adjust {adjusting.is_primary ? "the primary photo" : "this photo"}
+            </h3>
+            <button
+              type="button"
+              onClick={() => setAdjustingId(null)}
+              className="rounded-full bg-brand-purple px-3 py-1 text-xs font-semibold text-brand-white hover:bg-brand-deep-blue"
+            >
+              Done
+            </button>
+          </div>
+          <PhotoCropEditor
+            key={adjusting.id}
+            src={adjusting.url}
+            crop={adjusting.crop}
+            focalX={adjusting.focal_x}
+            focalY={adjusting.focal_y}
+            onChange={(crop) => updateCrop(adjusting, crop)}
+          />
+        </div>
       )}
     </div>
   );

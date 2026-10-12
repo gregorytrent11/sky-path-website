@@ -1,7 +1,7 @@
-import Image from "next/image";
 import Link from "next/link";
 import type { Dog } from "@/types/database";
 import { dogSummaryLine } from "@/components/dogs/dog-display";
+import CroppedPhoto from "@/components/dogs/CroppedPhoto";
 
 export default function DogCard({ dog }: { dog: Dog }) {
   return (
@@ -11,12 +11,13 @@ export default function DogCard({ dog }: { dog: Dog }) {
     >
       <div className="relative aspect-[4/3] w-full overflow-hidden bg-brand-gray">
         {dog.primary_photo_url ? (
-          <Image
+          <CroppedPhoto
             src={dog.primary_photo_url}
             alt={dog.name}
-            fill
-            className="object-cover transition-transform group-hover:scale-105"
-            style={{ objectPosition: `${dog.primary_photo_focal_x}% ${dog.primary_photo_focal_y}%` }}
+            crop={dog.primary_photo_crop}
+            focalX={dog.primary_photo_focal_x}
+            focalY={dog.primary_photo_focal_y}
+            className="transition-transform group-hover:scale-105"
           />
         ) : (
           <div className="flex h-full items-center justify-center text-sm text-brand-charcoal/70">

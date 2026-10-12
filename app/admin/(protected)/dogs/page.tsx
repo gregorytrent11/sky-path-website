@@ -7,6 +7,7 @@ import { supabase } from "@/lib/supabase/client";
 import { triggerDeploy } from "@/lib/trigger-deploy";
 import { removeDogMediaObjects } from "@/lib/storage-cleanup";
 import type { Dog, DogStatus } from "@/types/database";
+import { MAX_FEATURED_DOGS } from "@/lib/photo-crop";
 
 const statusStyles: Record<DogStatus, string> = {
   draft: "bg-brand-gray text-brand-charcoal",
@@ -30,6 +31,8 @@ export default function AdminDogsPage() {
   const router = useRouter();
   const [dogs, setDogs] = useState<Dog[] | null>(null);
   const [busyId, setBusyId] = useState<string | null>(null);
+  const [featuredError, setFeaturedError] = useState<string | null>(null);
+  const featuredCount = dogs ? dogs.filter((d) => d.featured).length : 0;
 
   async function reload() {
     const { data } = await supabase
@@ -74,6 +77,13 @@ export default function AdminDogsPage() {
   }
 
   async function setFeatured(id: string, featured: boolean) {
+    setFeaturedError(null);
+    if (featured && featuredCount >= MAX_FEATURED_DOGS) {
+      setFeaturedError(
+        `The homepage shows up to ${MAX_FEATURED_DOGS} featured dogs. Unfeature one before featuring another.`
+      );
+      return;
+    }
     setBusyId(id);
     await supabase.from("dogs").update({ featured }).eq("id", id);
     await reload();
@@ -107,6 +117,17 @@ export default function AdminDogsPage() {
           Add Dog
         </Link>
       </div>
+
+      {dogs && dogs.length > 0 && (
+        <p className="mt-3 text-sm text-brand-charcoal/70">
+          Featured on the homepage: {featuredCount} of {MAX_FEATURED_DOGS}
+        </p>
+      )}
+      {featuredError && (
+        <p role="alert" className="mt-2 text-sm text-red-700">
+          {featuredError}
+        </p>
+      )}
 
       {!dogs ? (
         <p className="mt-6 text-brand-charcoal/80">Loading…</p>

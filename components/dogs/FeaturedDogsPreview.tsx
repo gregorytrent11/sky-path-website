@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase/client";
 import type { Dog } from "@/types/database";
 import DogCard from "@/components/dogs/DogCard";
+import { MAX_FEATURED_DOGS } from "@/lib/photo-crop";
 
 // `initialDogs` is the build-time snapshot (see lib/build-time-dogs.ts) so the
 // homepage HTML search engines index already names real adoptable dogs; the
@@ -23,7 +24,7 @@ export default function FeaturedDogsPreview({ initialDogs }: { initialDogs?: Dog
       .in("status", ["incoming", "published", "pending"])
       .order("sort_order", { ascending: true })
       .order("created_at", { ascending: false })
-      .limit(3)
+      .limit(MAX_FEATURED_DOGS)
       .then(({ data }) => {
         if (cancelled) return;
         setDogs(data ?? []);
@@ -43,7 +44,7 @@ export default function FeaturedDogsPreview({ initialDogs }: { initialDogs?: Dog
   }
 
   return (
-    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
       {dogs.map((dog) => (
         <DogCard key={dog.id} dog={dog} />
       ))}

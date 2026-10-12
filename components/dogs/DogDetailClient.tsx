@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
+import CroppedPhoto from "@/components/dogs/CroppedPhoto";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase/client";
 import type { Dog, DogMedia } from "@/types/database";
@@ -129,7 +129,9 @@ export default function DogDetailClient({
     alt_text: dog.name,
     focal_x: dog.primary_photo_focal_x,
     focal_y: dog.primary_photo_focal_y,
+    crop: dog.primary_photo_crop,
   }] : [];
+  const active = gallery[activePhoto] ?? gallery[0];
   const badges = compatibilityBadges(dog);
 
   return (
@@ -138,16 +140,12 @@ export default function DogDetailClient({
         <div>
           <div className="relative aspect-[4/3] w-full overflow-hidden rounded-xl bg-brand-gray">
             {gallery.length > 0 ? (
-              <Image
-                src={gallery[activePhoto]?.url ?? gallery[0].url}
-                alt={gallery[activePhoto]?.alt_text || dog.name}
-                fill
-                className="object-cover"
-                style={{
-                  objectPosition: `${gallery[activePhoto]?.focal_x ?? gallery[0].focal_x}% ${
-                    gallery[activePhoto]?.focal_y ?? gallery[0].focal_y
-                  }%`,
-                }}
+              <CroppedPhoto
+                src={active.url}
+                alt={active.alt_text || dog.name}
+                crop={active.crop}
+                focalX={active.focal_x}
+                focalY={active.focal_y}
                 priority
               />
             ) : (
@@ -169,12 +167,13 @@ export default function DogDetailClient({
                     index === activePhoto ? "border-brand-purple" : "border-transparent"
                   }`}
                 >
-                  <Image
+                  <CroppedPhoto
                     src={item.url}
                     alt=""
-                    fill
-                    className="object-cover"
-                    style={{ objectPosition: `${item.focal_x}% ${item.focal_y}%` }}
+                    crop={item.crop}
+                    focalX={item.focal_x}
+                    focalY={item.focal_y}
+                    frameAspect={1}
                   />
                 </button>
               ))}

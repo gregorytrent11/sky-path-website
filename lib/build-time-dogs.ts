@@ -21,6 +21,7 @@
 import { request as httpRequest } from "node:http";
 import { request as httpsRequest } from "node:https";
 import type { Dog, DogMedia } from "@/types/database";
+import { MAX_FEATURED_DOGS } from "@/lib/photo-crop";
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -85,7 +86,7 @@ export async function fetchAvailableDogsForBuild(): Promise<Dog[]> {
 export async function fetchFeaturedDogsForBuild(): Promise<Dog[]> {
   return restGet<Dog>(
     "dogs",
-    "featured=eq.true&is_visible=eq.true&status=in.(incoming,published,pending)&select=*&order=sort_order.asc,created_at.desc&limit=3"
+    `featured=eq.true&is_visible=eq.true&status=in.(incoming,published,pending)&select=*&order=sort_order.asc,created_at.desc&limit=${MAX_FEATURED_DOGS}`
   );
 }
 

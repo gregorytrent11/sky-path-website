@@ -17,6 +17,17 @@ export type SubmissionFormType =
 export type SubmissionStatus = "new" | "in_progress" | "resolved" | "archived";
 export type EventStatus = "draft" | "published" | "archived";
 
+// A crop rectangle in fractions (0..1) of the original image's width/height.
+// `ar` is the crop's own pixel aspect ratio (width / height) so a renderer
+// can fit it into any frame without knowing the image's natural size.
+export type PhotoCrop = {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+  ar: number;
+};
+
 export type Dog = {
   id: string;
   name: string;
@@ -41,6 +52,7 @@ export type Dog = {
   primary_photo_url: string | null;
   primary_photo_focal_x: number;
   primary_photo_focal_y: number;
+  primary_photo_crop: PhotoCrop | null;
   success_story: string | null;
   success_story_status: SuccessStoryStatus;
   sort_order: number;
@@ -68,6 +80,7 @@ export type DogMedia = {
   alt_text: string | null;
   focal_x: number;
   focal_y: number;
+  crop: PhotoCrop | null;
   created_at: string;
 };
 

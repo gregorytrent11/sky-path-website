@@ -19,6 +19,7 @@ import DogMediaManager from "@/components/admin/DogMediaManager";
 import RichTextField from "@/components/admin/RichTextField";
 import { slugify } from "@/lib/slugify";
 import { triggerDeploy } from "@/lib/trigger-deploy";
+import { MAX_FEATURED_DOGS } from "@/lib/photo-crop";
 
 type FormState = {
   name: string;
@@ -136,6 +137,21 @@ function EditDogForm() {
     event.preventDefault();
     setError(null);
     setSaving(true);
+
+    if (form.featured) {
+      // Only MAX_FEATURED_DOGS fit on the homepage; count the OTHER featured
+      // dogs so re-saving an already-featured dog never trips the cap.
+      let query = supabase.from("dogs").select("id", { count: "exact", head: true }).eq("featured", true);
+      if (dogId) query = query.neq("id", dogId);
+      const { count } = await query;
+      if ((count ?? 0) >= MAX_FEATURED_DOGS) {
+        setSaving(false);
+        setError(
+          `The homepage shows up to ${MAX_FEATURED_DOGS} featured dogs and ${MAX_FEATURED_DOGS} are already featured. Unfeature one first.`
+        );
+        return;
+      }
+    }
 
     const payload: DogUpdate = {
       name: form.name.trim(),
@@ -276,8 +292,9 @@ function EditDogForm() {
             Feature on homepage
           </label>
           <p className="mt-1 text-xs text-brand-charcoal/60">
-            Shows this dog in the &ldquo;Featured Available Dogs&rdquo; section on the homepage. Only
-            published or pending dogs that are visible on the site will actually appear there.
+            Shows this dog in the &ldquo;Featured Available Dogs&rdquo; section on the homepage (up to{" "}
+            {MAX_FEATURED_DOGS} dogs). Only incoming, published or pending dogs that are visible on the
+            site will actually appear there.
           </p>
         </div>
 
