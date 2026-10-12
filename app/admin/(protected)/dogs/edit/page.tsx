@@ -19,7 +19,7 @@ import DogMediaManager from "@/components/admin/DogMediaManager";
 import RichTextField from "@/components/admin/RichTextField";
 import { slugify } from "@/lib/slugify";
 import { triggerDeploy } from "@/lib/trigger-deploy";
-import { MAX_FEATURED_DOGS } from "@/lib/photo-crop";
+import { FEATURED_STATUSES, MAX_FEATURED_DOGS } from "@/lib/featured";
 
 type FormState = {
   name: string;
@@ -138,10 +138,20 @@ function EditDogForm() {
     setError(null);
     setSaving(true);
 
-    if (form.featured) {
-      // Only MAX_FEATURED_DOGS fit on the homepage; count the OTHER featured
-      // dogs so re-saving an already-featured dog never trips the cap.
-      let query = supabase.from("dogs").select("id", { count: "exact", head: true }).eq("featured", true);
+    // An adopted or archived dog is no longer "available", so it can't hold a
+    // featured slot.
+    const featured = form.featured && !["adopted", "archived"].includes(form.status);
+
+    if (featured && FEATURED_STATUSES.includes(form.status)) {
+      // Only MAX_FEATURED_DOGS fit on the homepage; count the OTHER dogs that
+      // actually show there, so re-saving an already-featured dog never trips
+      // the cap and adopted/hidden dogs with a stale flag don't block it.
+      let query = supabase
+        .from("dogs")
+        .select("id", { count: "exact", head: true })
+        .eq("featured", true)
+        .eq("is_visible", true)
+        .in("status", FEATURED_STATUSES);
       if (dogId) query = query.neq("id", dogId);
       const { count } = await query;
       if ((count ?? 0) >= MAX_FEATURED_DOGS) {
@@ -157,7 +167,7 @@ function EditDogForm() {
       name: form.name.trim(),
       slug: form.slug.trim() || slugify(form.name),
       status: form.status,
-      featured: form.featured,
+      featured,
       breed: form.breed.trim() || null,
       sex: form.sex || null,
       age_category: form.age_category || null,

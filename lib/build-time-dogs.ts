@@ -21,7 +21,7 @@
 import { request as httpRequest } from "node:http";
 import { request as httpsRequest } from "node:https";
 import type { Dog, DogMedia } from "@/types/database";
-import { MAX_FEATURED_DOGS } from "@/lib/photo-crop";
+import { MAX_FEATURED_DOGS } from "@/lib/featured";
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;

@@ -5,8 +5,6 @@ import type { PhotoCrop } from "@/types/database";
 // so the crop admins draw is a 4:3 box -- what the cards will show.
 export const CARD_ASPECT = 4 / 3;
 
-export const MAX_FEATURED_DOGS = 8;
-
 function clamp(value: number, min: number, max: number): number {
   return Math.min(max, Math.max(min, value));
 }

@@ -7,7 +7,7 @@ import { supabase } from "@/lib/supabase/client";
 import { triggerDeploy } from "@/lib/trigger-deploy";
 import { removeDogMediaObjects } from "@/lib/storage-cleanup";
 import type { Dog, DogStatus } from "@/types/database";
-import { MAX_FEATURED_DOGS } from "@/lib/photo-crop";
+import { FEATURED_STATUSES, MAX_FEATURED_DOGS, showsOnHomepage } from "@/lib/featured";
 
 const statusStyles: Record<DogStatus, string> = {
   draft: "bg-brand-gray text-brand-charcoal",
@@ -32,7 +32,10 @@ export default function AdminDogsPage() {
   const [dogs, setDogs] = useState<Dog[] | null>(null);
   const [busyId, setBusyId] = useState<string | null>(null);
   const [featuredError, setFeaturedError] = useState<string | null>(null);
-  const featuredCount = dogs ? dogs.filter((d) => d.featured).length : 0;
+  const featuredCount = dogs ? dogs.filter(showsOnHomepage).length : 0;
+  // Flagged but not showing (adopted, archived, draft or hidden) -- so the
+  // admin understands why the homepage has fewer than the flagged total.
+  const featuredNotShowing = dogs ? dogs.filter((d) => d.featured && !showsOnHomepage(d)).length : 0;
 
   async function reload() {
     const { data } = await supabase
@@ -59,7 +62,8 @@ export default function AdminDogsPage() {
 
   async function markAdopted(id: string) {
     setBusyId(id);
-    await supabase.from("dogs").update({ status: "adopted" }).eq("id", id);
+    // An adopted dog is no longer "available", so it gives up its featured slot.
+    await supabase.from("dogs").update({ status: "adopted", featured: false }).eq("id", id);
     setBusyId(null);
     triggerDeploy();
     // Send the admin straight to the edit form, where a success story can
@@ -121,6 +125,13 @@ export default function AdminDogsPage() {
       {dogs && dogs.length > 0 && (
         <p className="mt-3 text-sm text-brand-charcoal/70">
           Featured on the homepage: {featuredCount} of {MAX_FEATURED_DOGS}
+          {featuredNotShowing > 0 && (
+            <>
+              {" "}
+              ({featuredNotShowing} more {featuredNotShowing === 1 ? "is" : "are"} flagged but not showing
+              because {featuredNotShowing === 1 ? "it is" : "they are"} adopted, archived, draft or hidden)
+            </>
+          )}
         </p>
       )}
       {featuredError && (
@@ -279,7 +290,7 @@ export default function AdminDogsPage() {
                         >
                           Unfeature
                         </button>
-                      ) : (
+                      ) : FEATURED_STATUSES.includes(dog.status) || dog.status === "draft" ? (
                         <button
                           type="button"
                           disabled={busyId === dog.id}
@@ -288,7 +299,7 @@ export default function AdminDogsPage() {
                         >
                           Feature
                         </button>
-                      )}
+                      ) : null}
                       <button
                         type="button"
                         disabled={busyId === dog.id}
