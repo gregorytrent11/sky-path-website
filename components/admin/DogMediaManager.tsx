@@ -60,6 +60,7 @@ export default function DogMediaManager({ dogId, dogName }: { dogId: string; dog
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [adjustingId, setAdjustingId] = useState<string | null>(null);
+  const [cropError, setCropError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   async function reload() {
@@ -224,19 +225,20 @@ export default function DogMediaManager({ dogId, dogName }: { dogId: string; dog
   // Saves the crop and keeps the legacy focal point at the crop's centre so
   // anything still reading focal_x/focal_y stays sensible.
   async function updateCrop(item: DogMedia, crop: PhotoCrop) {
+    setCropError(null);
     const focal = focalFromCrop(crop);
     setMedia((prev) =>
       prev.map((m) => (m.id === item.id ? { ...m, crop, focal_x: focal.x, focal_y: focal.y } : m))
     );
-    const { error: cropError } = await supabase
+    const { error: saveError } = await supabase
       .from("dog_media")
       .update({ crop, focal_x: focal.x, focal_y: focal.y })
       .eq("id", item.id);
-    if (cropError) {
-      setError(
-        cropError.code === "PGRST204"
-          ? "Cropping isn't switched on in the database yet (the dog_media_crop migration still needs to be applied)."
-          : `Could not save the crop (${cropError.message}).`
+    if (saveError) {
+      setCropError(
+        saveError.code === "PGRST204"
+          ? "The crop could not be saved: cropping isn't switched on in the database yet. Run the dog_media_crop migration in Supabase, then try again."
+          : `The crop could not be saved (${saveError.message}).`
       );
       return;
     }
@@ -349,12 +351,20 @@ export default function DogMediaManager({ dogId, dogName }: { dogId: string; dog
             </h3>
             <button
               type="button"
-              onClick={() => setAdjustingId(null)}
+              onClick={() => {
+                setAdjustingId(null);
+                setCropError(null);
+              }}
               className="rounded-full bg-brand-purple px-3 py-1 text-xs font-semibold text-brand-white hover:bg-brand-deep-blue"
             >
               Done
             </button>
           </div>
+          {cropError && (
+            <p role="alert" className="mb-3 rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">
+              {cropError}
+            </p>
+          )}
           <PhotoCropEditor
             key={adjusting.id}
             src={adjusting.url}

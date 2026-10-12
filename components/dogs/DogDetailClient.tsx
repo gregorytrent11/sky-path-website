@@ -121,7 +121,11 @@ export default function DogDetailClient({
     );
   }
 
-  const photos = media.filter((m) => m.media_type === "image");
+  // The photo an admin marked primary is the first one a visitor sees; the
+  // rest keep their upload order (sort is stable).
+  const photos = media
+    .filter((m) => m.media_type === "image")
+    .sort((a, b) => Number(b.is_primary) - Number(a.is_primary));
   const videos = media.filter((m) => m.media_type === "video");
   const gallery = photos.length > 0 ? photos : dog.primary_photo_url ? [{
     id: "primary",
