@@ -102,10 +102,31 @@ export const ADOPT_LAYOUT = [
         label: "Landlord or property manager name and phone number or email address (N/A if none)",
       },
       { key: "timeInCurrentHome", label: "How long have you lived in your current home?" },
-      { key: "yardFenced", label: "Is the yard fenced?", options: ["Yes", "No", "Partially"] },
+      { key: "yardFenced", label: "Do you have a fenced yard?", options: ["Yes", "No", "Partially"] },
+      {
+        key: "fenceHeight",
+        label: "How high is your fence?",
+        paperLabel: "If yes or partially fenced, how high is your fence?",
+        hideWhenEmpty: true,
+      },
+      {
+        key: "fenceMaterial",
+        label: "What type of material is your fence?",
+        paperLabel:
+          "If yes or partially fenced, what type of material is your fence? (Example: privacy fence, split rail, posts with wire)",
+        hideWhenEmpty: true,
+      },
+      {
+        key: "fenceHasGaps",
+        label: "Are there areas the dog can get out?",
+        paperLabel: "If yes or partially fenced, are there areas the dog can get out?",
+        options: YES_NO,
+        hideWhenEmpty: true,
+      },
       {
         key: "unfencedYardPlan", long: true,
-        label: "If no or partially fenced, how will you safely secure and supervise the dog while outside?",
+        label:
+          "If your home does not have a fully fenced yard, how do you plan to safely exercise and supervise the dog while preventing them from getting loose or escaping?",
         hideWhenEmpty: true,
       },
       {

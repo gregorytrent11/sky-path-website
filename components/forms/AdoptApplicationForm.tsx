@@ -32,6 +32,9 @@ export type AdoptFormState = {
   landlordInfo: string;
   timeInCurrentHome: string;
   yardFenced: string;
+  fenceHeight: string;
+  fenceMaterial: string;
+  fenceHasGaps: string;
   unfencedYardPlan: string;
   agreesToFencePhotos: string;
   household: string;
@@ -107,6 +110,9 @@ function emptyForm(): AdoptFormState {
     landlordInfo: "",
     timeInCurrentHome: "",
     yardFenced: "",
+    fenceHeight: "",
+    fenceMaterial: "",
+    fenceHasGaps: "",
     unfencedYardPlan: "",
     agreesToFencePhotos: "",
     household: "",
@@ -272,7 +278,11 @@ function AdoptApplicationFormInner() {
   }
 
   const renting = form.homeOwnership === "Rent";
-  const yardNotFullyFenced = form.yardFenced === "No" || form.yardFenced === "Partially";
+  const hasSomeFence = form.yardFenced === "Yes" || form.yardFenced === "Partially";
+  // The escape plan is asked of anyone with no fence at all, and of anyone whose
+  // fence has areas the dog could get out of.
+  const needsEscapePlan =
+    form.yardFenced === "No" || (hasSomeFence && form.fenceHasGaps === "Yes");
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -312,9 +322,12 @@ function AdoptApplicationFormInner() {
           // Stays one "Dog Name" answer in the admin list and the PDF, the
           // same as applications sent in before more than one dog was allowed.
           dogName: dogNames.map((name) => name.trim()).filter(Boolean).join(", "),
-          // The question is hidden once the yard is marked fully fenced, so
-          // don't send an answer typed before they changed their mind.
-          unfencedYardPlan: yardNotFullyFenced ? form.unfencedYardPlan : "",
+          // The fence follow-ups are hidden again when an earlier answer
+          // changes, so don't send answers typed before they changed their mind.
+          fenceHeight: hasSomeFence ? form.fenceHeight : "",
+          fenceMaterial: hasSomeFence ? form.fenceMaterial : "",
+          fenceHasGaps: hasSomeFence ? form.fenceHasGaps : "",
+          unfencedYardPlan: needsEscapePlan ? form.unfencedYardPlan : "",
           referenceAuthorization: referenceAuthorized,
           certified,
         },
@@ -445,16 +458,42 @@ function AdoptApplicationFormInner() {
         />
         <RadioGroupField
           name="yardFenced"
-          label="Is the yard fenced?"
+          label="Do you have a fenced yard?"
           value={form.yardFenced}
           onChange={(v) => update("yardFenced", v)}
           options={["Yes", "No", "Partially"]}
           required
         />
-        {yardNotFullyFenced && (
+        {hasSomeFence && (
+          <>
+            <TextField
+              id="adopt-fence-height"
+              label="How high is your fence?"
+              value={form.fenceHeight}
+              onChange={(v) => update("fenceHeight", v)}
+              required
+            />
+            <TextField
+              id="adopt-fence-material"
+              label="What type of material is your fence?"
+              placeholder="Example: privacy fence, split rail, posts with wire"
+              value={form.fenceMaterial}
+              onChange={(v) => update("fenceMaterial", v)}
+              required
+            />
+            <YesNoField
+              name="fenceHasGaps"
+              label="Are there areas the dog can get out?"
+              value={form.fenceHasGaps}
+              onChange={(v) => update("fenceHasGaps", v)}
+              required
+            />
+          </>
+        )}
+        {needsEscapePlan && (
           <TextAreaField
             id="adopt-unfenced-plan"
-            label="If no or partially fenced, how will you safely secure and supervise the dog while outside?"
+            label="If your home does not have a fully fenced yard, how do you plan to safely exercise and supervise the dog while preventing them from getting loose or escaping?"
             value={form.unfencedYardPlan}
             onChange={(v) => update("unfencedYardPlan", v)}
             required
