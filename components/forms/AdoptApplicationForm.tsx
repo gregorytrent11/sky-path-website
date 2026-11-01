@@ -444,7 +444,7 @@ function AdoptApplicationFormInner() {
           label="Housing type"
           value={form.housingType}
           onChange={(v) => update("housingType", v)}
-          options={["House", "Apartment", "Townhome or condo"]}
+          options={["House", "Apartment", "Townhome or condo", "Mobile home"]}
           required
         />
         <RadioGroupField

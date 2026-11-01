@@ -363,7 +363,7 @@ export default function FosterApplicationForm() {
 
       <div className="space-y-4">
         <SectionHeading>Home and Household</SectionHeading>
-        <RadioGroupField name="homeType" label="What type of home do you live in?" value={form.homeType} onChange={(v) => update("homeType", v)} options={["House", "Apartment", "Townhome or condo"]} required />
+        <RadioGroupField name="homeType" label="What type of home do you live in?" value={form.homeType} onChange={(v) => update("homeType", v)} options={["House", "Apartment", "Townhome or condo", "Mobile home"]} required />
         <RadioGroupField name="homeOwnership" label="Do you own or rent your home?" value={form.homeOwnership} onChange={(v) => update("homeOwnership", v)} options={["Own", "Rent", "Live with family or another arrangement"]} required />
         {renting && (
           <>
