@@ -24,7 +24,7 @@ export const siteConfig = {
   // match the town people type, so it must appear on the site itself.
   homeTown: "Joliet, Montana",
   contactEmail: "contact_us@skyspath.com",
-  contactPhone: "813-373-1918",
+  contactPhone: "406-997-2097",
   donationUrl: process.env.NEXT_PUBLIC_DONATION_URL || "",
   // PayPal hosted-button identifiers. Both are public by design -- they ship
   // in the page source on every PayPal integration -- so they live here
