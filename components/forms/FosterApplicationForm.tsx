@@ -375,7 +375,7 @@ export default function FosterApplicationForm() {
           </>
         )}
         {otherArrangement && (
-          <TextAreaField id="foster-home-ownership-explain" label="Please describe your living arrangement" value={form.homeOwnershipExplain} onChange={(v) => update("homeOwnershipExplain", v)} placeholder="Explain" required />
+          <TextAreaField id="foster-home-ownership-explain" label="Please describe your living arrangement" value={form.homeOwnershipExplain} onChange={(v) => update("homeOwnershipExplain", v)} required />
         )}
         <TextAreaField id="foster-household" label="Who lives in your household? (Include all adults and children, and ages of children.)" value={form.household} onChange={(v) => update("household", v)} required />
         <YesNoField name="householdAgrees" label="Does everyone in the household agree to fostering a dog?" value={form.householdAgrees} onChange={(v) => update("householdAgrees", v)} required />

@@ -479,7 +479,6 @@ function AdoptApplicationFormInner() {
             label="Please describe your living arrangement"
             value={form.homeOwnershipExplain}
             onChange={(v) => update("homeOwnershipExplain", v)}
-            placeholder="Explain"
             required
           />
         )}
