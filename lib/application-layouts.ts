@@ -90,7 +90,14 @@ export const ADOPT_LAYOUT = [
       {
         key: "housingType",
         label: "Housing type",
-        options: ["House", "Apartment", "Townhome or condo", "Mobile home"],
+        options: ["House", "Apartment", "Townhome or condo", "Mobile home", "Other"],
+      },
+      {
+        key: "housingTypeExplain",
+        label: "Please describe your type of home",
+        paperLabel: "If other: please describe your type of home",
+        long: true,
+        hideWhenEmpty: true,
       },
       {
         key: "homeOwnership",
@@ -316,7 +323,14 @@ export const FOSTER_LAYOUT = [
       {
         key: "homeType",
         label: "What type of home do you live in?",
-        options: ["House", "Apartment", "Townhome or condo", "Mobile home"],
+        options: ["House", "Apartment", "Townhome or condo", "Mobile home", "Other"],
+      },
+      {
+        key: "homeTypeExplain",
+        label: "Please describe your type of home",
+        paperLabel: "If other: please describe your type of home",
+        long: true,
+        hideWhenEmpty: true,
       },
       {
         key: "homeOwnership",

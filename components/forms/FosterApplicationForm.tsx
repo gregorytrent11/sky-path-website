@@ -35,6 +35,7 @@ export type FosterFormState = {
   howManyDogs: string;
   // Home and Household
   homeType: string;
+  homeTypeExplain: string;
   homeOwnership: string;
   homeOwnershipExplain: string;
   landlordAllowsFoster: string;
@@ -129,6 +130,7 @@ const emptyForm: FosterFormState = {
   availability: "",
   howManyDogs: "",
   homeType: "",
+  homeTypeExplain: "",
   homeOwnership: "",
   homeOwnershipExplain: "",
   landlordAllowsFoster: "",
@@ -211,6 +213,7 @@ export default function FosterApplicationForm() {
 
   const renting = form.homeOwnership === "Rent";
   const otherArrangement = form.homeOwnership === "Live with family or another arrangement";
+  const otherHomeType = form.homeType === "Other";
   const hasCurrentOrPreviousPets = form.hasCurrentPets === "Yes" || form.hasPreviousPets === "Yes";
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -227,6 +230,10 @@ export default function FosterApplicationForm() {
     }
     if (renting && !form.landlordPhone.trim()) {
       setError("Landlord or property manager phone number is required when renting.");
+      return;
+    }
+    if (otherHomeType && !form.homeTypeExplain.trim()) {
+      setError("Please describe your type of home.");
       return;
     }
     if (otherArrangement && !form.homeOwnershipExplain.trim()) {
@@ -280,8 +287,9 @@ export default function FosterApplicationForm() {
         message: form.whyFoster || undefined,
         payload: {
           ...form,
-          // Hidden again when the ownership answer changes, so don't send an
-          // explanation typed before they changed their mind.
+          // Hidden again when the home type or ownership answer changes, so
+          // don't send an explanation typed before they changed their mind.
+          homeTypeExplain: otherHomeType ? form.homeTypeExplain : "",
           homeOwnershipExplain: otherArrangement ? form.homeOwnershipExplain : "",
           certified,
         },
@@ -363,7 +371,10 @@ export default function FosterApplicationForm() {
 
       <div className="space-y-4">
         <SectionHeading>Home and Household</SectionHeading>
-        <RadioGroupField name="homeType" label="What type of home do you live in?" value={form.homeType} onChange={(v) => update("homeType", v)} options={["House", "Apartment", "Townhome or condo", "Mobile home"]} required />
+        <RadioGroupField name="homeType" label="What type of home do you live in?" value={form.homeType} onChange={(v) => update("homeType", v)} options={["House", "Apartment", "Townhome or condo", "Mobile home", "Other"]} required />
+        {otherHomeType && (
+          <TextAreaField id="foster-home-type-explain" label="Please describe your type of home" value={form.homeTypeExplain} onChange={(v) => update("homeTypeExplain", v)} required />
+        )}
         <RadioGroupField name="homeOwnership" label="Do you own or rent your home?" value={form.homeOwnership} onChange={(v) => update("homeOwnership", v)} options={["Own", "Rent", "Live with family or another arrangement"]} required />
         {renting && (
           <>

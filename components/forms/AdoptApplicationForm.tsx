@@ -28,6 +28,7 @@ export type AdoptFormState = {
   zip: string;
   atLeastTwentyOne: string;
   housingType: string;
+  housingTypeExplain: string;
   homeOwnership: string;
   homeOwnershipExplain: string;
   landlordName: string;
@@ -108,6 +109,7 @@ function emptyForm(): AdoptFormState {
     zip: "",
     atLeastTwentyOne: "",
     housingType: "",
+    housingTypeExplain: "",
     homeOwnership: "",
     homeOwnershipExplain: "",
     landlordName: "",
@@ -283,6 +285,7 @@ function AdoptApplicationFormInner() {
 
   const renting = form.homeOwnership === "Rent";
   const otherArrangement = form.homeOwnership === "Live with family or another arrangement";
+  const otherHousingType = form.housingType === "Other";
   const hasSomeFence = form.yardFenced === "Yes" || form.yardFenced === "Partially";
   // The escape plan is asked of anyone with no fence at all, and of anyone whose
   // fence has areas the dog could get out of.
@@ -303,6 +306,10 @@ function AdoptApplicationFormInner() {
     }
     if (renting && !form.landlordPhone.trim()) {
       setError("Landlord or property manager phone number is required when renting.");
+      return;
+    }
+    if (otherHousingType && !form.housingTypeExplain.trim()) {
+      setError("Please describe your type of home.");
       return;
     }
     if (otherArrangement && !form.homeOwnershipExplain.trim()) {
@@ -340,6 +347,7 @@ function AdoptApplicationFormInner() {
           // their mind.
           landlordName: renting ? form.landlordName : "",
           landlordPhone: renting ? form.landlordPhone : "",
+          housingTypeExplain: otherHousingType ? form.housingTypeExplain : "",
           homeOwnershipExplain: otherArrangement ? form.homeOwnershipExplain : "",
           fenceHeight: hasSomeFence ? form.fenceHeight : "",
           fenceMaterial: hasSomeFence ? form.fenceMaterial : "",
@@ -444,9 +452,18 @@ function AdoptApplicationFormInner() {
           label="Housing type"
           value={form.housingType}
           onChange={(v) => update("housingType", v)}
-          options={["House", "Apartment", "Townhome or condo", "Mobile home"]}
+          options={["House", "Apartment", "Townhome or condo", "Mobile home", "Other"]}
           required
         />
+        {otherHousingType && (
+          <TextAreaField
+            id="adopt-housing-type-explain"
+            label="Please describe your type of home"
+            value={form.housingTypeExplain}
+            onChange={(v) => update("housingTypeExplain", v)}
+            required
+          />
+        )}
         <RadioGroupField
           name="homeOwnership"
           label="Home ownership status"
