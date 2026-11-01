@@ -2,6 +2,7 @@
 
 import { FormEvent, useState } from "react";
 import Turnstile from "@/components/forms/Turnstile";
+import HumanCheckGate, { HUMAN_CHECK_ENABLED } from "@/components/forms/HumanCheckGate";
 import { submitForm } from "@/lib/submit-form";
 import {
   CheckboxGroupField,
@@ -206,6 +207,8 @@ export default function FosterApplicationForm() {
   const [status, setStatus] = useState<"idle" | "submitting" | "submitted">("idle");
   const [error, setError] = useState<string | null>(null);
   const [turnstileToken, setTurnstileToken] = useState("");
+  // The questions stay hidden until the visitor passes the human check.
+  const [humanVerified, setHumanVerified] = useState(!HUMAN_CHECK_ENABLED);
 
   function update<K extends keyof FosterFormState>(key: K, value: FosterFormState[K]) {
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -273,7 +276,7 @@ export default function FosterApplicationForm() {
       return;
     }
     if (!turnstileToken) {
-      setError("Please complete the verification challenge below.");
+      setError("We couldn't confirm you're a person just now. Please wait a moment and try again.");
       return;
     }
 
@@ -314,6 +317,10 @@ export default function FosterApplicationForm() {
         </p>
       </div>
     );
+  }
+
+  if (!humanVerified) {
+    return <HumanCheckGate formName="foster application" onVerified={() => setHumanVerified(true)} />;
   }
 
   return (
@@ -548,7 +555,10 @@ export default function FosterApplicationForm() {
         <TextField id="foster-signature-date" label="Date" type="date" value={form.signatureDate} onChange={(v) => update("signatureDate", v)} required />
       </div>
 
-      <Turnstile onVerify={setTurnstileToken} />
+      {/* The visitor already passed a visible check to open the form, but
+          that token only lasts five minutes, so a fresh one is fetched here
+          for the server-side check -- invisibly unless Cloudflare insists. */}
+      <Turnstile onVerify={setTurnstileToken} appearance="interaction-only" />
 
       {error && (
         <p role="alert" className="text-sm text-red-700">
