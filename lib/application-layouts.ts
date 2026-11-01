@@ -323,8 +323,17 @@ export const FOSTER_LAYOUT = [
         hideWhenEmpty: true,
       },
       {
-        key: "landlordInfo", long: true, paperLabel: "If you rent: landlord or property manager name and contact information",
-        label: "Landlord or property manager name and contact information",
+        key: "landlordName",
+        label: "Landlord or property manager name",
+        paperLabel: "If you rent: landlord or property manager name",
+        width: "half",
+        hideWhenEmpty: true,
+      },
+      {
+        key: "landlordPhone",
+        label: "Landlord or property manager phone number",
+        paperLabel: "If you rent: landlord or property manager phone number",
+        width: "half",
         hideWhenEmpty: true,
       },
       {

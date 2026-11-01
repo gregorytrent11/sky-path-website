@@ -37,7 +37,8 @@ export type FosterFormState = {
   homeType: string;
   homeOwnership: string;
   landlordAllowsFoster: string;
-  landlordInfo: string;
+  landlordName: string;
+  landlordPhone: string;
   household: string;
   householdAgrees: string;
   hasAllergies: string;
@@ -129,7 +130,8 @@ const emptyForm: FosterFormState = {
   homeType: "",
   homeOwnership: "",
   landlordAllowsFoster: "",
-  landlordInfo: "",
+  landlordName: "",
+  landlordPhone: "",
   household: "",
   householdAgrees: "",
   hasAllergies: "",
@@ -216,8 +218,12 @@ export default function FosterApplicationForm() {
       setError("You must be at least 18 years old to apply.");
       return;
     }
-    if (renting && !form.landlordInfo.trim()) {
-      setError("Landlord or property manager contact information is required when renting.");
+    if (renting && !form.landlordName.trim()) {
+      setError("Landlord or property manager name is required when renting.");
+      return;
+    }
+    if (renting && !form.landlordPhone.trim()) {
+      setError("Landlord or property manager phone number is required when renting.");
       return;
     }
     if (form.hasAllergies === "Yes" && !form.allergyExplain.trim()) {
@@ -349,7 +355,10 @@ export default function FosterApplicationForm() {
         {renting && (
           <>
             <RadioGroupField name="landlordAllowsFoster" label="Does your landlord or property manager allow foster dogs?" value={form.landlordAllowsFoster} onChange={(v) => update("landlordAllowsFoster", v)} options={["Yes", "No", "Not applicable"]} required />
-            <TextAreaField id="foster-landlord" label="Landlord or property manager name and contact information" value={form.landlordInfo} onChange={(v) => update("landlordInfo", v)} required />
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:items-end">
+              <TextField id="foster-landlord-name" label="Landlord or property manager name" value={form.landlordName} onChange={(v) => update("landlordName", v)} required />
+              <PhoneField id="foster-landlord-phone" label="Landlord or property manager phone number" value={form.landlordPhone} onChange={(v) => update("landlordPhone", v)} required />
+            </div>
           </>
         )}
         <TextAreaField id="foster-household" label="Who lives in your household? (Include all adults and children, and ages of children.)" value={form.household} onChange={(v) => update("household", v)} required />
