@@ -36,6 +36,7 @@ export type FosterFormState = {
   // Home and Household
   homeType: string;
   homeOwnership: string;
+  homeOwnershipExplain: string;
   landlordAllowsFoster: string;
   landlordName: string;
   landlordPhone: string;
@@ -129,6 +130,7 @@ const emptyForm: FosterFormState = {
   howManyDogs: "",
   homeType: "",
   homeOwnership: "",
+  homeOwnershipExplain: "",
   landlordAllowsFoster: "",
   landlordName: "",
   landlordPhone: "",
@@ -208,6 +210,7 @@ export default function FosterApplicationForm() {
   }
 
   const renting = form.homeOwnership === "Rent";
+  const otherArrangement = form.homeOwnership === "Live with family or another arrangement";
   const hasCurrentOrPreviousPets = form.hasCurrentPets === "Yes" || form.hasPreviousPets === "Yes";
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -224,6 +227,10 @@ export default function FosterApplicationForm() {
     }
     if (renting && !form.landlordPhone.trim()) {
       setError("Landlord or property manager phone number is required when renting.");
+      return;
+    }
+    if (otherArrangement && !form.homeOwnershipExplain.trim()) {
+      setError("Please explain your living arrangement.");
       return;
     }
     if (form.hasAllergies === "Yes" && !form.allergyExplain.trim()) {
@@ -271,7 +278,13 @@ export default function FosterApplicationForm() {
         email: form.email,
         phone: form.phone,
         message: form.whyFoster || undefined,
-        payload: { ...form, certified },
+        payload: {
+          ...form,
+          // Hidden again when the ownership answer changes, so don't send an
+          // explanation typed before they changed their mind.
+          homeOwnershipExplain: otherArrangement ? form.homeOwnershipExplain : "",
+          certified,
+        },
         turnstileToken,
       });
       setStatus("submitted");
@@ -360,6 +373,9 @@ export default function FosterApplicationForm() {
               <PhoneField id="foster-landlord-phone" label="Landlord or property manager phone number" value={form.landlordPhone} onChange={(v) => update("landlordPhone", v)} required />
             </div>
           </>
+        )}
+        {otherArrangement && (
+          <TextAreaField id="foster-home-ownership-explain" label="Please describe your living arrangement" value={form.homeOwnershipExplain} onChange={(v) => update("homeOwnershipExplain", v)} placeholder="Explain" required />
         )}
         <TextAreaField id="foster-household" label="Who lives in your household? (Include all adults and children, and ages of children.)" value={form.household} onChange={(v) => update("household", v)} required />
         <YesNoField name="householdAgrees" label="Does everyone in the household agree to fostering a dog?" value={form.householdAgrees} onChange={(v) => update("householdAgrees", v)} required />

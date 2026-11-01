@@ -29,6 +29,7 @@ export type AdoptFormState = {
   atLeastTwentyOne: string;
   housingType: string;
   homeOwnership: string;
+  homeOwnershipExplain: string;
   landlordName: string;
   landlordPhone: string;
   timeInCurrentHome: string;
@@ -108,6 +109,7 @@ function emptyForm(): AdoptFormState {
     atLeastTwentyOne: "",
     housingType: "",
     homeOwnership: "",
+    homeOwnershipExplain: "",
     landlordName: "",
     landlordPhone: "",
     timeInCurrentHome: "",
@@ -280,6 +282,7 @@ function AdoptApplicationFormInner() {
   }
 
   const renting = form.homeOwnership === "Rent";
+  const otherArrangement = form.homeOwnership === "Live with family or another arrangement";
   const hasSomeFence = form.yardFenced === "Yes" || form.yardFenced === "Partially";
   // The escape plan is asked of anyone with no fence at all, and of anyone whose
   // fence has areas the dog could get out of.
@@ -300,6 +303,10 @@ function AdoptApplicationFormInner() {
     }
     if (renting && !form.landlordPhone.trim()) {
       setError("Landlord or property manager phone number is required when renting.");
+      return;
+    }
+    if (otherArrangement && !form.homeOwnershipExplain.trim()) {
+      setError("Please explain your living arrangement.");
       return;
     }
     if (!referenceAuthorized) {
@@ -333,6 +340,7 @@ function AdoptApplicationFormInner() {
           // their mind.
           landlordName: renting ? form.landlordName : "",
           landlordPhone: renting ? form.landlordPhone : "",
+          homeOwnershipExplain: otherArrangement ? form.homeOwnershipExplain : "",
           fenceHeight: hasSomeFence ? form.fenceHeight : "",
           fenceMaterial: hasSomeFence ? form.fenceMaterial : "",
           fenceHasGaps: hasSomeFence ? form.fenceHasGaps : "",
@@ -464,6 +472,16 @@ function AdoptApplicationFormInner() {
               required
             />
           </div>
+        )}
+        {otherArrangement && (
+          <TextAreaField
+            id="adopt-home-ownership-explain"
+            label="Please describe your living arrangement"
+            value={form.homeOwnershipExplain}
+            onChange={(v) => update("homeOwnershipExplain", v)}
+            placeholder="Explain"
+            required
+          />
         )}
         <TextField
           id="adopt-time-in-home"

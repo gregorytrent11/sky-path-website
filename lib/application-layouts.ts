@@ -111,6 +111,13 @@ export const ADOPT_LAYOUT = [
         width: "half",
         hideWhenEmpty: true,
       },
+      {
+        key: "homeOwnershipExplain",
+        label: "Please describe your living arrangement",
+        paperLabel: "If you live with family or another arrangement: please describe your living arrangement",
+        long: true,
+        hideWhenEmpty: true,
+      },
       { key: "timeInCurrentHome", label: "How long have you lived in your current home?" },
       { key: "yardFenced", label: "Do you have a fenced yard?", options: ["Yes", "No", "Partially"] },
       {
@@ -334,6 +341,13 @@ export const FOSTER_LAYOUT = [
         label: "Landlord or property manager phone number",
         paperLabel: "If you rent: landlord or property manager phone number",
         width: "half",
+        hideWhenEmpty: true,
+      },
+      {
+        key: "homeOwnershipExplain",
+        label: "Please describe your living arrangement",
+        paperLabel: "If you live with family or another arrangement: please describe your living arrangement",
+        long: true,
         hideWhenEmpty: true,
       },
       {
