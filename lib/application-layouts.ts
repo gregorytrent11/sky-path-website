@@ -8,7 +8,9 @@ import { humanizeKey, humanizeValue } from "@/lib/submission-format";
 // applicant filled in: same sections, same order, same question wording,
 // same fields sharing a row. When a question is added to a form, add it here
 // too -- the `...LayoutCoversForm` types at the bottom fail the build if a
-// form key is missing.
+// form key is missing. When a question is dropped or split up, keep its old
+// key here marked `retired` so earlier applications still read in order
+// instead of landing in "Other Answers".
 
 const YES_NO = ["Yes", "No"] as const;
 const YES_NO_NA = ["Yes", "No", "Not applicable"] as const;
@@ -34,6 +36,10 @@ export type LayoutField = {
   // Wording for the blank paper copy, where a follow-up question can't
   // appear only after a "Yes" the way it does on screen.
   paperLabel?: string;
+  // A question the form no longer asks. Applications sent in before it was
+  // dropped still carry the answer, so it's printed in its original spot
+  // (never as unanswered), but left off the blank paper copy.
+  retired?: boolean;
 };
 
 // A `note` is the form's guidance to the applicant; it's printed on the
@@ -74,6 +80,13 @@ export const ADOPT_LAYOUT = [
     title: "Dog Information",
     items: [
       { key: "dogName", label: "Which dog(s) are you interested in?" },
+      {
+        // Asked here until Aug 30, 2026.
+        key: "willingScreening", retired: true, hideWhenEmpty: true,
+        label:
+          "Are you willing to participate in requested screening (home visit, virtual home check, reference check, meet-and-greet)?",
+        options: YES_NO,
+      },
       { key: "whyInterested", long: true, label: "Why are you interested in this dog?" },
     ],
   },
@@ -117,6 +130,11 @@ export const ADOPT_LAYOUT = [
         paperLabel: "If you rent: landlord or property manager phone",
         width: "half",
         hideWhenEmpty: true,
+      },
+      {
+        // Asked of everyone as one box until Oct 31, 2026.
+        key: "landlordInfo", retired: true, hideWhenEmpty: true, long: true,
+        label: "Landlord or property manager name and phone number or email address (N/A if none)",
       },
       {
         key: "homeOwnershipExplain",
@@ -356,6 +374,12 @@ export const FOSTER_LAYOUT = [
         paperLabel: "If you rent: landlord or property manager phone",
         width: "half",
         hideWhenEmpty: true,
+      },
+      {
+        // One "name and contact information" box, shown to renters, until
+        // Oct 31, 2026.
+        key: "landlordInfo", retired: true, hideWhenEmpty: true, long: true,
+        label: "Landlord or property manager name and contact information",
       },
       {
         key: "homeOwnershipExplain",
@@ -628,6 +652,12 @@ export const FOSTER_LAYOUT = [
     title: "References",
     items: [
       {
+        // Asked here until Aug 30, 2026.
+        key: "willingHomeCheck", retired: true, hideWhenEmpty: true,
+        label: "Are you willing to participate in a home visit or virtual home check?",
+        options: YES_NO,
+      },
+      {
         key: "authorizeContact",
         label:
           "Do you authorize Sky's Path to Home to contact your landlord, veterinarian, personal references, or other animal-welfare organizations when evaluating your application?",
@@ -796,17 +826,20 @@ export function blankApplication(formType: ApplicationFormType): ResolvedSection
     title: section.title,
     rows: buildRows(
       section.items,
-      (item) => ({
-        key: item.key,
-        label: item.paperLabel ?? item.label,
-        value: null,
-        options: item.options,
-        multiple: item.multiple,
-        selected: [],
-        agreement: item.agreement,
-        checked: item.agreement ? false : undefined,
-        long: item.long,
-      }),
+      (item) =>
+        item.retired
+          ? null
+          : {
+              key: item.key,
+              label: item.paperLabel ?? item.label,
+              value: null,
+              options: item.options,
+              multiple: item.multiple,
+              selected: [],
+              agreement: item.agreement,
+              checked: item.agreement ? false : undefined,
+              long: item.long,
+            },
       true
     ),
   }));
