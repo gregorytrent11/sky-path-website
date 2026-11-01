@@ -436,7 +436,7 @@ function AdoptApplicationFormInner() {
           label="Housing type"
           value={form.housingType}
           onChange={(v) => update("housingType", v)}
-          options={["House", "Apartment", "Townhome or condo", "Mobile home", "Other"]}
+          options={["House", "Apartment", "Townhome or condo"]}
           required
         />
         <RadioGroupField
@@ -448,7 +448,7 @@ function AdoptApplicationFormInner() {
           required
         />
         {renting && (
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:items-end">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <TextField
               id="adopt-landlord-name"
               label="Landlord or property manager name"

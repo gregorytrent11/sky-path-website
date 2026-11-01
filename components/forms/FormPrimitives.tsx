@@ -39,8 +39,8 @@ export function TextField({
   describedBy?: string;
 }) {
   return (
-    <div>
-      <label htmlFor={id}>
+    <div className="flex h-full flex-col">
+      <label htmlFor={id} className="pb-1">
         <Label label={label} required={required} />
       </label>
       <input
@@ -53,7 +53,7 @@ export function TextField({
         min={min}
         max={max}
         aria-describedby={describedBy}
-        className={`mt-1 ${inputClasses}`}
+        className={`mt-auto ${inputClasses}`}
       />
     </div>
   );
@@ -82,8 +82,8 @@ export function PhoneField({
   describedBy?: string;
 }) {
   return (
-    <div>
-      <label htmlFor={id}>
+    <div className="flex h-full flex-col">
+      <label htmlFor={id} className="pb-1">
         <Label label={label} required={required} />
       </label>
       <input
@@ -109,7 +109,7 @@ export function PhoneField({
         }
         maxLength={14}
         aria-describedby={describedBy}
-        className={`mt-1 ${inputClasses}`}
+        className={`mt-auto ${inputClasses}`}
       />
     </div>
   );

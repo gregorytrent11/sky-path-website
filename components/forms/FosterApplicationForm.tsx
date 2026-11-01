@@ -350,12 +350,12 @@ export default function FosterApplicationForm() {
 
       <div className="space-y-4">
         <SectionHeading>Home and Household</SectionHeading>
-        <RadioGroupField name="homeType" label="What type of home do you live in?" value={form.homeType} onChange={(v) => update("homeType", v)} options={["House", "Apartment", "Townhome or condo", "Mobile home", "Other"]} required />
+        <RadioGroupField name="homeType" label="What type of home do you live in?" value={form.homeType} onChange={(v) => update("homeType", v)} options={["House", "Apartment", "Townhome or condo"]} required />
         <RadioGroupField name="homeOwnership" label="Do you own or rent your home?" value={form.homeOwnership} onChange={(v) => update("homeOwnership", v)} options={["Own", "Rent", "Live with family or another arrangement"]} required />
         {renting && (
           <>
             <RadioGroupField name="landlordAllowsFoster" label="Does your landlord or property manager allow foster dogs?" value={form.landlordAllowsFoster} onChange={(v) => update("landlordAllowsFoster", v)} options={["Yes", "No", "Not applicable"]} required />
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:items-end">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <TextField id="foster-landlord-name" label="Landlord or property manager name" value={form.landlordName} onChange={(v) => update("landlordName", v)} required />
               <PhoneField id="foster-landlord-phone" label="Landlord or property manager phone number" value={form.landlordPhone} onChange={(v) => update("landlordPhone", v)} required />
             </div>
