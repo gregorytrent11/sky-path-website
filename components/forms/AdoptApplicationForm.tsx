@@ -29,7 +29,8 @@ export type AdoptFormState = {
   atLeastTwentyOne: string;
   housingType: string;
   homeOwnership: string;
-  landlordInfo: string;
+  landlordName: string;
+  landlordPhone: string;
   timeInCurrentHome: string;
   yardFenced: string;
   fenceHeight: string;
@@ -107,7 +108,8 @@ function emptyForm(): AdoptFormState {
     atLeastTwentyOne: "",
     housingType: "",
     homeOwnership: "",
-    landlordInfo: "",
+    landlordName: "",
+    landlordPhone: "",
     timeInCurrentHome: "",
     yardFenced: "",
     fenceHeight: "",
@@ -292,8 +294,12 @@ function AdoptApplicationFormInner() {
       setError("You must be at least 21 years old to apply.");
       return;
     }
-    if (renting && !form.landlordInfo.trim()) {
-      setError("Landlord or property manager contact information is required when renting.");
+    if (renting && !form.landlordName.trim()) {
+      setError("Landlord or property manager name is required when renting.");
+      return;
+    }
+    if (renting && !form.landlordPhone.trim()) {
+      setError("Landlord or property manager phone number is required when renting.");
       return;
     }
     if (!referenceAuthorized) {
@@ -322,8 +328,11 @@ function AdoptApplicationFormInner() {
           // Stays one "Dog Name" answer in the admin list and the PDF, the
           // same as applications sent in before more than one dog was allowed.
           dogName: dogNames.map((name) => name.trim()).filter(Boolean).join(", "),
-          // The fence follow-ups are hidden again when an earlier answer
-          // changes, so don't send answers typed before they changed their mind.
+          // The landlord and fence follow-ups are hidden again when an earlier
+          // answer changes, so don't send answers typed before they changed
+          // their mind.
+          landlordName: renting ? form.landlordName : "",
+          landlordPhone: renting ? form.landlordPhone : "",
           fenceHeight: hasSomeFence ? form.fenceHeight : "",
           fenceMaterial: hasSomeFence ? form.fenceMaterial : "",
           fenceHasGaps: hasSomeFence ? form.fenceHasGaps : "",
@@ -438,17 +447,24 @@ function AdoptApplicationFormInner() {
           options={["Own", "Rent", "Live with family or another arrangement"]}
           required
         />
-        <TextAreaField
-          id="adopt-landlord"
-          label={
-            renting
-              ? "Landlord or property manager name and phone number or email address"
-              : "Landlord or property manager information (put N/A if you do not have one)"
-          }
-          value={form.landlordInfo}
-          onChange={(v) => update("landlordInfo", v)}
-          required
-        />
+        {renting && (
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <TextField
+              id="adopt-landlord-name"
+              label="Landlord or property manager name"
+              value={form.landlordName}
+              onChange={(v) => update("landlordName", v)}
+              required
+            />
+            <PhoneField
+              id="adopt-landlord-phone"
+              label="Landlord or property manager phone number"
+              value={form.landlordPhone}
+              onChange={(v) => update("landlordPhone", v)}
+              required
+            />
+          </div>
+        )}
         <TextField
           id="adopt-time-in-home"
           label="How long have you lived in your current home?"
