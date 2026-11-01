@@ -466,7 +466,7 @@ function AdoptApplicationFormInner() {
             />
             <PhoneField
               id="adopt-landlord-phone"
-              label="Landlord or property manager phone number"
+              label="Landlord or property manager phone"
               value={form.landlordPhone}
               onChange={(v) => update("landlordPhone", v)}
               required

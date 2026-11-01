@@ -370,7 +370,7 @@ export default function FosterApplicationForm() {
             <RadioGroupField name="landlordAllowsFoster" label="Does your landlord or property manager allow foster dogs?" value={form.landlordAllowsFoster} onChange={(v) => update("landlordAllowsFoster", v)} options={["Yes", "No", "Not applicable"]} required />
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <TextField id="foster-landlord-name" label="Landlord or property manager name" value={form.landlordName} onChange={(v) => update("landlordName", v)} required />
-              <PhoneField id="foster-landlord-phone" label="Landlord or property manager phone number" value={form.landlordPhone} onChange={(v) => update("landlordPhone", v)} required />
+              <PhoneField id="foster-landlord-phone" label="Landlord or property manager phone" value={form.landlordPhone} onChange={(v) => update("landlordPhone", v)} required />
             </div>
           </>
         )}

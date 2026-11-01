@@ -106,8 +106,8 @@ export const ADOPT_LAYOUT = [
       },
       {
         key: "landlordPhone",
-        label: "Landlord or property manager phone number",
-        paperLabel: "If you rent: landlord or property manager phone number",
+        label: "Landlord or property manager phone",
+        paperLabel: "If you rent: landlord or property manager phone",
         width: "half",
         hideWhenEmpty: true,
       },
@@ -338,8 +338,8 @@ export const FOSTER_LAYOUT = [
       },
       {
         key: "landlordPhone",
-        label: "Landlord or property manager phone number",
-        paperLabel: "If you rent: landlord or property manager phone number",
+        label: "Landlord or property manager phone",
+        paperLabel: "If you rent: landlord or property manager phone",
         width: "half",
         hideWhenEmpty: true,
       },

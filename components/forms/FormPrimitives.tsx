@@ -7,7 +7,7 @@ function Label({ label, required }: { label: string; required?: boolean }) {
       {label}
       {required && (
         <span aria-hidden="true" className="text-brand-purple">
-          {" "}
+          {"\u00A0"}
           *
         </span>
       )}
