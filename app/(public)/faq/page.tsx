@@ -106,8 +106,10 @@ export default function FaqPage() {
 
           <FaqItem question="Do I need to have a fence to adopt a dog?">
             <p>
-              Fences are not required. However, not every dog is a candidate for a home without a
-              fence.
+              A fenced yard is not always required for adoption. However, some dogs may need a
+              securely fenced yard based on their individual needs, personality, and safety. Each
+              dog is evaluated individually to ensure they are placed in a home that is the best
+              fit for them.
             </p>
           </FaqItem>
           <FaqItem question="Can I adopt if I work outside the home?">
@@ -179,6 +181,7 @@ export default function FaqPage() {
                 "If you live in a rental, you must provide written permission from the landlord or owner of the residence that you can have a dog and whether there are weight/size restrictions on the pet.",
                 "If you have a history of violating the law or losing, giving away, or selling animals, or have had your animals injured or killed by vehicles, we will review the circumstances and reserve the right to not give you an animal.",
                 "If we learn that you have put false information on your adoption application, we will nullify the adoption application and we reserve the right to take back an animal that has already been adopted to you.",
+                "We may conduct virtual home visits through video as part of our adoption process. We may also request video walkthroughs or photos of your home’s interior, backyard, and fencing to ensure a safe and suitable environment for the dog being considered for adoption.",
               ]}
             />
 

@@ -89,6 +89,7 @@ export type AdoptFormState = {
   referenceThreeEmail: string;
   referenceThreePhone: string;
   referenceThreeObservedAnimalCare: string;
+  agreesToVirtualHomeVisit: string;
   signatureName: string;
   signatureDate: string;
 };
@@ -175,6 +176,7 @@ function emptyForm(): AdoptFormState {
     referenceThreeEmail: "",
     referenceThreePhone: "",
     referenceThreeObservedAnimalCare: "",
+    agreesToVirtualHomeVisit: "",
     signatureName: "",
     signatureDate: "",
   };
@@ -797,6 +799,17 @@ function AdoptApplicationFormInner() {
             </span>
           </label>
         </div>
+      </div>
+
+      <div className="space-y-4">
+        <SectionHeading>Virtual Home Visit Acknowledgment &amp; Agreement</SectionHeading>
+        <YesNoField
+          name="agreesToVirtualHomeVisit"
+          label="Do you agree to schedule a virtual home visit and, if requested, provide additional photos or videos of your home’s interior, exterior, yard, and fencing as part of the adoption process?"
+          value={form.agreesToVirtualHomeVisit}
+          onChange={(v) => update("agreesToVirtualHomeVisit", v)}
+          required
+        />
       </div>
 
       <div className="space-y-4">
