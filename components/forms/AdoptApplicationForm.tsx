@@ -53,7 +53,12 @@ export type AdoptFormState = {
   emergencyVetPlan: string;
   lifelongCommitment: string;
   majorLifeChangePlan: string;
-  currentPets: string;
+  hasCurrentPets: string;
+  currentPetsList: string;
+  currentPetsVaccinated: string;
+  currentPetsHeartworm: string;
+  hasPreviousPets: string;
+  previousPetsOutcome: string;
   incompatiblePetsPlan: string;
   vetName: string;
   vetPhone: string;
@@ -134,7 +139,12 @@ function emptyForm(): AdoptFormState {
     emergencyVetPlan: "",
     lifelongCommitment: "",
     majorLifeChangePlan: "",
-    currentPets: "",
+    hasCurrentPets: "",
+    currentPetsList: "",
+    currentPetsVaccinated: "",
+    currentPetsHeartworm: "",
+    hasPreviousPets: "",
+    previousPetsOutcome: "",
     incompatiblePetsPlan: "",
     vetName: "",
     vetPhone: "",
@@ -294,6 +304,8 @@ function AdoptApplicationFormInner() {
   // fence has areas the dog could get out of.
   const needsEscapePlan =
     form.yardFenced === "No" || (hasSomeFence && form.fenceHasGaps === "Yes");
+  const hasCurrentPets = form.hasCurrentPets === "Yes";
+  const hasPreviousPets = form.hasPreviousPets === "Yes";
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -317,6 +329,10 @@ function AdoptApplicationFormInner() {
     }
     if (otherArrangement && !form.homeOwnershipExplain.trim()) {
       setError("Please explain your living arrangement.");
+      return;
+    }
+    if (hasCurrentPets && !form.currentPetsList.trim()) {
+      setError("Please list your current pets (species, breed, age, sex, and temperament).");
       return;
     }
     if (!referenceAuthorized) {
@@ -356,6 +372,13 @@ function AdoptApplicationFormInner() {
           fenceMaterial: hasSomeFence ? form.fenceMaterial : "",
           fenceHasGaps: hasSomeFence ? form.fenceHasGaps : "",
           unfencedYardPlan: needsEscapePlan ? form.unfencedYardPlan : "",
+          // The pet follow-ups only show after a Yes, so drop answers given
+          // before the applicant changed that answer to No.
+          currentPetsList: hasCurrentPets ? form.currentPetsList : "",
+          currentPetsVaccinated: hasCurrentPets ? form.currentPetsVaccinated : "",
+          currentPetsHeartworm: hasCurrentPets ? form.currentPetsHeartworm : "",
+          incompatiblePetsPlan: hasCurrentPets ? form.incompatiblePetsPlan : "",
+          previousPetsOutcome: hasPreviousPets ? form.previousPetsOutcome : "",
           referenceAuthorization: referenceAuthorized,
           certified,
         },
@@ -584,9 +607,6 @@ function AdoptApplicationFormInner() {
         <TextField
           id="adopt-hours-alone"
           label="How many hours will the dog usually be alone each day?"
-          type="number"
-          min={0}
-          max={24}
           value={form.hoursAlone}
           onChange={(v) => update("hoursAlone", v)}
           required
@@ -640,8 +660,32 @@ function AdoptApplicationFormInner() {
           required
         />
         <TextAreaField id="adopt-life-change" label="What would you do with the dog if you moved, changed jobs, had a baby, or experienced another major life change?" value={form.majorLifeChangePlan} onChange={(v) => update("majorLifeChangePlan", v)} required />
-        <TextAreaField id="adopt-current-pets" label="Current Pets" value={form.currentPets} onChange={(v) => update("currentPets", v)} required />
-        <TextAreaField id="adopt-incompatible-pets" label="What will you do if your new dog is not compatible with your current pets?" value={form.incompatiblePetsPlan} onChange={(v) => update("incompatiblePetsPlan", v)} required />
+        <YesNoField name="hasCurrentPets" label="Do you currently have pets?" value={form.hasCurrentPets} onChange={(v) => update("hasCurrentPets", v)} required />
+        {hasCurrentPets && (
+          <>
+            <TextAreaField
+              id="adopt-current-pets"
+              label="List all current pets (species, breed, age, sex, spayed/neutered status, vaccination status, and temperament around other animals)"
+              value={form.currentPetsList}
+              onChange={(v) => update("currentPetsList", v)}
+              required
+            />
+            <RadioGroupField name="currentPetsVaccinated" label="Are all current pets up to date on vaccinations and routine veterinary care?" value={form.currentPetsVaccinated} onChange={(v) => update("currentPetsVaccinated", v)} options={["Yes", "No", "Not applicable"]} required />
+            <RadioGroupField name="currentPetsHeartworm" label="Have your current dogs been tested for heartworm, when appropriate?" value={form.currentPetsHeartworm} onChange={(v) => update("currentPetsHeartworm", v)} options={["Yes", "No", "Not applicable"]} required />
+            <TextAreaField id="adopt-incompatible-pets" label="What will you do if your new dog is not compatible with your current pets?" value={form.incompatiblePetsPlan} onChange={(v) => update("incompatiblePetsPlan", v)} required />
+          </>
+        )}
+        <YesNoField name="hasPreviousPets" label="Have you owned pets previously?" value={form.hasPreviousPets} onChange={(v) => update("hasPreviousPets", v)} required />
+        {hasPreviousPets && (
+          <RadioGroupField
+            name="previousPetsOutcome"
+            label="What happened to your previous pets?"
+            value={form.previousPetsOutcome}
+            onChange={(v) => update("previousPetsOutcome", v)}
+            options={["Still living with applicant", "Passed away", "Rehomed", "Returned to a rescue or shelter"]}
+            required
+          />
+        )}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <TextField id="adopt-vet-name" label="Veterinarian or clinic name" value={form.vetName} onChange={(v) => update("vetName", v)} describedBy="adopt-vet-na-note" required />
           <PhoneField id="adopt-vet-phone" label="Veterinarian phone number" value={form.vetPhone} onChange={(v) => update("vetPhone", v)} describedBy="adopt-vet-na-note" allowNA required />
@@ -681,7 +725,7 @@ function AdoptApplicationFormInner() {
       <div className="space-y-4">
         <SectionHeading>References</SectionHeading>
         <p className="text-sm leading-relaxed text-brand-charcoal/80">
-          References must be at least 18 years old, and at least 1 reference should not be an
+          References must be at least 21 years old, and at least 1 reference should not be an
           immediate family member. Sky&rsquo;s Path to Home will contact references and must be
           able to speak with them before your adoption application can be approved.
         </p>

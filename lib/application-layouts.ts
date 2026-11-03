@@ -226,10 +226,40 @@ export const ADOPT_LAYOUT = [
         label:
           "What would you do with the dog if you moved, changed jobs, had a baby, or experienced another major life change?",
       },
-      { key: "currentPets", long: true, label: "Current Pets" },
       {
-        key: "incompatiblePetsPlan", long: true,
+        // Asked as one free-text box until Nov 2, 2026.
+        key: "currentPets", retired: true, hideWhenEmpty: true, long: true, label: "Current Pets",
+      },
+      { key: "hasCurrentPets", label: "Do you currently have pets?", options: YES_NO },
+      {
+        key: "currentPetsList", long: true, paperLabel: "If yes: list all current pets (species, breed, age, sex, spayed/neutered status, vaccination status, and temperament around other animals)",
+        label:
+          "List all current pets (species, breed, age, sex, spayed/neutered status, vaccination status, and temperament around other animals)",
+        hideWhenEmpty: true,
+      },
+      {
+        key: "currentPetsVaccinated", paperLabel: "If yes: are all current pets up to date on vaccinations and routine veterinary care?",
+        label: "Are all current pets up to date on vaccinations and routine veterinary care?",
+        options: YES_NO_NA,
+        hideWhenEmpty: true,
+      },
+      {
+        key: "currentPetsHeartworm", paperLabel: "If yes: have your current dogs been tested for heartworm, when appropriate?",
+        label: "Have your current dogs been tested for heartworm, when appropriate?",
+        options: YES_NO_NA,
+        hideWhenEmpty: true,
+      },
+      {
+        key: "incompatiblePetsPlan", long: true, paperLabel: "If yes: what will you do if your new dog is not compatible with your current pets?",
         label: "What will you do if your new dog is not compatible with your current pets?",
+        hideWhenEmpty: true,
+      },
+      { key: "hasPreviousPets", label: "Have you owned pets previously?", options: YES_NO },
+      {
+        key: "previousPetsOutcome", paperLabel: "If yes: what happened to your previous pets?",
+        label: "What happened to your previous pets?",
+        options: ["Still living with applicant", "Passed away", "Rehomed", "Returned to a rescue or shelter"],
+        hideWhenEmpty: true,
       },
       { key: "vetName", label: "Veterinarian or clinic name", width: "half" },
       { key: "vetPhone", label: "Veterinarian phone number", width: "half" },
@@ -265,7 +295,7 @@ export const ADOPT_LAYOUT = [
     title: "References",
     items: [
       {
-        note: "References must be at least 18 years old, and at least 1 reference should not be an immediate family member. Sky's Path to Home will contact references and must be able to speak with them before your adoption application can be approved.",
+        note: "References must be at least 21 years old, and at least 1 reference should not be an immediate family member. Sky's Path to Home will contact references and must be able to speak with them before your adoption application can be approved.",
       },
       { note: "Please let your references know that we will be reaching out." },
       ...referenceItems("One", "Reference #1"),

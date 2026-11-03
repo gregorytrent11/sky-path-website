@@ -110,6 +110,19 @@ export default function FaqPage() {
               fence.
             </p>
           </FaqItem>
+          <FaqItem question="Can I adopt if I work outside the home?">
+            <p>
+              Yes! Working outside the home does not prevent you from adopting. We&rsquo;ll discuss
+              your schedule and the needs of the dog you&rsquo;re interested in to help find a good
+              match.
+            </p>
+            <p>
+              For puppies learning to potty train and dogs who need frequent potty breaks,
+              you&rsquo;ll need a plan for someone to let them outside during longer absences. This
+              could be you coming home at lunch, a trusted friend or family member, a dog walker,
+              or doggy daycare. We&rsquo;ll discuss any specific care requirements before adoption.
+            </p>
+          </FaqItem>
 
           <FaqItem question="What is included in the adoption fee?">
             <p>
