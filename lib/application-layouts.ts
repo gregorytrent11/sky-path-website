@@ -264,7 +264,11 @@ export const ADOPT_LAYOUT = [
       { key: "vetName", label: "Veterinarian or clinic name", width: "half" },
       { key: "vetPhone", label: "Veterinarian phone number", width: "half" },
       { note: "Put N/A if this is your first animal or you have no other animals at this time." },
-      { key: "currentPetVetStatus", long: true, label: "Current pet vaccination and veterinary care status" },
+      {
+        key: "currentPetVetStatus", long: true, paperLabel: "If you have current pets: their vaccination and veterinary care status",
+        label: "Current pet vaccination and veterinary care status",
+        hideWhenEmpty: true,
+      },
       { key: "behavioralPlan", long: true, label: "Plan for handling behavioral or adjustment challenges" },
       {
         key: "surrenderedPetBefore",

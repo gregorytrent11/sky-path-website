@@ -379,6 +379,7 @@ function AdoptApplicationFormInner() {
           currentPetsHeartworm: hasCurrentPets ? form.currentPetsHeartworm : "",
           incompatiblePetsPlan: hasCurrentPets ? form.incompatiblePetsPlan : "",
           previousPetsOutcome: hasPreviousPets ? form.previousPetsOutcome : "",
+          currentPetVetStatus: hasCurrentPets ? form.currentPetVetStatus : "",
           referenceAuthorization: referenceAuthorized,
           certified,
         },
@@ -693,7 +694,9 @@ function AdoptApplicationFormInner() {
         <p id="adopt-vet-na-note" className="text-sm text-brand-charcoal/70">
           Put N/A if this is your first animal or you have no other animals at this time.
         </p>
-        <TextAreaField id="adopt-vet-status" label="Current pet vaccination and veterinary care status" value={form.currentPetVetStatus} onChange={(v) => update("currentPetVetStatus", v)} required />
+        {hasCurrentPets && (
+          <TextAreaField id="adopt-vet-status" label="Current pet vaccination and veterinary care status" value={form.currentPetVetStatus} onChange={(v) => update("currentPetVetStatus", v)} required />
+        )}
         <TextAreaField id="adopt-behavior-plan" label="Plan for handling behavioral or adjustment challenges" value={form.behavioralPlan} onChange={(v) => update("behavioralPlan", v)} required />
         <YesNoField
           name="surrenderedPetBefore"
