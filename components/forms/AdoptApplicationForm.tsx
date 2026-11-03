@@ -45,6 +45,8 @@ export type AdoptFormState = {
   householdAgrees: string;
   hoursAlone: string;
   whereStay: string;
+  pottyBreaksWho: string;
+  pottyBreaksBackup: string;
   whereDogSleeps: string;
   exercisePlan: string;
   adjustmentTime: string;
@@ -132,6 +134,8 @@ function emptyForm(): AdoptFormState {
     householdAgrees: "",
     hoursAlone: "",
     whereStay: "",
+    pottyBreaksWho: "",
+    pottyBreaksBackup: "",
     whereDogSleeps: "",
     exercisePlan: "",
     adjustmentTime: "",
@@ -619,6 +623,20 @@ function AdoptApplicationFormInner() {
           label="Where will the dog stay when no one is home?"
           value={form.whereStay}
           onChange={(v) => update("whereStay", v)}
+          required
+        />
+        <TextAreaField
+          id="adopt-potty-breaks-who"
+          label="Who will provide potty breaks, and how often?"
+          value={form.pottyBreaksWho}
+          onChange={(v) => update("pottyBreaksWho", v)}
+          required
+        />
+        <TextAreaField
+          id="adopt-potty-breaks-backup"
+          label="If that person is unavailable, what is your backup plan?"
+          value={form.pottyBreaksBackup}
+          onChange={(v) => update("pottyBreaksBackup", v)}
           required
         />
         <TextAreaField

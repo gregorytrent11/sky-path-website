@@ -193,6 +193,11 @@ export const ADOPT_LAYOUT = [
     items: [
       { key: "hoursAlone", label: "How many hours will the dog usually be alone each day?" },
       { key: "whereStay", long: true, label: "Where will the dog stay when no one is home?" },
+      { key: "pottyBreaksWho", long: true, label: "Who will provide potty breaks, and how often?" },
+      {
+        key: "pottyBreaksBackup", long: true,
+        label: "If that person is unavailable, what is your backup plan?",
+      },
       { key: "whereDogSleeps", long: true, label: "Where will your new dog sleep?" },
       { key: "exercisePlan", long: true, label: "How will you provide exercise, training, and enrichment?" },
       {
