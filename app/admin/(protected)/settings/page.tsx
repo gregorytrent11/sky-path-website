@@ -63,6 +63,8 @@ export default function AdminSettingsPage() {
   const [addedEmail, setAddedEmail] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [expirations, setExpirations] = useState<CredentialExpiration[]>([]);
+  const [testBusy, setTestBusy] = useState(false);
+  const [testResult, setTestResult] = useState<{ ok: boolean; text: string } | null>(null);
 
   async function loadAdmins() {
     setAdminsError(null);
@@ -86,6 +88,21 @@ export default function AdminSettingsPage() {
       .order("expires_on")
       .then(({ data }) => setExpirations(data ?? []));
   }, []);
+
+  async function handleSendTestReminder() {
+    setTestResult(null);
+    setTestBusy(true);
+    const { data, error: invokeError } = await supabase.functions.invoke(
+      "credential-expiry-reminder",
+      { body: { test: true } }
+    );
+    setTestBusy(false);
+    if (invokeError || !data || data.error || data.failed?.length) {
+      setTestResult({ ok: false, text: "The test reminder could not be sent." });
+      return;
+    }
+    setTestResult({ ok: true, text: `Test reminder sent to ${data.to}.` });
+  }
 
   async function handleAdd(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -164,8 +181,24 @@ export default function AdminSettingsPage() {
             </ul>
             <p className="mt-2 text-xs text-brand-charcoal/60">
               Reminders with renewal steps are emailed to contact_us@skyspath.com 30, 15 and 5 days
-              before each date.
+              before each date.{" "}
+              <button
+                type="button"
+                onClick={handleSendTestReminder}
+                disabled={testBusy}
+                className="font-medium text-brand-purple hover:underline disabled:opacity-60"
+              >
+                {testBusy ? "Sending…" : "Send a test reminder"}
+              </button>
             </p>
+            {testResult && (
+              <p
+                role={testResult.ok ? "status" : "alert"}
+                className={`mt-1 text-xs ${testResult.ok ? "text-green-700" : "text-red-700"}`}
+              >
+                {testResult.text}
+              </p>
+            )}
           </div>
         )}
       </div>
