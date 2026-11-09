@@ -1,9 +1,9 @@
 // Supabase Edge Function: emails a one-time reminder when a tracked
 // credential (public.credential_expirations) is 30 days or fewer from
-// expiring. Called once a day by pg_cron -- see
-// supabase/migrations/20261109000000_credential_expiry.sql.
+// expiring. Called once a day by .github/workflows/credential-expiry.yml;
+// the table is in supabase/migrations/20261109000000_credential_expiry.sql.
 //
-// "Verify JWT" stays ON for this function, so the database job sends the
+// "Verify JWT" stays ON for this function; the workflow presents the
 // project's public anon key as its bearer token. The function takes no
 // input, and all it can ever do is send the reminder that is already due,
 // once, to the fixed inbox below.

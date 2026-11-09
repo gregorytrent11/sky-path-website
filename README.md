@@ -19,7 +19,8 @@ address added under Admin → Settings → Admins can get in. The Entra client
 secret expires; renew it in Entra and paste the new value into Supabase
 (Authentication → Sign In / Providers → Azure) before it does. The expiry
 date is tracked in the `credential_expirations` table: the
-`credential-expiry-reminder` edge function (daily, via pg_cron) emails
+`credential-expiry-reminder` edge function (called daily by
+`.github/workflows/credential-expiry.yml`) emails
 contact_us@skyspath.com 30 days ahead, and Admin → Settings shows the date.
 After renewing, update the row as described at the top of
 `supabase/migrations/20261109000000_credential_expiry.sql`.

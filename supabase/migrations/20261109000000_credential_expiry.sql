@@ -3,8 +3,8 @@
 -- First entry: the Microsoft Entra client secret behind admin sign-in. When
 -- it lapses, "Sign in with Microsoft" stops working for every admin.
 --
--- The credential-expiry-reminder edge function runs once a day (pg_cron,
--- below). For each row with 30 days or fewer left and no reminder sent yet,
+-- The credential-expiry-reminder edge function runs once a day (called by
+-- .github/workflows/credential-expiry.yml). For each row with 30 days or fewer left and no reminder sent yet,
 -- it emails the alert inbox once and stamps reminded_at. The Admin ->
 -- Settings page also shows the date.
 --
@@ -44,25 +44,3 @@ values (
   date '2028-11-08'
 )
 on conflict (name) do nothing;
-
--- Daily check at 15:00 UTC (8 or 9 am in Montana).
---
--- Before running: replace <ANON_KEY> below with the project's public anon
--- key (the NEXT_PUBLIC_SUPABASE_ANON_KEY value). The function keeps "Verify
--- JWT" on, so the job has to present it.
-create extension if not exists pg_cron with schema pg_catalog;
-create extension if not exists pg_net with schema extensions;
-
-select cron.unschedule(jobid) from cron.job where jobname = 'credential-expiry-reminder';
-
-select cron.schedule(
-  'credential-expiry-reminder',
-  '0 15 * * *',
-  $$
-  select net.http_post(
-    url := 'https://gggqscleapxeblhjflpd.supabase.co/functions/v1/credential-expiry-reminder',
-    headers := '{"Content-Type": "application/json", "Authorization": "Bearer <ANON_KEY>"}'::jsonb,
-    body := '{}'::jsonb
-  );
-  $$
-);
