@@ -19,7 +19,7 @@
 
 import { createClient } from "jsr:@supabase/supabase-js@2";
 
-const NOTIFY_EMAIL = "contact_us@skyspath.com";
+const NOTIFY_EMAIL = "support@skyspath.com";
 // Days-before-expiry steps, widest first. The Settings page colours the row
 // on the same steps (yellow, orange, red).
 const REMIND_STEPS = [30, 15, 5];

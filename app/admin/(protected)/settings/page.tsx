@@ -180,7 +180,7 @@ export default function AdminSettingsPage() {
               })}
             </ul>
             <p className="mt-2 text-xs text-brand-charcoal/60">
-              Reminders with renewal steps are emailed to contact_us@skyspath.com 30, 15 and 5 days
+              Reminders with renewal steps are emailed to support@skyspath.com 30, 15 and 5 days
               before each date.{" "}
               <button
                 type="button"
