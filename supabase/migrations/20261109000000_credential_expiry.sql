@@ -46,6 +46,10 @@ values (
 on conflict (name) do nothing;
 
 -- Daily check at 15:00 UTC (8 or 9 am in Montana).
+--
+-- Before running: replace <ANON_KEY> below with the project's public anon
+-- key (the NEXT_PUBLIC_SUPABASE_ANON_KEY value). The function keeps "Verify
+-- JWT" on, so the job has to present it.
 create extension if not exists pg_cron with schema pg_catalog;
 create extension if not exists pg_net with schema extensions;
 
@@ -57,7 +61,7 @@ select cron.schedule(
   $$
   select net.http_post(
     url := 'https://gggqscleapxeblhjflpd.supabase.co/functions/v1/credential-expiry-reminder',
-    headers := '{"Content-Type": "application/json"}'::jsonb,
+    headers := '{"Content-Type": "application/json", "Authorization": "Bearer <ANON_KEY>"}'::jsonb,
     body := '{}'::jsonb
   );
   $$

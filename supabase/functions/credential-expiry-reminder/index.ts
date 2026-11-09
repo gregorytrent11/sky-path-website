@@ -3,10 +3,10 @@
 // expiring. Called once a day by pg_cron -- see
 // supabase/migrations/20261109000000_credential_expiry.sql.
 //
-// "Verify JWT" is switched OFF for this function (function Settings in the
-// dashboard) so the database job can call it without carrying a key. That
-// is safe: it takes no input, and all it can ever do is send the reminder
-// that is already due, once, to the fixed inbox below.
+// "Verify JWT" stays ON for this function, so the database job sends the
+// project's public anon key as its bearer token. The function takes no
+// input, and all it can ever do is send the reminder that is already due,
+// once, to the fixed inbox below.
 //
 // Required secrets: RESEND_API_KEY (already set for submit-form).
 // SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are injected automatically.
