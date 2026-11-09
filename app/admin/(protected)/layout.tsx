@@ -15,7 +15,6 @@ const navItems = [
 ];
 
 const SUBMISSIONS_PATH = "/admin/submissions/";
-const SETTINGS_PATH = "/admin/settings/";
 
 export default function AdminProtectedLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -26,14 +25,8 @@ export default function AdminProtectedLayout({ children }: { children: React.Rea
   useEffect(() => {
     if (state === "anonymous") {
       router.replace("/admin/login/");
-    } else if (state === "mfa-setup-required" && pathname !== SETTINGS_PATH) {
-      // Two-factor is mandatory for every admin. Until a verified TOTP
-      // factor exists, the only reachable page is Settings (where
-      // enrollment happens) -- direct navigation to any other admin URL
-      // bounces back here.
-      router.replace(SETTINGS_PATH);
     }
-  }, [state, pathname, router]);
+  }, [state, router]);
 
   useEffect(() => {
     if (state !== "authenticated") return;
@@ -54,43 +47,12 @@ export default function AdminProtectedLayout({ children }: { children: React.Rea
     );
   }
 
-  if (state === "mfa-setup-required" && pathname !== SETTINGS_PATH) {
-    return (
-      <div className="flex min-h-[60vh] items-center justify-center text-brand-charcoal/80">
-        Loading…
-      </div>
-    );
-  }
-
-  const mfaRequired = state === "mfa-setup-required";
-
   return (
     <div className="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-8 sm:px-6 md:flex-row">
       <aside className="shrink-0 md:w-56">
-        {mfaRequired && (
-          <p
-            role="alert"
-            className="mb-4 rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-xs text-amber-900"
-          >
-            Two-factor authentication is required for all admin accounts. Set it up below to
-            continue.
-          </p>
-        )}
         <nav aria-label="Admin" className="flex flex-row gap-1 overflow-x-auto md:flex-col">
           {navItems.map((item) => {
             const active = pathname === item.href;
-            const disabled = mfaRequired && item.href !== SETTINGS_PATH;
-            if (disabled) {
-              return (
-                <span
-                  key={item.href}
-                  aria-disabled="true"
-                  className="whitespace-nowrap rounded-md px-3 py-2 text-sm font-medium text-brand-charcoal/40"
-                >
-                  {item.label}
-                </span>
-              );
-            }
             return (
               <Link
                 key={item.href}

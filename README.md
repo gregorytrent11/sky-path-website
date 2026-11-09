@@ -11,8 +11,13 @@ npm install
 npm run dev
 ```
 
-Admin login is at `/admin/login`. Accounts are created manually in the
-Supabase dashboard (Authentication → Users); there's no public sign-up.
+Admin login is at `/admin/login` and is Microsoft-only: admins sign in with
+their skyspath.com Microsoft 365 account (Supabase "Azure" provider, Entra app
+"Sky's Path Website Admin Sign-in", single tenant), and Microsoft handles the
+second sign-in step. New sign-ups are switched off in Supabase, so only an
+address added under Admin → Settings → Admins can get in. The Entra client
+secret expires; renew it in Entra and paste the new value into Supabase
+(Authentication → Sign In / Providers → Azure) before it does.
 
 ## Architecture
 

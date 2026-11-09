@@ -1,8 +1,13 @@
-// Supabase Edge Function: lets a signed-in admin invite a new admin by
-// email, or list existing admins, without needing direct access to the
-// Supabase dashboard. Uses the service role key (never shipped to the
-// browser) to call the Auth Admin API, gated behind a check that the
-// caller is already an authenticated admin.
+// Supabase Edge Function: lets a signed-in admin add a new admin, or list
+// and delete existing admins, without needing direct access to the Supabase
+// dashboard. Uses the service role key (never shipped to the browser) to
+// call the Auth Admin API, gated behind a check that the caller is already
+// an authenticated admin.
+//
+// Admins sign in with Microsoft only, and new sign-ups are switched off in
+// Supabase, so "adding an admin" just creates the account row for their
+// skyspath.com address. Their first Microsoft sign-in attaches to that row
+// (same verified email); a Microsoft account with no row is turned away.
 //
 // Required secrets (supabase secrets set ...):
 //   SERVICE_ROLE_KEY (the "SUPABASE_" prefix is reserved for default
@@ -11,7 +16,7 @@
 
 import { createClient } from "jsr:@supabase/supabase-js@2";
 
-const SITE_URL = "https://skyspath.com";
+const ADMIN_EMAIL_DOMAIN = "@skyspath.com";
 
 const ALLOWED_ORIGINS = new Set([
   "https://skyspath.com",
@@ -89,7 +94,7 @@ Deno.serve(async (req) => {
     return new Response(JSON.stringify({ admins }), { status: 200, headers });
   }
 
-  if (body.action === "invite") {
+  if (body.action === "add") {
     const email = body.email?.trim().toLowerCase();
     if (!email || !email.includes("@")) {
       return new Response(JSON.stringify({ error: "A valid email address is required" }), {
@@ -97,50 +102,20 @@ Deno.serve(async (req) => {
         headers,
       });
     }
-    const { error } = await adminClient.auth.admin.inviteUserByEmail(email, {
-      redirectTo: `${SITE_URL}/admin/reset-password/`,
-    });
-    if (error) {
-      return new Response(JSON.stringify({ error: error.message }), { status: 400, headers });
-    }
-    return new Response(JSON.stringify({ ok: true }), { status: 200, headers });
-  }
-
-  if (body.action === "resend") {
-    const userId = body.userId?.trim();
-    if (!userId) {
-      return new Response(JSON.stringify({ error: "A user id is required" }), {
-        status: 400,
-        headers,
-      });
-    }
-    const { data: target, error: lookupError } = await adminClient.auth.admin.getUserById(userId);
-    if (lookupError || !target?.user?.email) {
-      return new Response(JSON.stringify({ error: "That admin no longer exists." }), {
-        status: 404,
-        headers,
-      });
-    }
-    if (target.user.last_sign_in_at) {
+    if (!email.endsWith(ADMIN_EMAIL_DOMAIN)) {
       return new Response(
-        JSON.stringify({ error: "That admin has already signed in and doesn't need an invite." }),
+        JSON.stringify({ error: "Admins must use a skyspath.com Microsoft account." }),
         { status: 400, headers }
       );
     }
-    // inviteUserByEmail refuses an email that's already registered, and
-    // expired invite links can't be refreshed in place -- so recreate the
-    // pending account. Safe only because we just checked they've never
-    // signed in, meaning there's no real account state to lose.
-    const { error: deleteError } = await adminClient.auth.admin.deleteUser(target.user.id);
-    if (deleteError) {
-      return new Response(JSON.stringify({ error: deleteError.message }), { status: 400, headers });
-    }
-    const { error: reinviteError } = await adminClient.auth.admin.inviteUserByEmail(
-      target.user.email,
-      { redirectTo: `${SITE_URL}/admin/reset-password/` }
-    );
-    if (reinviteError) {
-      return new Response(JSON.stringify({ error: reinviteError.message }), { status: 400, headers });
+    // email_confirm marks the address verified, which is what lets the
+    // Microsoft sign-in attach to this account. No email is sent.
+    const { error } = await adminClient.auth.admin.createUser({ email, email_confirm: true });
+    if (error) {
+      const message = /already/i.test(error.message)
+        ? "That address is already an admin."
+        : error.message;
+      return new Response(JSON.stringify({ error: message }), { status: 400, headers });
     }
     return new Response(JSON.stringify({ ok: true }), { status: 200, headers });
   }
