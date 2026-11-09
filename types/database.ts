@@ -121,6 +121,17 @@ export type EventInsert = Partial<Omit<Event, "id" | "created_at" | "updated_at"
   Pick<Event, "title" | "slug">;
 export type EventUpdate = Partial<Omit<Event, "id" | "created_at" | "updated_at">>;
 
+// A credential that expires (see the credential_expiry migration). Rows are
+// read-only from the browser.
+export type CredentialExpiration = {
+  id: string;
+  name: string;
+  renew_steps: string;
+  expires_on: string;
+  reminded_at: string | null;
+  created_at: string;
+};
+
 export type Database = {
   public: {
     Tables: {
@@ -148,6 +159,13 @@ export type Database = {
         Row: Event;
         Insert: EventInsert;
         Update: EventUpdate;
+        Relationships: [];
+      };
+      credential_expirations: {
+        Row: CredentialExpiration;
+        Insert: Partial<CredentialExpiration> &
+          Pick<CredentialExpiration, "name" | "renew_steps" | "expires_on">;
+        Update: Partial<CredentialExpiration>;
         Relationships: [];
       };
     };

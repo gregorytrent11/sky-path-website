@@ -3,12 +3,24 @@
 import { FormEvent, useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase/client";
 import { useAdminSession } from "@/lib/supabase/auth";
+import type { CredentialExpiration } from "@/types/database";
 
 interface AdminUser {
   id: string;
   email: string | null;
   created_at: string;
   last_sign_in_at: string | null;
+}
+
+// expires_on is a plain date; pin it to UTC so it doesn't shift a day in
+// Mountain time.
+function formatExpiry(isoDate: string): string {
+  return new Date(`${isoDate}T00:00:00Z`).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    timeZone: "UTC",
+  });
 }
 
 function formatDate(value: string | null): string {
@@ -26,6 +38,7 @@ export default function AdminSettingsPage() {
   const [addError, setAddError] = useState<string | null>(null);
   const [addedEmail, setAddedEmail] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [expirations, setExpirations] = useState<CredentialExpiration[]>([]);
 
   async function loadAdmins() {
     setAdminsError(null);
@@ -43,6 +56,11 @@ export default function AdminSettingsPage() {
     // Initial external data fetch on mount, not derived state.
     // eslint-disable-next-line react-hooks/set-state-in-effect
     loadAdmins();
+    supabase
+      .from("credential_expirations")
+      .select("*")
+      .order("expires_on")
+      .then(({ data }) => setExpirations(data ?? []));
   }, []);
 
   async function handleAdd(event: FormEvent<HTMLFormElement>) {
@@ -101,6 +119,23 @@ export default function AdminSettingsPage() {
           Admins sign in with their Sky&rsquo;s Path Microsoft account. Passwords and the second
           sign-in step are managed by Microsoft, not on this site.
         </p>
+        {expirations.length > 0 && (
+          <div className="mt-4 border-t border-brand-soft-blue/40 pt-4">
+            <h3 className="text-sm font-medium text-brand-charcoal">Renewal dates</h3>
+            <ul className="mt-2 space-y-1 text-sm text-brand-charcoal">
+              {expirations.map((item) => (
+                <li key={item.id} className="flex flex-wrap justify-between gap-2">
+                  <span>{item.name}</span>
+                  <span className="text-brand-charcoal/70">Expires {formatExpiry(item.expires_on)}</span>
+                </li>
+              ))}
+            </ul>
+            <p className="mt-2 text-xs text-brand-charcoal/60">
+              A reminder with renewal steps is emailed to contact_us@skyspath.com 30 days before
+              each date.
+            </p>
+          </div>
+        )}
       </div>
 
       <div className="mt-6 max-w-lg rounded-xl border border-brand-soft-blue/60 bg-brand-white p-6">
