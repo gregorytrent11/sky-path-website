@@ -304,7 +304,10 @@ export const ADOPT_LAYOUT = [
     title: "References",
     items: [
       {
-        note: "References must be at least 21 years old, and at least 1 reference should not be an immediate family member. Sky's Path to Home will contact references and must be able to speak with them before your adoption application can be approved.",
+        note: "Reference Requirements: Three references with phone numbers are required. At least two of the three references must be non-family members and cannot live in the same household as the applicant.",
+      },
+      {
+        note: "References must be at least 21 years old. Sky's Path to Home will contact references and must be able to speak with them before your adoption application can be approved.",
       },
       { note: "Please let your references know that we will be reaching out." },
       ...referenceItems("One", "Reference #1"),

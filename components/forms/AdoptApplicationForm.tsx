@@ -747,10 +747,15 @@ function AdoptApplicationFormInner() {
 
       <div className="space-y-4">
         <SectionHeading>References</SectionHeading>
+        <p className="text-sm font-semibold leading-relaxed text-brand-charcoal">
+          Reference Requirements: Three references with phone numbers are required. At least two
+          of the three references must be non-family members and cannot live in the same
+          household as the applicant.
+        </p>
         <p className="text-sm leading-relaxed text-brand-charcoal/80">
-          References must be at least 21 years old, and at least 1 reference should not be an
-          immediate family member. Sky&rsquo;s Path to Home will contact references and must be
-          able to speak with them before your adoption application can be approved.
+          References must be at least 21 years old. Sky&rsquo;s Path to Home will contact
+          references and must be able to speak with them before your adoption application can be
+          approved.
         </p>
         <p className="text-sm leading-relaxed text-brand-charcoal/80">
           Please let your references know that we will be reaching out.
