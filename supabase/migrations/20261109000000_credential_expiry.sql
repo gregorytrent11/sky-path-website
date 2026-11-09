@@ -4,8 +4,9 @@
 -- it lapses, "Sign in with Microsoft" stops working for every admin.
 --
 -- The credential-expiry-reminder edge function runs once a day (called by
--- .github/workflows/credential-expiry.yml). For each row with 30 days or fewer left and no reminder sent yet,
--- it emails the alert inbox once and stamps reminded_at. The Admin ->
+-- .github/workflows/credential-expiry.yml). For each row it emails the
+-- alert inbox when 30, then 15, then 5 days are left (one email per step)
+-- and stamps reminded_at with when the latest one went out. The Admin ->
 -- Settings page also shows the date.
 --
 -- AFTER RENEWING a credential, record the new date so the next reminder is

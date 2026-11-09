@@ -23,6 +23,30 @@ function formatExpiry(isoDate: string): string {
   });
 }
 
+// Whole days from today (the admin's own calendar day) to the expiry date.
+function daysUntil(isoDate: string): number {
+  const now = new Date();
+  const today = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
+  return Math.round((Date.parse(`${isoDate}T00:00:00Z`) - today) / (24 * 60 * 60 * 1000));
+}
+
+// Same steps as the reminder emails: 30 days yellow, 15 orange, 5 red.
+function expiryHighlight(daysLeft: number): string {
+  if (daysLeft <= 5) return "border-red-300 bg-red-100 text-red-900";
+  if (daysLeft <= 15) return "border-orange-300 bg-orange-100 text-orange-900";
+  if (daysLeft <= 30) return "border-yellow-300 bg-yellow-100 text-yellow-900";
+  return "border-transparent text-brand-charcoal";
+}
+
+function expiryText(isoDate: string, daysLeft: number): string {
+  const date = formatExpiry(isoDate);
+  if (daysLeft > 30) return `Expires ${date}`;
+  if (daysLeft > 1) return `Expires ${date} (in ${daysLeft} days)`;
+  if (daysLeft === 1) return `Expires ${date} (tomorrow)`;
+  if (daysLeft === 0) return `Expires today`;
+  return `Expired ${date}`;
+}
+
 function formatDate(value: string | null): string {
   if (!value) return "Never";
   return new Date(value).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
@@ -122,17 +146,25 @@ export default function AdminSettingsPage() {
         {expirations.length > 0 && (
           <div className="mt-4 border-t border-brand-soft-blue/40 pt-4">
             <h3 className="text-sm font-medium text-brand-charcoal">Renewal dates</h3>
-            <ul className="mt-2 space-y-1 text-sm text-brand-charcoal">
-              {expirations.map((item) => (
-                <li key={item.id} className="flex flex-wrap justify-between gap-2">
-                  <span>{item.name}</span>
-                  <span className="text-brand-charcoal/70">Expires {formatExpiry(item.expires_on)}</span>
-                </li>
-              ))}
+            <ul className="mt-2 space-y-1 text-sm">
+              {expirations.map((item) => {
+                const daysLeft = daysUntil(item.expires_on);
+                return (
+                  <li
+                    key={item.id}
+                    className={`flex flex-wrap justify-between gap-2 rounded-md border px-2 py-1 ${expiryHighlight(daysLeft)}`}
+                  >
+                    <span>{item.name}</span>
+                    <span className={daysLeft <= 30 ? "font-semibold" : "text-brand-charcoal/70"}>
+                      {expiryText(item.expires_on, daysLeft)}
+                    </span>
+                  </li>
+                );
+              })}
             </ul>
             <p className="mt-2 text-xs text-brand-charcoal/60">
-              A reminder with renewal steps is emailed to contact_us@skyspath.com 30 days before
-              each date.
+              Reminders with renewal steps are emailed to contact_us@skyspath.com 30, 15 and 5 days
+              before each date.
             </p>
           </div>
         )}

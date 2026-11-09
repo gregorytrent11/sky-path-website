@@ -21,7 +21,8 @@ secret expires; renew it in Entra and paste the new value into Supabase
 date is tracked in the `credential_expirations` table: the
 `credential-expiry-reminder` edge function (called daily by
 `.github/workflows/credential-expiry.yml`) emails
-contact_us@skyspath.com 30 days ahead, and Admin → Settings shows the date.
+contact_us@skyspath.com 30, 15 and 5 days ahead, and Admin → Settings shows
+the date (highlighted yellow, orange, then red on the same steps).
 After renewing, update the row as described at the top of
 `supabase/migrations/20261109000000_credential_expiry.sql`.
 
