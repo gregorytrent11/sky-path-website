@@ -22,6 +22,7 @@ function formatDate(value: string) {
 export default function AdminSuccessStoriesPage() {
   const [dogs, setDogs] = useState<Dog[] | null>(null);
   const [busyId, setBusyId] = useState<string | null>(null);
+  const [tab, setTab] = useState<"live" | "archive">("live");
   const [notice, setNotice] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -181,7 +182,7 @@ export default function AdminSuccessStoriesPage() {
       <p className="mt-3 text-sm text-brand-charcoal/70">
         The website shows up to {MAX_SUCCESS_STORIES} stories, and the homepage shows the{" "}
         {HOMEPAGE_SUCCESS_STORIES} most recent. When another story is published, the oldest one
-        moves to the archive below. To write a story, open an adopted dog from the Dogs page.
+        moves to the Archive tab. To write a story, open an adopted dog from the Dogs page.
       </p>
 
       {notice && (
@@ -199,21 +200,39 @@ export default function AdminSuccessStoriesPage() {
         <p className="mt-6 text-brand-charcoal/80">Loading…</p>
       ) : (
         <>
-          <h2 className="mt-8 font-heading text-lg font-semibold text-brand-deep-blue">
-            On the website ({showingCount} of {MAX_SUCCESS_STORIES})
-          </h2>
-          {live.length === 0 ? (
-            <p className="mt-3 text-sm text-brand-charcoal/80">No stories are published yet.</p>
-          ) : (
-            storyTable(live, false)
-          )}
+          <div role="tablist" aria-label="Success stories" className="mt-6 flex gap-1 border-b border-brand-soft-blue/60">
+            {(
+              [
+                ["live", `On the website (${showingCount} of ${MAX_SUCCESS_STORIES})`],
+                ["archive", `Archive (${archive.length})`],
+              ] as const
+            ).map(([key, label]) => (
+              <button
+                key={key}
+                type="button"
+                role="tab"
+                aria-selected={tab === key}
+                onClick={() => setTab(key)}
+                className={`-mb-px rounded-t-md border-b-2 px-4 py-2 text-sm font-semibold ${
+                  tab === key
+                    ? "border-brand-purple text-brand-purple"
+                    : "border-transparent text-brand-charcoal/70 hover:text-brand-charcoal"
+                }`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
 
-          <h2 className="mt-10 font-heading text-lg font-semibold text-brand-deep-blue">
-            Archive ({archive.length})
-          </h2>
-          {archive.length === 0 ? (
-            <p className="mt-3 text-sm text-brand-charcoal/80">
-              Nothing in the archive yet. Older stories land here once more than{" "}
+          {tab === "live" ? (
+            live.length === 0 ? (
+              <p className="mt-4 text-sm text-brand-charcoal/80">No stories are published yet.</p>
+            ) : (
+              storyTable(live, false)
+            )
+          ) : archive.length === 0 ? (
+            <p className="mt-4 text-sm text-brand-charcoal/80">
+              Nothing in the archive yet. Stories land here when you move them, or once more than{" "}
               {MAX_SUCCESS_STORIES} have been published.
             </p>
           ) : (
