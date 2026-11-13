@@ -88,6 +88,28 @@ export default function AdminSuccessStoriesPage() {
     setBusyId(null);
   }
 
+  // Deleting removes the story text only; the dog's record and photos stay.
+  async function deleteStory(dog: Dog) {
+    if (
+      !window.confirm(
+        `Delete ${dog.name}'s success story? The story text will be removed and cannot be recovered. ${dog.name}'s dog record and photos are kept.`
+      )
+    ) {
+      return;
+    }
+    setNotice(null);
+    setError(null);
+    setBusyId(dog.id);
+    const { error: updateError } = await supabase
+      .from("dogs")
+      .update({ success_story: null, success_story_status: "draft" })
+      .eq("id", dog.id);
+    if (updateError) setError(updateError.message);
+    else setNotice(`${dog.name}'s story was deleted.`);
+    await reload();
+    setBusyId(null);
+  }
+
   function storyTable(rows: Dog[], archived: boolean) {
     return (
       <div className="mt-3 overflow-x-auto rounded-xl border border-brand-soft-blue/60">
@@ -133,6 +155,16 @@ export default function AdminSuccessStoriesPage() {
                     >
                       {archived ? "Put back on website" : "Move to archive"}
                     </button>
+                    {archived && (
+                      <button
+                        type="button"
+                        disabled={busyId === dog.id}
+                        onClick={() => deleteStory(dog)}
+                        className="text-red-700 hover:underline"
+                      >
+                        Delete
+                      </button>
+                    )}
                   </div>
                 </td>
               </tr>
