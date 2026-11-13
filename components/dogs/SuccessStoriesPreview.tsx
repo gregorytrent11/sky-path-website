@@ -6,6 +6,7 @@ import Link from "next/link";
 import { supabase } from "@/lib/supabase/client";
 import type { Dog } from "@/types/database";
 import { toPlainText } from "@/components/RichText";
+import { HOMEPAGE_SUCCESS_STORIES } from "@/lib/success-stories";
 
 export default function SuccessStoriesPreview() {
   const [dogs, setDogs] = useState<Dog[] | null>(null);
@@ -19,7 +20,7 @@ export default function SuccessStoriesPreview() {
       .eq("success_story_status", "published")
       .not("success_story", "is", null)
       .order("updated_at", { ascending: false })
-      .limit(2)
+      .limit(HOMEPAGE_SUCCESS_STORIES)
       .then(({ data }) => {
         if (cancelled) return;
         setDogs((data ?? []).filter((dog) => dog.success_story?.trim()));
@@ -38,12 +39,13 @@ export default function SuccessStoriesPreview() {
   }
 
   return (
-    <div className="mx-auto mt-8 grid max-w-4xl gap-6 sm:grid-cols-2">
+    // Flex rather than grid so a row with fewer than four stories stays centred.
+    <div className="mt-8 flex flex-wrap justify-center gap-6">
       {dogs.map((dog) => (
         <Link
           key={dog.id}
           href={`/success-stories/#${dog.slug}`}
-          className="overflow-hidden rounded-xl border border-brand-soft-blue/60 bg-brand-white text-left shadow-sm transition-shadow hover:shadow-md"
+          className="w-full overflow-hidden sm:w-[calc(50%-0.75rem)] lg:w-[calc(25%-1.125rem)] rounded-xl border border-brand-soft-blue/60 bg-brand-white text-left shadow-sm transition-shadow hover:shadow-md"
         >
           <div className="relative aspect-[4/3] w-full overflow-hidden bg-brand-gray">
             {dog.primary_photo_url ? (
