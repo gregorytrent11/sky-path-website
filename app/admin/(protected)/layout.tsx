@@ -9,6 +9,7 @@ import { useAdminSession } from "@/lib/supabase/auth";
 const navItems = [
   { label: "Dashboard", href: "/admin/" },
   { label: "Dogs", href: "/admin/dogs/" },
+  { label: "Success Stories", href: "/admin/success-stories/" },
   { label: "Events", href: "/admin/events/" },
   { label: "Submissions", href: "/admin/submissions/" },
   { label: "Settings", href: "/admin/settings/" },

@@ -20,7 +20,11 @@ import RichTextField from "@/components/admin/RichTextField";
 import { slugify } from "@/lib/slugify";
 import { triggerDeploy } from "@/lib/trigger-deploy";
 import { FEATURED_STATUSES, MAX_FEATURED_DOGS } from "@/lib/featured";
-import { HOMEPAGE_SUCCESS_STORIES, MAX_SUCCESS_STORIES } from "@/lib/success-stories";
+import {
+  HOMEPAGE_SUCCESS_STORIES,
+  MAX_SUCCESS_STORIES,
+  archiveOverflowStories,
+} from "@/lib/success-stories";
 
 type FormState = {
   name: string;
@@ -164,31 +168,10 @@ function EditDogForm() {
       }
     }
 
-    if (
+    const publishesStory =
       form.status === "adopted" &&
-      form.success_story.trim() &&
-      form.success_story_status === "published"
-    ) {
-      // The site carries at most MAX_SUCCESS_STORIES published stories. Count
-      // the OTHER dogs whose story is live, so re-saving a published story
-      // never trips the cap.
-      let query = supabase
-        .from("dogs")
-        .select("id", { count: "exact", head: true })
-        .eq("status", "adopted")
-        .eq("is_visible", true)
-        .eq("success_story_status", "published")
-        .not("success_story", "is", null);
-      if (dogId) query = query.neq("id", dogId);
-      const { count } = await query;
-      if ((count ?? 0) >= MAX_SUCCESS_STORIES) {
-        setSaving(false);
-        setError(
-          `The website shows up to ${MAX_SUCCESS_STORIES} success stories and ${MAX_SUCCESS_STORIES} are already published. Set an older story back to Draft first, or save this one as a Draft.`
-        );
-        return;
-      }
-    }
+      !!form.success_story.trim() &&
+      form.success_story_status === "published";
 
     const payload: DogUpdate = {
       name: form.name.trim(),
@@ -217,11 +200,24 @@ function EditDogForm() {
 
     if (dogId) {
       const { error: updateError } = await supabase.from("dogs").update(payload).eq("id", dogId);
-      setSaving(false);
       if (updateError) {
+        setSaving(false);
         setError(updateError.message);
         return;
       }
+      if (publishesStory) {
+        // The site carries at most MAX_SUCCESS_STORIES stories; this one is
+        // now the newest, so anything past the limit moves to the archive.
+        const { error: archiveError } = await archiveOverflowStories();
+        if (archiveError) {
+          setSaving(false);
+          setError(
+            `The story was saved, but the oldest story could not be moved to the archive: ${archiveError}`
+          );
+          return;
+        }
+      }
+      setSaving(false);
       // A brand-new page shell is only needed when the URL itself changes
       // -- editing content on an existing page doesn't, since the page
       // fetches live data from Supabase on load regardless of the static
@@ -505,12 +501,12 @@ function EditDogForm() {
               maxLength={1500}
               showWordCount
               placeholder={`Tell adopters about ${form.name || "this dog"}'s journey home...`}
-              hint={`Drafts are saved but stay off the Success Stories page until you publish. Up to ${MAX_SUCCESS_STORIES} stories can be published at once; the homepage shows the ${HOMEPAGE_SUCCESS_STORIES} most recent.`}
+              hint={`Drafts are saved but stay off the Success Stories page until you publish. The website shows up to ${MAX_SUCCESS_STORIES} stories (the homepage shows the ${HOMEPAGE_SUCCESS_STORIES} most recent); publishing another moves the oldest to the archive under Success Stories.`}
             />
 
             <div className="flex flex-wrap items-center gap-3">
               <span className="text-sm font-medium text-brand-charcoal">Story status</span>
-              {(["draft", "published"] as const).map((option) => (
+              {(["draft", "published", "archived"] as const).map((option) => (
                 <label
                   key={option}
                   className="flex items-center gap-1.5 text-sm text-brand-charcoal"
@@ -523,7 +519,7 @@ function EditDogForm() {
                     onChange={() => update("success_story_status", option)}
                     disabled={!form.success_story.trim()}
                   />
-                  {option === "draft" ? "Draft" : "Published"}
+                  {option === "draft" ? "Draft" : option === "published" ? "Published" : "Archived"}
                 </label>
               ))}
               {form.success_story.trim() && (

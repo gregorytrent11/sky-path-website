@@ -2,7 +2,7 @@
 // Regenerate with `supabase gen types typescript` once the CLI is linked.
 
 export type DogStatus = "draft" | "incoming" | "published" | "pending" | "adopted" | "archived";
-export type SuccessStoryStatus = "draft" | "published";
+export type SuccessStoryStatus = "draft" | "published" | "archived";
 export type DogSex = "male" | "female" | "unknown";
 export type DogAgeCategory = "puppy" | "young" | "adult" | "senior";
 export type DogSize = "small" | "medium" | "large" | "xlarge";
