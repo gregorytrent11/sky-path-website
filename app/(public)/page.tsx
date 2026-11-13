@@ -63,15 +63,21 @@ export default async function HomePage() {
 
       {/* Featured available dogs */}
       <section aria-labelledby="featured-dogs-heading" className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
-        <div className="mb-8 flex items-center justify-between">
-          <h2 id="featured-dogs-heading" className="font-heading text-3xl font-semibold text-brand-deep-blue">
-            Featured Available Dogs
-          </h2>
-          <Link href="/dogs" className="text-sm font-semibold text-brand-purple hover:underline">
-            View all dogs &rarr;
+        <h2
+          id="featured-dogs-heading"
+          className="mb-8 text-center font-heading text-3xl font-semibold text-brand-deep-blue"
+        >
+          Featured Available Dogs
+        </h2>
+        <FeaturedDogsPreview initialDogs={featuredDogs} />
+        <div className="mt-8 text-center">
+          <Link
+            href="/dogs"
+            className="inline-block rounded-full border-2 border-brand-purple px-6 py-2.5 text-sm font-semibold text-brand-purple transition-colors hover:bg-brand-purple hover:text-brand-white"
+          >
+            View All Dogs
           </Link>
         </div>
-        <FeaturedDogsPreview initialDogs={featuredDogs} />
       </section>
 
       {/* How it works */}

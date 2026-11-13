@@ -44,9 +44,15 @@ export default function FeaturedDogsPreview({ initialDogs }: { initialDogs?: Dog
   }
 
   return (
-    <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-4">
+    // Flex rather than grid so a row with fewer than four dogs stays centred.
+    <div className="flex flex-wrap justify-center gap-6">
       {dogs.map((dog) => (
-        <DogCard key={dog.id} dog={dog} />
+        <div
+          key={dog.id}
+          className="w-full sm:w-[calc(50%-0.75rem)] md:w-[calc(25%-1.125rem)] [&>*]:h-full"
+        >
+          <DogCard dog={dog} />
+        </div>
       ))}
     </div>
   );
